@@ -9,6 +9,6 @@ module.exports = {
     DATABASE_DIALECT: process.env.DATABASE_DILECT || 'mysql',
 
     SEQUELIZE_SYNC_OPTIONS: {
-        alter: false
+        alter: true
     }
 }

@@ -8,7 +8,7 @@ module.exports = {
         message: 'User already exist',
         code: 4001
     },
-    
+
     // 404
     NOT_FOUND_ROUTE: {
         message: 'API route not found',

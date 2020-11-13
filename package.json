@@ -1,19 +1,28 @@
 {
   "name": "neighbor_helper",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "For chatbots studio.",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "linter": "eslint src"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/paratskiy-organization/neighbor_helper.git"
+    "url": "https://github.com/paratskiy-organization/neighbor_helper.git"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/paratskiy-organization/neighbor_helper/issues"
+  "keywords": [
+    "neighbor_helper",
+    "intership",
+    "bakend",
+    "chatbot",
+    "Claudiajs"
+  ],
+  "author": "Maksim Luzin",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.21.2",
   },
-  "homepage": "https://github.com/paratskiy-organization/neighbor_helper#readme"
+  "dependencies": {}
 }

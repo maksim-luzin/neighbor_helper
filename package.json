@@ -4,11 +4,12 @@
   "description": "For chatbots studio.",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon src/app.js --exec \"npm run linter && babel-node\"",
     "linter": "eslint src"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/paratskiy-organization/neighbor_helper.git"
+    "url": "https://github.com/maksim-luzin/Test_for_Chatbots_Studio.git"
   },
   "keywords": [
     "neighbor_helper",
@@ -20,9 +21,18 @@
   "author": "Maksim Luzin",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.12.1",
+    "@babel/node": "^7.12.1",
+    "@babel/plugin-transform-modules-commonjs": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "babel-eslint": "^10.1.0",
+    "@babel/runtime": "^7.12.1",
+    "core-js": "^3.6.5",
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.21.2"
   },
   "dependencies": {}
 }

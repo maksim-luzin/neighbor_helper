@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+#WebStorm
+src/.idea
+
+#Visual Studio Code
+.editorconfig
+
+#Claudia.JS
+bin/
+claudia.json

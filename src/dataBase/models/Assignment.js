@@ -4,7 +4,8 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class Assignment extends Model {
         static associate(models) {
-           Assignment.belongsTo(models.User, {foreignKey: ''})
+            Assignment.belongsTo(models.User, {foreignKey: 'authorTelegramId'});
+            Assignment.belongsTo(models.Location, {foreignKey: 'locationId'});
         }
     }
     Assignment.init({

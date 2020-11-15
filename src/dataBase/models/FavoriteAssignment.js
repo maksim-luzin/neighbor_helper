@@ -4,7 +4,8 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class FavoriteAssignment extends Model {
         static associate(models) {
-
+            FavoriteAssignment.belongsToMany(models.User, {through: 'UserFavoriteAssignment', foreignKey: 'telegramId'});
+            FavoriteAssignment.belongsTo(models.Assignment, {foreignKey: 'assignmentId'});
         }
     }
     FavoriteAssignment.init({

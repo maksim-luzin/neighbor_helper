@@ -4,7 +4,7 @@ const {
     DATABASE_HOST,
     DATABASE_DIALECT,
     DATABASE_NAME
-} = require('../configs/global.config');
+} = require('./global.config');
 module.exports = {
     "development": {
         "username": DATABASE_USER,

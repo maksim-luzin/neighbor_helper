@@ -15,19 +15,19 @@ module.exports = {
         }
       },
       title: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       description: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       reward: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       link: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       locationId: {
@@ -39,11 +39,11 @@ module.exports = {
         }
       },
       status: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       category: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       spamScore: {
@@ -51,7 +51,7 @@ module.exports = {
         allowNull: false
       },
       pictureUrl: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false
       },
       createdAt: {

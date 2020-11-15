@@ -4,7 +4,8 @@ module.exports = {
             id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
+                autoIncrement: true
             },
             telegramId: {
                 type: Sequelize.INTEGER,
@@ -15,15 +16,15 @@ module.exports = {
                 }
             },
             localName: {
-                type: Sequelize.VARCHAR,
+                type: Sequelize.STRING,
                 allowNull: false
             },
             globalName: {
-                type: Sequelize.VARCHAR,
+                type: Sequelize.STRING,
                 allowNull: false
             },
             coordinates: {
-                type: Sequelize.VARCHAR,
+                type: Sequelize.STRING,
                 allowNull: false
             },
             createdAt: {

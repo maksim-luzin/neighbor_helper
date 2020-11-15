@@ -4,7 +4,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class Location extends Model {
         static associate(models) {
-
+            Location.belongsTo(models.User, {foreignKey: 'telegramId'});
         }
     }
     Location.init({

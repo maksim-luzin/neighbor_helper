@@ -22,6 +22,10 @@ module.exports = {
                 type: Sequelize.VARCHAR,
                 allowNull: false
             },
+            coordinates: {
+                type: Sequelize.VARCHAR,
+                allowNull: false
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false

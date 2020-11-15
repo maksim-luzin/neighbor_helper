@@ -10,14 +10,14 @@ module.exports = {
         "username": DATABASE_USER,
         "password": DATABASE_PASSWORD,
         "database": DATABASE_NAME,
-        "host": DATABASE_HOST,
+        "host": "127.0.0.1",
         "dialect": DATABASE_DIALECT
     },
     "production": {
-        "username": "root",
-        "password": "HomeHome20012018",
-        "database": "chatBot",
+        "username": DATABASE_USER,
+        "password": DATABASE_PASSWORD,
+        "database": DATABASE_NAME,
         "host": "127.0.0.1",
-        "dialect": "postgres"
+        "dialect": DATABASE_DIALECT
     }
 }

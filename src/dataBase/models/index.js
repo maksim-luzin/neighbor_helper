@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -9,10 +7,29 @@ const config = require(__dirname + '/../../configs/sequelize.config.js')[env];
 const db = {};
 
 let sequelize;
+// if (config.environment === 'production') {
+//   sequelize = new Sequelize(process.env[config.use_env_variable], config);
+//   sequelize = new Sequelize(
+//       process.env.DATABASE_NAME,
+//       process.env.DATABASE_USER,
+//       process.env.DATABASE_PASSWORD, {
+//         host: process.env.DATABASE_HOST,
+//         port: process.env.PORT,
+//         dialect: 'postgres',
+//         dialectOption: {
+//           ssl: true,
+//           native: true
+//         },
+//         logging: true
+//       }
+//   );
+// } else {
+//   sequelize = new Sequelize(config.database, config.username, config.password, config);
+// }
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+    sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+    sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
 fs

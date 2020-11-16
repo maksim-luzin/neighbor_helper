@@ -5,14 +5,6 @@ const morgan = require('morgan');
 dotEnv.config();
 
 const {
-    errors: {
-        SERVER_UNKNOWN_ERROR: {
-            message,
-            code
-        }
-    }
-} = require('./errors');
-const {
     enums: {
         ResponseStatusCodes: {
             SERVER_ERROR
@@ -20,15 +12,9 @@ const {
     }
 } = require('./constants');
 const { logger } = require('./loggers');
-// const {
-//     associations: {
-//         initDBAssociations
-//     }
-// } = require('./dataBase');
 
 const app = express();
 
-// initDBAssociations();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use(morgan('dev'))
@@ -52,8 +38,8 @@ app.use((err, req, res, next) => {
     res
         .status(err.status || SERVER_ERROR)
         .json({
-            message: err.message || message,
-            code: err.code || code
+            message: err.message,
+            code: err.code
         });
 })
 

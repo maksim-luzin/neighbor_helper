@@ -12,8 +12,9 @@
     "gulp": "./node_modules/.bin/gulp",
     "claudia": "./node_modules/.bin/claudia",
     "transpile": "npm run linter && gulp",
-    "create": "npm run transpile && ./node_modules/.bin/claudia create --profile claudia --region eu-central-1  --api-module bin/app",
-    "update": "npm run transpile && claudia update --profile claudia"
+    "create": "npm run transpile && claudia create --profile claudia --region eu-central-1  --api-module bin/app",
+    "update": "npm run transpile && claudia update --profile claudia",
+    "registrate": "npm run transpile && claudia update --profile claudia --configure-telegram-bot"
   },
   "repository": {
     "type": "git",

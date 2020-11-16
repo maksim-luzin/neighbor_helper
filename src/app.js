@@ -1,4 +1,4 @@
-import API from 'claudia-api-builder';
+import API from 'claudia-bot-builder';
 import excuse from 'huh';
 
 const api = new API();

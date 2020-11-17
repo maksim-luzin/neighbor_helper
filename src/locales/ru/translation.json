@@ -1,0 +1,57 @@
+{
+  "mainMenu": {
+    "addLocation": "Добавить локацию",
+    "myAssignments": "Мои объявления",
+    "favoriteAssignments": "Избранные объявления",
+    "submitAssignment": "Подать объявление",
+    "findAssignment": "Найти объявление",
+    "about": "О нас",
+    "language": "Язык"
+  },
+  "generalNavigation": {
+    "favoriteAssignments": "Избранные",
+    "submittedAssignments": "Поданные",
+    "addLocation": "Добавить локацию",
+    "back": "<< Назад",
+    "home": "Домой",
+    "cancel": "Отмена",
+    "submit": "Далее >>",
+    "skip": "Пропустить >>"
+  },
+  "language": {
+    "ukrain": "Украинский",
+    "russian": "Руский",
+    "english": "Английский"
+  },
+  "messages": {
+    "chooseLocation": "Выберите локацию",
+    "enterLocationName": "Введите локацию",
+    "chooseLanguage": "Выберите язык",
+    "languageChanged": "Язык успешно изменен",
+    "chooseCategory": "Выберите категорию",
+    "enterAssignmentTitle": "Введите название",
+    "enterAssignmentDescription": "Введите описание",
+    "enterReward": "Введите награду",
+    "addPicture": "Добавте картинку",
+    "enterLink": "Введите ссылку"
+  },
+  "notification": {
+    "addToFavorite": "Добавлено в избранные",
+    "removeFromFavorite": "Удалено из избранных",
+    "markAsSpan": "Отмечено как спам",
+    "assignmentCompleted": "Объявление отмечено как выполнено",
+    "assignmentNotCompleted": "Объявление отмечено как не выполнено",
+    "assignmentRemoved": "Объявление удалено" 
+  },
+  "assignment": {
+    "reward": "Удалить",
+    "button": {
+      "contactTheAuthor": "Связаться с автором",
+      "markAsSpam": "Спам",
+      "completeAssignment": "Отметить как выполнено",
+      "NotCompleteAssignment": "Отметить как не выполнено",
+      "removeAssignment": "Удалить",
+      "addToFavorite": "Добавить в избранное"
+    }
+  }
+}

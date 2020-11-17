@@ -1,10 +1,20 @@
-import API from 'claudia-bot-builder';
-import excuse from 'huh';
+import botBuilder, { telegramTemplate } from 'claudia-bot-builder';
 
-const api = new API();
+const mainMenu = [
+  ['Добавить локацию'],
+  ['Мои объявления'],
+  ['Избранные объявления'],
+  ['Подать объявление'],
+  ['Найти объявление'],
+  ['Язык', 'О нас']
+];
 
-api.get('/', request => (
-  `Thanks for sending ${request.text}.Your message is very important to us, but ${excuse.get()}`
+const bot = botBuilder(() => (
+  new telegramTemplate
+    // eslint-disable-next-line new-cap
+    .Text('Приветствую вас.')
+    .addReplyKeyboard(mainMenu)
+    .get()
 ));
 
-module.exports = api;
+module.exports = bot;

@@ -1,0 +1,57 @@
+{
+  "mainMenu": {
+    "addLocation": "Add location",
+    "myAssignments": "My assignments",
+    "favoriteAssignments": "Favorite assignments",
+    "submitAssignment": "Submit assignments",
+    "findAssignment": "Find assignments",
+    "about": "About",
+    "language": "Language"
+  },
+  "generalNavigation": {
+    "favoriteAssignments": "Favorites",
+    "submittedAssignments": "Submitted",
+    "addLocation": "Add location",
+    "back": "<< Back",
+    "home": "Home",
+    "cancel": "Cencel",
+    "submit": "Submit >>",
+    "skip": "Skip >>"
+  },
+  "language": {
+    "ukrain": "Ukrain",
+    "russian": "Russian",
+    "english": "English"
+  },
+  "messages": {
+    "chooseLocation": "Choose location",
+    "enterLocationName": "Enter location name",
+    "chooseLanguage": "Choose language",
+    "languageChanged": "Language succesfully changed",
+    "chooseCategory": "Choose category",
+    "enterAssignmentTitle": "Enter title",
+    "enterAssignmentDescription": "Enter description",
+    "enterReward": "Enter reward",
+    "addPicture": "Add picture",
+    "enterLink": "Enter link"
+  },
+  "notification": {
+    "addedToFavorite": "Added to favorites",
+    "removedFromFavorite": "Removed from favorites",
+    "markedAsSpan": "Marked as spam",
+    "assignmentCompleted": "Assignment completed",
+    "assignmentNotCompleted": "Assignment not completed",
+    "assignmentRemoved": "Assignment removed" 
+  },
+  "assignment": {
+    "reward": "Reward",
+    "button": {
+      "contactTheAuthor": "Contact to author",
+      "markAsSpam": "Spam",
+      "completeAssignment": "Complete assignment",
+      "NotCompleteAssignment": "Not complete assignment",
+      "removeAssignment": "Remove",
+      "addToFavorites": "Add to favorites"
+    }
+  }
+}

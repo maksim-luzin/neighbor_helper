@@ -36,15 +36,15 @@
     "enterLink": "Введите ссылку"
   },
   "notification": {
-    "addToFavorite": "Добавлено в избранные",
-    "removeFromFavorite": "Удалено из избранных",
-    "markAsSpan": "Отмечено как спам",
+    "addedToFavorite": "Добавлено в избранные",
+    "removeedFromFavorite": "Удалено из избранных",
+    "markedAsSpan": "Отмечено как спам",
     "assignmentCompleted": "Объявление отмечено как выполнено",
     "assignmentNotCompleted": "Объявление отмечено как не выполнено",
     "assignmentRemoved": "Объявление удалено" 
   },
   "assignment": {
-    "reward": "Удалить",
+    "reward": "Награда",
     "button": {
       "contactTheAuthor": "Связаться с автором",
       "markAsSpam": "Спам",

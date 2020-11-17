@@ -19,9 +19,9 @@
     "skip": "Пропустить >>"
   },
   "language": {
-    "ukrain": "Украинский",
-    "russian": "Руский",
-    "english": "Английский"
+    "ukrain": "Українська",
+    "russian": "Русский",
+    "english": "English"
   },
   "messages": {
     "chooseLocation": "Выберите локацию",

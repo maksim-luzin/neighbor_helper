@@ -1,0 +1,57 @@
+{
+  "mainMenu": {
+    "addLocation": "Додати локацію",
+    "myAssignments": "Мої оголошення",
+    "favoriteAssignments": "Вибрані оголошення",
+    "submitAssignment": "Подати об'яву",
+    "findAssignment": "Знайти оголошення",
+    "about": "Про нас",
+    "language": "Мова"
+  },
+  "generalNavigation": {
+    "favoriteAssignments": "Вибрані",
+    "submittedAssignments": "Поданні",
+    "addLocation": "Додати локацію",
+    "back": "<< Назад",
+    "home": "Додому",
+    "cancel": "Відміна",
+    "submit": "Далі >>",
+    "skip": "Пропустити >>"
+  },
+  "language": {
+    "ukrain": "Українська",
+    "russian": "Русский",
+    "english": "English"
+  },
+  "messages": {
+    "chooseLocation": "Виберіть локацію",
+    "enterLocationName": "Введіть локацію",
+    "chooseLanguage": "Оберіть мову",
+    "languageChanged": "Мова успішно змінена",
+    "chooseCategory": "Оберіть категорію",
+    "enterAssignmentTitle": "Введіть назву",
+    "enterAssignmentDescription": "Введіть опис",
+    "enterReward": "Введіть нагороду",
+    "addPicture": "Додайте картинку",
+    "enterLink": "Введіть посилання"
+  },
+  "notification": {
+    "addedToFavorite": "Додано в обрані",
+    "removeedFromFavorite": "Вилучено з вибраних",
+    "markedAsSpan": "Відзначено як спам",
+    "assignmentCompleted": "Оголошення відзначено як виконано",
+    "assignmentNotCompleted": "Оголошення відзначено як не виконано",
+    "assignmentRemoved": "Оголошення видалено" 
+  },
+  "assignment": {
+    "reward": "Нагорода",
+    "button": {
+      "contactTheAuthor": "Зв'язатися з автором",
+      "markAsSpam": "Спам",
+      "completeAssignment": "Відмітити як виконане",
+      "NotCompleteAssignment": "Відмітити як не виконане",
+      "removeAssignment": "Видалити",
+      "addToFavorite": "Додати в обране"
+    }
+  }
+}

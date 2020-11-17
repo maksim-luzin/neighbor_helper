@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
 
       User.belongsToMany(models.Assignment, { through: 'FavoriteAssignments', foreignKey: 'telegramId', as: 'favoriteAssignments'});
     }
-  };
+  }
   User.init({
     telegramId: {
       allowNull: false,

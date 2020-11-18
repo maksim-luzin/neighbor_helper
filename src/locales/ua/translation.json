@@ -36,7 +36,7 @@
     "enterLink": "Введіть посилання"
   },
   "notifications": {
-    "addedToFavorite": "Додано в обрані",
+    "addedToFavorites": "Додано в обрані",
     "removedFromFavorites": "Вилучено з вибраних",
     "markedAsSpam": "Відзначено як спам",
     "assignmentCompleted": "Оголошення відзначено як виконане",

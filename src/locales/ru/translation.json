@@ -38,7 +38,7 @@
   "notifications": {
     "addedToFavorites": "Добавлено в избранные",
     "removedFromFavorites": "Удалено из избранных",
-    "markedAsSpan": "Отмечено как спам",
+    "markedAsSpam": "Отмечено как спам",
     "assignmentCompleted": "Объявление отмечено как выполненное",
     "assignmentNotCompleted": "Объявление отмечено как не выполненное",
     "assignmentRemoved": "Объявление удалено" 

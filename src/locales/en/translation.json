@@ -14,12 +14,12 @@
     "addLocation": "Add location",
     "back": "<< Back",
     "home": "Home",
-    "cancel": "Cencel",
+    "cancel": "Cancel",
     "submit": "Submit >>",
     "skip": "Skip >>"
   },
   "language": {
-    "ukrain": "Українська",
+    "ukrainian": "Українська",
     "russian": "Русский",
     "english": "English"
   },
@@ -35,10 +35,10 @@
     "addPicture": "Add picture",
     "enterLink": "Enter link"
   },
-  "notification": {
-    "addedToFavorite": "Added to favorites",
-    "removedFromFavorite": "Removed from favorites",
-    "markedAsSpan": "Marked as spam",
+  "notifications": {
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites",
+    "markedAsSpam": "Marked as spam",
     "assignmentCompleted": "Assignment completed",
     "assignmentNotCompleted": "Assignment not completed",
     "assignmentRemoved": "Assignment removed" 
@@ -46,10 +46,10 @@
   "assignment": {
     "reward": "Reward",
     "button": {
-      "contactTheAuthor": "Contact to author",
+      "contactTheAuthor": "Contact the author",
       "markAsSpam": "Spam",
-      "completeAssignment": "Complete assignment",
-      "NotCompleteAssignment": "Not complete assignment",
+      "markAssignmentAsCompleted": "Close assignment",
+      "markAssignmentAsNotCompleted": "Open assignment",
       "removeAssignment": "Remove",
       "addToFavorites": "Add to favorites"
     }

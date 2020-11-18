@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/paratskiy-organization/neighbor_helper#readme",
   "devDependencies": {
-    "eslint": "^7.13.0"
-  },
-  "dependencies": {
+    "eslint": "^7.13.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
+  },
+  "dependencies": {
   }
 }

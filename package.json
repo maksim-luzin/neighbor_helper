@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src"
+    "start": "nodemon src",
+    "lint": "eslint ./src",
+    "lint-fix": "eslint ./src --fix"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
@@ -27,7 +29,9 @@
     "@types/sequelize": "^4.28.9",
     "@types/winston": "^2.4.4",
     "@types/morgan": "^1.9.2",
-    "eslint": "^7.13.0"
+    "eslint": "^7.13.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   },
   "repository": {
     "type": "git",

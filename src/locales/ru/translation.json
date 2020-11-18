@@ -19,28 +19,28 @@
     "skip": "Пропустить >>"
   },
   "language": {
-    "ukrain": "Українська",
+    "ukrainian": "Українська",
     "russian": "Русский",
     "english": "English"
   },
   "messages": {
     "chooseLocation": "Выберите локацию",
-    "enterLocationName": "Введите локацию",
+    "enterLocationName": "Введите название локации",
     "chooseLanguage": "Выберите язык",
     "languageChanged": "Язык успешно изменен",
     "chooseCategory": "Выберите категорию",
     "enterAssignmentTitle": "Введите название",
     "enterAssignmentDescription": "Введите описание",
     "enterReward": "Введите награду",
-    "addPicture": "Добавте картинку",
+    "addPicture": "Добавьте картинку",
     "enterLink": "Введите ссылку"
   },
-  "notification": {
-    "addedToFavorite": "Добавлено в избранные",
-    "removeedFromFavorite": "Удалено из избранных",
+  "notifications": {
+    "addedToFavorites": "Добавлено в избранные",
+    "removedFromFavorites": "Удалено из избранных",
     "markedAsSpan": "Отмечено как спам",
-    "assignmentCompleted": "Объявление отмечено как выполнено",
-    "assignmentNotCompleted": "Объявление отмечено как не выполнено",
+    "assignmentCompleted": "Объявление отмечено как выполненное",
+    "assignmentNotCompleted": "Объявление отмечено как не выполненное",
     "assignmentRemoved": "Объявление удалено" 
   },
   "assignment": {
@@ -48,10 +48,10 @@
     "button": {
       "contactTheAuthor": "Связаться с автором",
       "markAsSpam": "Спам",
-      "completeAssignment": "Отметить как выполнено",
-      "NotCompleteAssignment": "Отметить как не выполнено",
+      "markAssignmentAsCompleted": "Отметить как выполненное",
+      "markAssignmentAsNotCompleted": "Отметить как не выполненное",
       "removeAssignment": "Удалить",
-      "addToFavorite": "Добавить в избранное"
+      "addToFavorites": "Добавить в избранное"
     }
   }
 }

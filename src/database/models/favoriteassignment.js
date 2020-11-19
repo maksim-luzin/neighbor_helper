@@ -1,4 +1,7 @@
 'use strict';
+
+const { FAVORITE_ASSIGNMENT_MODEL_NAME } = require('../../constants').enums.dataBaseModel;
+
 const {
   Model
 } = require('sequelize');
@@ -30,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'FavoriteAssignment',
+    modelName: FAVORITE_ASSIGNMENT_MODEL_NAME,
   });
   return FavoriteAssignment;
 };

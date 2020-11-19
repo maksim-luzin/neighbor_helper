@@ -4,13 +4,6 @@ const morgan = require('morgan');
 
 dotEnv.config();
 
-const {
-    enums: {
-        ResponseStatusCodes: {
-            SERVER_ERROR
-        }
-    }
-} = require('./constants');
 const { logger } = require('./loggers');
 
 const app = express();
@@ -36,7 +29,7 @@ app.use((err, req, res, next) => {
     }
 
     res
-        .status(err.status || SERVER_ERROR)
+        .status(err.status)
         .json({
             message: err.message,
             code: err.code

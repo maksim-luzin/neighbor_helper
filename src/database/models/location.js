@@ -1,4 +1,7 @@
 'use strict';
+
+const { LOCATION_MODEL_NAME } = require('../../constants').enums.databaseModel;
+
 const {
   Model
 } = require('sequelize');
@@ -38,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Location',
+    modelName: LOCATION_MODEL_NAME,
   });
   return Location;
 };

@@ -1,4 +1,7 @@
 'use strict';
+
+const { ASSIGNMENT_MODEL_NAME } = require('../../constants').enums.databaseModel;
+
 const {
   Model
 } = require('sequelize');
@@ -73,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'Assignment',
+    modelName: ASSIGNMENT_MODEL_NAME,
   });
   return Assignment;
 };

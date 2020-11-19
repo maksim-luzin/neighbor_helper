@@ -1,2 +1,2 @@
-module.exports.dataBaseModel = require('./dataBaseModel.enum');
+module.exports.databaseModel = require('./databaseModel.enum');
 module.exports.ResponseStatusCodes = require('./responceStatus');

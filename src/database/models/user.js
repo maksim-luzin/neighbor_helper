@@ -1,6 +1,6 @@
 'use strict';
 
-const { USER_MODEL_NAME } = require('../../constants').enums.dataBaseModel;
+const { USER_MODEL_NAME } = require('../../constants').enums.databaseModel;
 
 const {
   Model

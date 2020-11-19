@@ -1,6 +1,6 @@
 'use strict';
 
-const { FAVORITE_ASSIGNMENT_MODEL_NAME } = require('../../constants').enums.dataBaseModel;
+const { FAVORITE_ASSIGNMENT_MODEL_NAME } = require('../../constants').enums.databaseModel;
 
 const {
   Model

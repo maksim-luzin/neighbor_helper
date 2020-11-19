@@ -1,6 +1,6 @@
 'use strict';
 
-const { LOCATION_MODEL_NAME } = require('../../constants').enums.dataBaseModel;
+const { LOCATION_MODEL_NAME } = require('../../constants').enums.databaseModel;
 
 const {
   Model

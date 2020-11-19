@@ -1,20 +1,12 @@
 class ServiceResponse {
     succeeded = false;
     message = '';
-    model = {};
+    model = null;
 
-    constructor(succeeded, message, model) {
-        this.succeeded = succeeded;
-        this.message = message;
-        this.model = model;
-    }
-
-    static ResultServiceResponse(succeeded) {
-        return new ServiceResponse(succeeded, '', {});
-    }
-
-    static ResultAndMessageServiceResponse(succeeded, message) {
-        return new ServiceResponse(succeeded, message, {});
+    constructor( { succeeded, message, model } ) {
+        this.succeeded = succeeded || succeeded;
+        this.message = message || this.message;
+        this.model = model || this.model;
     }
 }
 

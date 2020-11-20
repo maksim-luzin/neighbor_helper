@@ -10,14 +10,14 @@ module.exports = {
         "username": DATABASE_USER,
         "password": DATABASE_PASSWORD,
         "database": DATABASE_NAME,
-        "host": "127.0.0.1",
+        "host": DATABASE_HOST,
         "dialect": DATABASE_DIALECT
     },
     "production": {
         "username": DATABASE_USER,
         "password": DATABASE_PASSWORD,
         "database": DATABASE_NAME,
-        "host": "127.0.0.1",
+        "host": DATABASE_HOST,
         "dialect": DATABASE_DIALECT
     }
 }

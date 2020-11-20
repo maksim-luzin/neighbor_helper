@@ -1,26 +1,30 @@
 const {
     models: {
-        user
+        User
     }
 } = require('../dataBase');
 
+const ServiceResponse = require('../helpers/ServiceResponse');
+
 module.exports = {
-    create(user) {
-        return user.create(user);
+    async create(telegramId) {
+        try {
+            const result = await User.findOrCreate({
+                where: {
+                    telegramId: telegramId
+                },
+                defaults: {
+                    telegramId: telegramId
+                }
+            });
+            const created = result[1];
+
+            if (created)
+                return new ServiceResponse( { succeeded: true} );
+
+            return new ServiceResponse ( { succeeded: true, message: `User with such telegramId=${telegramId} already exists.` } );
+        } catch {
+            return new ServiceResponse ( { succeeded: false, message: `Error occurred while creating user with telegramId=${telegramId}.` } )
+        }
     },
-    update(id, updateFields) {
-        return user.update(updateFields, {
-            where: {id}
-        });
-    },
-    delete(id) {
-        return user.destroy({
-            where: {id}
-        });
-    },
-    getById(id) {
-        return user.findOne({
-            where: {id}
-        });
-    }
 }

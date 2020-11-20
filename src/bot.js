@@ -1,3 +1,5 @@
+const botBuilder = require('claudia-bot-builder');
+
 const messageHandler = require('./features');
 
-// claudia bot builder creation
+module.exports = botBuilder(messageHandler);

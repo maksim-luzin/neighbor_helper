@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     telegramId: {
       allowNull: false,
       type: DataTypes.INTEGER,
+      unique: 'telegramIdAndLocalnameUnique',
       references: {
         model: 'Users',
         key: 'telegramId'
@@ -33,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     localName: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      unique: 'telegramIdAndLocalnameUnique',
     },
     globalName: {
       allowNull: false,

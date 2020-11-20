@@ -56,8 +56,8 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       allowNull: false,
       type: DataTypes.ENUM,
-      values: ['Not done', 'Done'],
-      defaultValue: 'Not done'
+      values: ['notDone', 'done'],
+      defaultValue: 'notDone'
     },
     pictureUrl: {
       allowNull: true,
@@ -71,8 +71,8 @@ module.exports = (sequelize, DataTypes) => {
     category: {
       allowNull: false,
       type: DataTypes.ENUM,
-      values: ['Help', 'Barter', 'Repair', 'Education', 'Other'],
-      defaultValue: 'Other'
+      values: ['help', 'barter', 'repair', 'education', 'other'],
+      defaultValue: 'other'
     }
   }, {
     sequelize,

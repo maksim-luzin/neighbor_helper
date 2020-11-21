@@ -1,23 +1,22 @@
-'use strict';
+const {
+  Model,
+} = require('sequelize');
 
 const { LOCATION_MODEL_NAME } = require('../../constants').enums.databaseModel;
 
-const {
-  Model
-} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Location extends Model {
     static associate(models) {
-      Location.belongsTo(models.User, {foreignKey: 'telegramId'});
-      Location.hasOne(models.Assignment, { foreignKey: 'locationId'});
+      Location.belongsTo(models.User, { foreignKey: 'telegramId' });
+      Location.hasOne(models.Assignment, { foreignKey: 'locationId' });
     }
-  };
+  }
   Location.init({
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
     },
     telegramId: {
       allowNull: false,
@@ -25,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
       unique: 'telegramIdAndLocalnameUnique',
       references: {
         model: 'Users',
-        key: 'telegramId'
-      }
+        key: 'telegramId',
+      },
     },
     coordinates: {
       allowNull: false,
-      type: DataTypes.GEOGRAPHY
+      type: DataTypes.GEOGRAPHY,
     },
     localName: {
       allowNull: false,
@@ -39,8 +38,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     globalName: {
       allowNull: false,
-      type: DataTypes.STRING
-    }
+      type: DataTypes.STRING,
+    },
   }, {
     sequelize,
     modelName: LOCATION_MODEL_NAME,

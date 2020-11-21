@@ -17,9 +17,6 @@ module.exports = async (webhook) => {
     if (message.location) {
       return locationHandler(message);
     }
-    // if(message.) {
-    //   return
-    // }
   } else if (callbackQuery) {
     return callbackQueryHandler(callbackQuery);
   }

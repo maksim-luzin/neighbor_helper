@@ -8,4 +8,5 @@ module.exports = {
   DATABASE_HOST: process.env.DATABASE_HOST || 'localhost',
   DATABASE_DIALECT: process.env.DATABASE_DIALECT || 'postgres',
 
+  BOT_TOKEN: process.env.BOT_TOKEN || '',
 };

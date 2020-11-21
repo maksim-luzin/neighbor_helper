@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "claudia-bot-builder": "^4.5.0",
+    "express": "^4.17.1",
     "dotenv": "^8.2.0",
     "morgan": "^1.10.0",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
+    "axios": "^0.21.0",
     "sequelize": "^6.3.5",
     "sequelize-cli": "^6.2.0",
     "sequelize-replace-enum-postgres": "^1.5.0",
@@ -27,6 +29,7 @@
     "@types/winston": "^2.4.4",
     "@types/morgan": "^1.9.2",
     "eslint": "^7.13.0",
+    "ngrok": "^3.3.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
   },

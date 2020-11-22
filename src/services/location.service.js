@@ -55,4 +55,37 @@ module.exports = {
     }
   },
 
+  async getAllByTelegramId({ telegramId }) {
+    try {
+      const foundUser = await User.findOne({
+        where: {
+          telegramId,
+        },
+      });
+
+      if (foundUser) {
+        const foundLocations = await Location.findAll({
+          where: {
+            telegramId,
+          },
+          attributes: ['localName'],
+        });
+
+        return new ServiceResponse({
+          succeeded: true,
+          model: foundLocations.map((elem) => (elem.dataValues)),
+        });
+      }
+
+      return new ServiceResponse({
+        succeeded: true,
+        message: `User with such telegramId=${telegramId} was not found.`,
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: `Error occurred while getting user's locations with telegramId=${telegramId} `,
+      });
+    }
+  },
 };

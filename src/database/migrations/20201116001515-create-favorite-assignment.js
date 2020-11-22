@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('FavoriteAssignments', {
@@ -9,7 +8,7 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'telegramId',
-        }
+        },
       },
       assignmentId: {
         allowNull: false,
@@ -18,19 +17,19 @@ module.exports = {
         references: {
           model: 'Assignments',
           key: 'id',
-        }
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('FavoriteAssignments');
-  }
+  },
 };

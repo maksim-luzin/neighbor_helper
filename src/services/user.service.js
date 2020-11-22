@@ -7,7 +7,7 @@ const {
 const ServiceResponse = require('../helpers/ServiceResponse');
 
 module.exports = {
-  async create(telegramId) {
+  async create({ telegramId }) {
     try {
       const result = await User.findOrCreate({
         where: {
@@ -33,7 +33,7 @@ module.exports = {
     }
   },
 
-  async updateRange(telegramId, newRange) {
+  async update({ telegramId = null, newRange = null, newLocale = null }) {
     try {
       const foundUser = await User.findOne({
         where: {
@@ -42,18 +42,12 @@ module.exports = {
       });
 
       if (foundUser) {
-        const result = await foundUser.update({
-          range: newRange,
+        await foundUser.update({
+          range: newRange || foundUser.range,
+          locale: newLocale || foundUser.locale,
         });
 
-        // eslint-disable-next-line no-underscore-dangle
-        if (result._previousDataValues.range !== result.dataValues.range) {
-          return new ServiceResponse({ succeeded: true });
-        }
-        return new ServiceResponse({
-          succeeded: true,
-          message: `Range of user with telegramId=${telegramId} was not updated.`,
-        });
+        return new ServiceResponse({ succeeded: true });
       }
       return new ServiceResponse({
         succeeded: true,
@@ -62,7 +56,8 @@ module.exports = {
     } catch {
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while updating user with telegramId=${telegramId}`,
+        message: `Error occurred while updating user with telegramId=${telegramId}`
+                  + `with values newRange=${newRange} and newLocale=${newLocale}`,
       });
     }
   },

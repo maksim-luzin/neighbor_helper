@@ -1,8 +1,9 @@
 const PREFIXES = {
   SET_LANGUAGE: 'SET_LANGUAGE_',
   GET_STARTED: 'GET_STARTED_',
-  CHOOSE_COMPETITION_COUNTRY: 'CHOOSE_COMPETITION_COUNTRY_',
-  COMPETITION: 'COMPETITION_',
+  ANNOUNCEMENT: 'ANNOUNCEMENT_',
+  CHOOSE_CATEGORY: 'CHOOSE_CATEGORY_',
+  DESCRIPTION: 'DESCRIPTION_',
 };
 
 module.exports.backButton = (callback) => ({
@@ -22,7 +23,16 @@ module.exports.greeting = {
   keyboardPrefix: PREFIXES.GET_STARTED,
   ua: {
     text: 'Привіт, я neighbor_helper бот! Я створений, щоб допомагати сусідам.',
-    keyboard: [[['Редагувати радіус'], ['Додати локацію'], ['Мої оголошення'], [''], [''], [''], [''], ['']]],
+    keyboard: [[
+      ['Редагувати радіус'],
+      ['Додати локацію'],
+      ['Мої оголошення'],
+      ['Розмістити оголошення'],
+      [''],
+      [''],
+      [''],
+      [''],
+    ]],
   },
   ru: {
     text: '',
@@ -34,19 +44,19 @@ module.exports.greeting = {
   },
 };
 
-module.exports.competitionCountries = (keyboard) => ({
+module.exports.category = (keyboard) => ({
   keyboard,
-  keyboardPrefix: PREFIXES.CHOOSE_COMPETITION_COUNTRY,
+  keyboardPrefix: PREFIXES.CHOOSE_CATEGORY,
   ua: {
-    text: 'Оберіть країну ваших змагань',
+    text: 'Оберіть категорію оголошення',
   },
 });
 
-module.exports.competitions = (keyboard, countryName) => ({
+module.exports.announcement = (keyboard, category) => ({
   keyboard,
-  keyboardPrefix: PREFIXES.COMPETITION,
+  keyboardPrefix: PREFIXES.ANNOUNCEMENT,
   ua: {
-    text: `Оберіть змагання, яке вас цікавить.\nКраїна - ${countryName}`,
+    text: `Введіть назву оголошення.\nКатегорія - ${category}`,
   },
 });
 
@@ -54,6 +64,6 @@ module.exports.userRole = {
   keyboardPrefix: 'CHOOSE_USER_ROLE_',
   ua: {
     text: 'Представтеся, будь ласка.',
-    keyboard: [[['Я - WCA делегат/організатор', 'ADMIN']], [['Я - учасник/гість', 'SIMPLE']]],
+    keyboard: [[['Я NG-H делегат/організатор', 'ADMIN']], [['Я - учасник/гість', 'SIMPLE']]],
   },
 };

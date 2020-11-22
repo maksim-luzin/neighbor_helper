@@ -5,8 +5,11 @@ module.exports = ({ text }) => {
     case '/start': {
       return telegram.sendText(enums.start);
     }
-    case '': {
+    case '/help': {
       return 'dpp';
+    }
+    case '': {
+      return '';
     }
     default: {
       return '';

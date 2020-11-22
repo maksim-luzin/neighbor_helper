@@ -4,15 +4,23 @@ const { models: { User } } = require('../../database');
 // і в індекс файл прописані службові дані
 // ми не можемо доступитися до самої моделі юзера
 
-const { enums, telegram, parser } = require('../../helpers');
+const {
+  enums,
+  telegram,
+  parser,
+  db: {
+    saveUser,
+  },
+} = require('../../helpers');
 
 const getDataFromQuery = (query) => query.split('_').pop();
 
 module.exports = async ({ data: callbackData, message }) => {
   if (callbackData.startsWith(enums.PREFIXES.SET_LANGUAGE)) {
-    const userLang = getDataFromQuery(callbackData).toLowerCase();
+    const userLang = getDataFromQuery(callbackData)
+      .toLowerCase();
 
-    // await db.saveUser(message, userLang);
+    await saveUser(message, userLang);
 
     return [
       telegram.hideInlineKeyboard(message.message_id),
@@ -35,23 +43,29 @@ module.exports = async ({ data: callbackData, message }) => {
         telegram.sendText(greeting, userLang),
       ];
     }
-
     case callbackData.startsWith(enums.PREFIXES.CHOOSE_CATEGORY): {
-      // const countryCode = getDataFromQuery(callbackData);
+      const countryCode = getDataFromQuery(callbackData);
       const countryName = utils.formatCountryName(countryCode);
       const keyboard = await parser.getCompetitionsKeyboard(countryCode);
-      const announcement = enums.announcement(keyboard, countryName);
+      const category = enums.category(keyboard);
 
       return [
         telegram.hideInlineKeyboard(message.message_id),
         telegram.pause(200),
-        telegram.sendText(announcement, userLang, enums.backButton(enums.PREFIXES.GET_STARTED)),
+        telegram.sendText(category, userLang, enums.backButton(enums.PREFIXES.GET_STARTED)),
       ];
     }
+    case callbackData.startsWith(enums.PREFIXES.ANNOUNCEMENT): {
+      const announcementId = getDataFromQuery(callbackData);
+      console.log(announcementId);
 
-    case callbackData === enums.PREFIXES.
-
-    case callbackData.startsWith(enums.PREFIXES.COMPETITION): {
+      return [
+        telegram.hideInlineKeyboard(message.message_id),
+        telegram.pause(200),
+        telegram.sendText(enums.description, userLang),
+      ];
+    }
+    case callbackData.startsWith(enums.PREFIXES.DESCRIPTION): {
       const competitionId = getDataFromQuery(callbackData);
       console.log(competitionId);
 

@@ -5,6 +5,11 @@ const PREFIXES = {
   CHOOSE_CATEGORY: 'CHOOSE_CATEGORY_',
   DESCRIPTION: 'DESCRIPTION_',
 };
+const replyKeyboard = [
+  ['Ремонт', 'Навчання'],
+  ['Допомога', 'Обмін'],
+  ['Даром', 'Інше'],
+];
 
 module.exports.backButton = (callback) => ({
   keyboardPrefix: callback,
@@ -31,7 +36,7 @@ module.exports.greeting = {
       [''],
       [''],
       [''],
-      [''],
+      ['Мова', 'Про нас'],
     ]],
   },
   ru: {
@@ -49,6 +54,7 @@ module.exports.category = (keyboard) => ({
   keyboardPrefix: PREFIXES.CHOOSE_CATEGORY,
   ua: {
     text: 'Оберіть категорію оголошення',
+    reply_markup: { keyboard: replyKeyboard, resize_keyboard: true },
   },
 });
 
@@ -57,6 +63,14 @@ module.exports.announcement = (keyboard, category) => ({
   keyboardPrefix: PREFIXES.ANNOUNCEMENT,
   ua: {
     text: `Введіть назву оголошення.\nКатегорія - ${category}`,
+  },
+});
+
+module.exports.description = (keyboard) => ({
+  keyboard,
+  keyboardPrefix: PREFIXES.DESCRIPTION,
+  ua: {
+    text: 'Введіть опис оголошення',
   },
 });
 

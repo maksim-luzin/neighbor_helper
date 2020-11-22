@@ -4,6 +4,7 @@ const PREFIXES = {
   ANNOUNCEMENT: 'ANNOUNCEMENT_',
   CHOOSE_CATEGORY: 'CHOOSE_CATEGORY_',
   DESCRIPTION: 'DESCRIPTION_',
+  HELP: 'HELP_',
 };
 const replyKeyboard = [
   ['Ремонт', 'Навчання'],
@@ -46,6 +47,13 @@ module.exports.greeting = {
   us: {
     text: '',
     keyboard: [[[]]],
+  },
+};
+
+module.exports.help = {
+  keyboardPrefix: PREFIXES.HELP,
+  ua: {
+    text: 'Наш бот створений для того щоб спростити життя сусідам і бла бла бля',
   },
 };
 

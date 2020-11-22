@@ -6,10 +6,10 @@ module.exports = ({ text }) => {
       return telegram.sendText(enums.start);
     }
     case '/help': {
-      return 'dpp';
+      return telegram.sendText(enums.help);
     }
-    case '': {
-      return '';
+    case '/announcement': {
+      return telegram.sendText(enums.announcement());
     }
     default: {
       return '';

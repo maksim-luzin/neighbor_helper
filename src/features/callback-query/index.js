@@ -17,8 +17,7 @@ const getDataFromQuery = (query) => query.split('_').pop();
 
 module.exports = async ({ data: callbackData, message }) => {
   if (callbackData.startsWith(enums.PREFIXES.SET_LANGUAGE)) {
-    const userLang = getDataFromQuery(callbackData)
-      .toLowerCase();
+    const userLang = getDataFromQuery(callbackData).toLowerCase();
 
     await saveUser(message, userLang);
 
@@ -34,7 +33,7 @@ module.exports = async ({ data: callbackData, message }) => {
 
   switch (true) {
     case callbackData === enums.PREFIXES.GET_STARTED: {
-      const keyboard = await parser.getCompetitionCountries();
+      const keyboard = await parser.getCompetitionCountries();// це як приклад
       const greeting = enums.greeting(keyboard);
 
       return [
@@ -45,8 +44,8 @@ module.exports = async ({ data: callbackData, message }) => {
     }
     case callbackData.startsWith(enums.PREFIXES.CHOOSE_CATEGORY): {
       const countryCode = getDataFromQuery(callbackData);
-      const countryName = utils.formatCountryName(countryCode);
-      const keyboard = await parser.getCompetitionsKeyboard(countryCode);
+      const countryName = utils.formatCountryName(countryCode); //// це як приклад
+      const keyboard = await parser.getCompetitionsKeyboard(countryCode); // це як приклад
       const category = enums.category(keyboard);
 
       return [
@@ -73,6 +72,15 @@ module.exports = async ({ data: callbackData, message }) => {
         telegram.hideInlineKeyboard(message.message_id),
         telegram.pause(200),
         telegram.sendText(enums.userRole, userLang),
+      ];
+    }
+    case callbackData === enums.PREFIXES.HELP: {
+      const competitionId = getDataFromQuery(callbackData);
+      console.log(competitionId);
+      return [
+        telegram.hideInlineKeyboard(message.message_id),
+        telegram.pause(200),
+        telegram.sendText(enums.backButton(enums.PREFIXES.GET_STARTED)),
       ];
     }
   }

@@ -3,6 +3,7 @@ const {
     Assignment,
     User,
     Location,
+    sequelize,
   },
 } = require('../database');
 
@@ -64,6 +65,49 @@ module.exports = {
                + `reward=${reward}, link=${link}, pictureUrl=${pictureUrl}, `
                + `category=${category},  localLocationName=${localLocationName}. `
                + `${e}`,
+      });
+    }
+  },
+
+  async getAllNearby({ telegramId, category = null, localLocationName }) {
+    try {
+      const foundRangeAndCoordinates = await User.findOne({
+        where: {
+          telegramId,
+        },
+        attributes: ['range'],
+        include: [{
+          model: Location,
+          where: {
+            localName: localLocationName,
+          },
+          attributes: ['coordinates'],
+        }],
+      });
+
+      const categoryCondition = category ? `AND a.category = ${category}` : '';
+      const nearbyAssignments = await sequelize.query(
+        `SELECT a.title, a.description, a.reward, l."globalName", a."authorTelegramId"
+        FROM "Assignments" a
+        INNER JOIN "Locations" l ON a."locationId" = l.id
+        WHERE ST_DWithin(l.coordinates, 
+        ST_MakePoint(${foundRangeAndCoordinates.dataValues.Locations[0].dataValues.coordinates.coordinates[0]},
+        ${foundRangeAndCoordinates.dataValues.Locations[0].dataValues.coordinates.coordinates[1]}), 
+        ${foundRangeAndCoordinates.dataValues.range} * 1000)
+        ${categoryCondition}
+        ORDER BY l.coordinates <-> l.coordinates`,
+      );
+
+      return new ServiceResponse({
+        succeeded: true,
+        model: nearbyAssignments[0],
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while getting all nearby assignments with '
+          + `telegramId=${telegramId}, category=${category}. `
+          + `${e}`,
       });
     }
   },

@@ -87,7 +87,7 @@ module.exports = {
 
       const categoryCondition = category ? `AND a.category = ${category}` : '';
       const nearbyAssignments = await sequelize.query(
-        `SELECT a.title, a.description, a.reward, l."globalName", a."authorTelegramId"
+        `SELECT a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
         FROM "Assignments" a
         INNER JOIN "Locations" l ON a."locationId" = l.id
         WHERE ST_DWithin(l.coordinates, 

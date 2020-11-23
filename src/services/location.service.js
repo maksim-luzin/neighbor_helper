@@ -57,23 +57,21 @@ module.exports = {
 
   async getAllByTelegramId({ telegramId }) {
     try {
-      const foundUser = await User.findOne({
+      const foundLocations = await User.findOne({
         where: {
           telegramId,
         },
+        attributes: [],
+        include: [{
+          model: Location,
+          attributes: ['localName'],
+        }],
       });
 
-      if (foundUser) {
-        const foundLocations = await Location.findAll({
-          where: {
-            telegramId,
-          },
-          attributes: ['localName'],
-        });
-
+      if (foundLocations) {
         return new ServiceResponse({
           succeeded: true,
-          model: foundLocations.map((elem) => (elem.dataValues)),
+          model: foundLocations.dataValues.Locations.map((elem) => (elem.dataValues)),
         });
       }
 
@@ -84,7 +82,8 @@ module.exports = {
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while getting user's locations with telegramId=${telegramId} `,
+        message: `Error occurred while getting user's locations with telegramId=${telegramId}. `
+               + `${e}.`,
       });
     }
   },

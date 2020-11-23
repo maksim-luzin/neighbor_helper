@@ -3,6 +3,7 @@ const {
     Assignment,
     User,
     Location,
+    FavoriteAssignment,
     sequelize,
   },
 } = require('../database');
@@ -208,6 +209,63 @@ module.exports = {
         succeeded: false,
         message: 'Error occurred while updating assignment with '
                + `authorTelegramId=${telegramId}, id=${assignmentId}, status=${status}. `
+               + `${e}.`,
+      });
+    }
+  },
+
+  async addToFavorites({ telegramId, assignmentId }) {
+    try {
+      const foundUser = await User.findOne({
+        where: {
+          telegramId,
+        },
+        attributes: ['telegramId'],
+      });
+
+      if (foundUser) {
+        const foundAssignment = await Assignment.findOne({
+          where: {
+            id: assignmentId,
+          },
+          attributes: ['id'],
+        });
+
+        if (foundAssignment) {
+          const foundFavoriteAssignment = await FavoriteAssignment.findOne({
+            where: {
+              telegramId,
+              assignmentId,
+            },
+            attributes: ['assignmentId'],
+          });
+          if (!foundFavoriteAssignment) {
+            await FavoriteAssignment.create({
+              telegramId,
+              assignmentId,
+            });
+            return new ServiceResponse({ succeeded: true });
+          }
+          return new ServiceResponse({
+            succeeded: true,
+            message: 'Assignment is already in favorites!',
+          });
+        }
+        return new ServiceResponse({
+          succeeded: true,
+          message: `Assignment with id=${assignmentId} was not found.`,
+        });
+      }
+
+      return new ServiceResponse({
+        succeeded: true,
+        message: `User with telegramId=${telegramId} was not found.`,
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while adding assignment to favorites with '
+               + `telegramId=${telegramId}, id=${assignmentId}. `
                + `${e}.`,
       });
     }

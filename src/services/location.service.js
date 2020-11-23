@@ -16,17 +16,19 @@ module.exports = {
         where: {
           telegramId,
         },
+        attributes: ['telegramId'],
       });
 
       if (foundUser) {
-        const foundLocationName = await Location.findOne({
+        const foundLocation = await Location.findOne({
           where: {
             telegramId,
             localName,
           },
+          attributes: ['id'],
         });
 
-        if (!foundLocationName) {
+        if (!foundLocation) {
           await Location.create({
             telegramId,
             coordinates: { type: 'Point', coordinates },
@@ -39,18 +41,19 @@ module.exports = {
 
         return new ServiceResponse({
           succeeded: true,
-          message: `Location name '${localName}' is already taken!`,
+          message: `Location name ${localName} is already taken!`,
         });
       }
       return new ServiceResponse({
         succeeded: true,
         message: `User with such telegramId=${telegramId} was not found.`,
       });
-    } catch {
+    } catch (e) {
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while creating location with telegramId=${telegramId} `
-               + `coordinates=${coordinates}, localName=${localName}, globalName=${globalName}.`,
+        message: `Error occurred while creating location with telegramId=${telegramId}
+                + coordinates=${coordinates}, localName=${localName}, globalName=${globalName}.
+                + ${e}.`,
       });
     }
   },

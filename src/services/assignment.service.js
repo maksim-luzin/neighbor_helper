@@ -150,4 +150,34 @@ module.exports = {
       });
     }
   },
+
+  async delete({ telegramId, assignmentId }) {
+    try {
+      const foundAssignment = await Assignment.findOne({
+        where: {
+          id: assignmentId,
+          authorTelegramId: telegramId,
+        },
+        attributes: ['id'],
+      });
+
+      if (foundAssignment) {
+        await foundAssignment.destroy();
+        return new ServiceResponse({ succeeded: true });
+      }
+
+      return new ServiceResponse({
+        succeeded: true,
+        message: `Assigment with id=${assignmentId} wasn't`
+               + `found on user with telegramId=${telegramId}.`,
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while deleting assignment with '
+               + `telegramId=${telegramId}, assignmentId=${assignmentId}. `
+               + `${e}.`,
+      });
+    }
+  },
 };

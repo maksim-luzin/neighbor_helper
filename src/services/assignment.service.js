@@ -111,4 +111,43 @@ module.exports = {
       });
     }
   },
+
+  async getAllFavorites({ telegramId }) {
+    try {
+      const favoriteAssignments = await User.findOne({
+        where: {
+          telegramId,
+        },
+        attributes: [],
+        include: [{
+          model: Assignment,
+          as: 'favoriteAssignments',
+          attributes: ['title', 'description', 'reward', 'pictureUrl', 'authorTelegramId'],
+          include: [{
+            model: Location,
+            attributes: ['globalName'],
+          }],
+        }],
+      });
+
+      return new ServiceResponse({
+        succeeded: true,
+        model: favoriteAssignments.dataValues.favoriteAssignments.map((elem) => ({
+          title: elem.dataValues.title,
+          description: elem.dataValues.description,
+          reward: elem.dataValues.reward,
+          authorTelegramId: elem.dataValues.authorTelegramId,
+          pictureUrl: elem.dataValues.pictureUrl,
+          locationName: elem.dataValues.Location.dataValues.globalName,
+        })),
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while getting all favorite assignments with '
+          + `telegramId=${telegramId}. `
+          + `${e}`,
+      });
+    }
+  },
 };

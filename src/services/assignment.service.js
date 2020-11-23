@@ -180,4 +180,36 @@ module.exports = {
       });
     }
   },
+
+  async update({ telegramId, assignmentId, status = null }) {
+    try {
+      const foundAssignment = await Assignment.findOne({
+        where: {
+          id: assignmentId,
+          authorTelegramId: telegramId,
+        },
+        attributes: ['id'],
+      });
+
+      if (foundAssignment) {
+        await foundAssignment.update({
+          status: status || foundAssignment.status,
+        });
+        return new ServiceResponse({ succeeded: true });
+      }
+
+      return new ServiceResponse({
+        succeeded: true,
+        message: `Assigment with id=${assignmentId} wasn't`
+          + `found on user with telegramId=${telegramId}.`,
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while updating assignment with '
+               + `authorTelegramId=${telegramId}, id=${assignmentId}, status=${status}. `
+               + `${e}.`,
+      });
+    }
+  },
 };

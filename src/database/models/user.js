@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.ENUM,
       values: ['ua', 'ru', 'en'],
-      defaultValue: 'ua',
+      defaultValue: 'en',
     },
   }, {
     sequelize,

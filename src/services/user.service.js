@@ -1,26 +1,64 @@
-// const {
-//     models: {
-//         user
-//     }
-// } = require('../dataBase');
-//
-// module.exports = {
-//     create(user) {
-//         return user.create(user);
-//     },
-//     update(id, updateFields) {
-//         return user.update(updateFields, {
-//             where: {id}
-//         });
-//     },
-//     delete(id) {
-//         return user.destroy({
-//             where: {id}
-//         });
-//     },
-//     getById(id) {
-//         return user.findOne({
-//             where: {id}
-//         });
-//     }
-// }
+const {
+  models: {
+    User,
+  },
+} = require('../database');
+
+const ServiceResponse = require('../helpers/ServiceResponse');
+
+module.exports = {
+  async create({ telegramId }) {
+    try {
+      const result = await User.findOrCreate({
+        where: {
+          telegramId,
+        },
+        defaults: {
+          telegramId,
+        },
+      });
+      const created = result[1];
+
+      if (created) { return new ServiceResponse({ succeeded: true }); }
+
+      return new ServiceResponse({
+        succeeded: true,
+        message: `User with such telegramId=${telegramId} already exists.`,
+      });
+    } catch {
+      return new ServiceResponse({
+        succeeded: false,
+        message: `Error occurred while creating user with telegramId=${telegramId}.`,
+      });
+    }
+  },
+
+  async update({ telegramId = null, newRange = null, newLocale = null }) {
+    try {
+      const foundUser = await User.findOne({
+        where: {
+          telegramId,
+        },
+      });
+
+      if (foundUser) {
+        await foundUser.update({
+          range: newRange || foundUser.range,
+          locale: newLocale || foundUser.locale,
+        });
+
+        return new ServiceResponse({ succeeded: true });
+      }
+      return new ServiceResponse({
+        succeeded: true,
+        message: `User with such telegramId=${telegramId} was not found.`,
+      });
+    } catch {
+      return new ServiceResponse({
+        succeeded: false,
+        message: `Error occurred while updating user with telegramId=${telegramId}`
+                  + `with values newRange=${newRange} and newLocale=${newLocale}`,
+      });
+    }
+  },
+};

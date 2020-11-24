@@ -61,4 +61,32 @@ module.exports = {
       });
     }
   },
+
+  async getLocale({ telegramId }) {
+    try {
+      const foundUser = await User.findOne({
+        where: {
+          telegramId,
+        },
+        attributes: ['locale'],
+      });
+
+      if (foundUser) {
+        return new ServiceResponse({
+          succeeded: true,
+          model: foundUser.dataValues.locale,
+        });
+      }
+      return new ServiceResponse({
+        succeeded: true,
+        message: `User with such telegramId=${telegramId} was not found`,
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: `Error occurred while getting user's locale with telegramId=${telegramId}`
+          + `${e}.`,
+      });
+    }
+  },
 };

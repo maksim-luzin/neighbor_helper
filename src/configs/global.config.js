@@ -1,11 +1,12 @@
+require('dotenv').config();
+
 module.exports = {
-  PORT: process.env.PORT || '5000',
-  HOST: process.env.HOST || 'http://localhost',
-  DATABASE_USER: process.env.DATABASE_USER || 'dashaonishchenko',
+  DATABASE_PORT: process.env.DATABASE_PORT,
+  DATABASE_HOST: process.env.DATABASE_HOST,
+  DATABASE_USER: process.env.DATABASE_USER,
+  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+  DATABASE_NAME: process.env.DATABASE_NAME,
+  DATABASE_DIALECT: process.env.DATABASE_DIALECT,
 
-  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD || 'HomeHome20012018',
-  DATABASE_NAME: process.env.DATABASE_NAME || 'chatbot',
-  DATABASE_HOST: process.env.DATABASE_HOST || 'localhost',
-  DATABASE_DIALECT: process.env.DATABASE_DIALECT || 'postgres',
-
+  TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN, // for local development
 };

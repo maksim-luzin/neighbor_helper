@@ -62,19 +62,19 @@ module.exports = {
     }
   },
 
-  async getLocale({ telegramId }) {
+  async getOne({ telegramId, params }) { // params: ['locale', 'range'] - example
     try {
       const foundUser = await User.findOne({
         where: {
           telegramId,
         },
-        attributes: ['locale'],
+        attributes: params,
       });
 
       if (foundUser) {
         return new ServiceResponse({
           succeeded: true,
-          model: foundUser.dataValues.locale,
+          model: foundUser.dataValues,
         });
       }
       return new ServiceResponse({

@@ -14,8 +14,8 @@ const handlers = async (request) => {
       return response;
     }
 
-    if (message.data) {
-      const response = await callbackHandler;
+    if (originalRequest.callback_query) {
+      const response = await callbackHandler(originalRequest.callback_query, message);
       return response;
     }
 

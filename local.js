@@ -15,7 +15,7 @@ const webhookPath = '/webhook';
 const token = config.TELEGRAM_TOKEN;
 
 if (!token) {
-  throw new Error("Cann't find TEST_BOT_TOKEN in your environments");
+  throw new Error("Cann't find TELEGRAM_TOKEN in your environments");
 }
 
 sequelize

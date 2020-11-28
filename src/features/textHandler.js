@@ -5,7 +5,6 @@ const {
 
 const {
   startAction,
-  messageDefaultAction,
   mainMenuAction,
   aboutUsAction,
 } = require('../actions/mainActions');
@@ -21,7 +20,7 @@ const textHandlers = async (request) => {
       return aboutUsAction();
 
     default:
-      return messageDefaultAction();
+      return mainMenuAction();
   }
 };
 

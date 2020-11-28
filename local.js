@@ -12,7 +12,7 @@ const handlers = require('./src/features');
 
 const port = 3000;
 const webhookPath = '/webhook';
-const token = config.BOT_TOKEN;
+const token = config.TELEGRAM_TOKEN;
 
 if (!token) {
   throw new Error("Cann't find TEST_BOT_TOKEN in your environments");

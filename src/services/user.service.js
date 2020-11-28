@@ -57,7 +57,7 @@ module.exports = {
       return new ServiceResponse({
         succeeded: false,
         message: `Error occurred while updating user with telegramId=${telegramId}`
-                  + `with values newRange=${newRange} and newLocale=${newLocale}`,
+          + `with values newRange=${newRange} and newLocale=${newLocale}`,
       });
     }
   },

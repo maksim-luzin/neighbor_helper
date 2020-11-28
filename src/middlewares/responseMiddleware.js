@@ -1,8 +1,8 @@
 const { telegramTemplate } = require('claudia-bot-builder');
 
-const responseMiddleware = (
-  template = [['']],
+const templateResponse = (
   templateMessage = '',
+  template = false,
   inlineKeyboard = false,
 ) => {
   if (inlineKeyboard) {
@@ -15,16 +15,17 @@ const responseMiddleware = (
     );
   }
 
-  return (
-    new telegramTemplate
-      // eslint-disable-next-line new-cap
-      .Text(templateMessage)
-      .addReplyKeyboard(
-        template,
-        { one_time_keyboard: true },
-      )
-      .get()
-  );
+  if (template) {
+    return (
+      new telegramTemplate
+        // eslint-disable-next-line new-cap
+        .Text(templateMessage)
+        .addReplyKeyboard(template)
+        .get()
+    );
+  }
+
+  return templateMessage;
 };
 
-module.exorts = responseMiddleware;
+module.exports = templateResponse;

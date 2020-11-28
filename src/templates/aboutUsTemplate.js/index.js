@@ -1,0 +1,1 @@
+exports.aboutUsTemplate = require('./aboutUsTemplate');

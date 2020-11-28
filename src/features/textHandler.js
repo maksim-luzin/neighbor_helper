@@ -1,37 +1,27 @@
 const {
-  COMMAND_START,
-} = require('../constants/comand');
+  BUTTON_ABOUT_US,
+  BUTTON_ADD_LOCATION,
+} = require('../constants/button.text').MAIN_MENU;
 
 const {
-  BUTTON_DEFAULT_MENU_START,
-  BUTTON_MAIN_MENU_ABOUT_US,
-  BUTTON_MAIN_MENU_ADD_LOCATION,
-  BUTTON_ALL_MENU_CANCEL,
-} = require('../constants/button.text');
-
-const {
-  menuMain,
-  messageDefault,
-} = require('../controllers');
+  startAction,
+  messageDefaultAction,
+  mainMenuAction,
+  aboutUsAction,
+} = require('../actions/mainActions');
 
 const textHandlers = async (request) => {
   switch (request.text) {
-    case COMMAND_START:
+    case '/start':
       // eslint-disable-next-line no-case-declarations
-      const response = await menuMain(request);
+      const response = await startAction(request);
       return response;
 
-    case BUTTON_DEFAULT_MENU_START:
-      return menuMain(request);
-
-    case BUTTON_MAIN_MENU_ABOUT_US:
-      return menuMain(request);
-
-    case BUTTON_ALL_MENU_CANCEL:
-      return menuMain(request);
+    case BUTTON_ABOUT_US:
+      return aboutUsAction();
 
     default:
-      return messageDefault;
+      return messageDefaultAction();
   }
 };
 

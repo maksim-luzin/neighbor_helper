@@ -8,5 +8,5 @@ module.exports = {
   DATABASE_NAME: process.env.DATABASE_NAME,
   DATABASE_DIALECT: process.env.DATABASE_DIALECT,
 
-  BOT_TOKEN: process.env.BOT_TOKEN, // for local development
+  TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN, // for local development
 };

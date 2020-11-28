@@ -11,7 +11,7 @@ const startAction = async (message) => {
     },
   );
 
-  const messageStart = `Здравствуй ${message.from.first_name}\n ${aboutUsTemplate}`;
+  const messageStart = `Здравствуй, ${message.from.first_name}\n ${aboutUsTemplate}`;
   return templateResponse(messageStart, mainMenuTemplate);
 };
 

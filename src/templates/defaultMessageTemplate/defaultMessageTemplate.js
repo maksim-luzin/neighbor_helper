@@ -1,3 +1,3 @@
-const defaultMessageTemplate = 'Ой, что то пошло не так.';
+const defaultMessageTemplate = 'Ой, что-то пошло не так.';
 
 module.exports = defaultMessageTemplate;

@@ -1,31 +1,31 @@
 const { telegramTemplate } = require('claudia-bot-builder');
 
 const templateResponse = (
-  templateMessage = '',
-  template = false,
-  inlineKeyboard = false,
+  messageTemplate = '',
+  keyboardTemplate = false,
+  isInlineKeyboard = false,
 ) => {
-  if (inlineKeyboard) {
+  if (isInlineKeyboard) {
     return (
       new telegramTemplate
         // eslint-disable-next-line new-cap
-        .Text(templateMessage)
-        .addInlineKeyboard(template)
+        .Text(messageTemplate)
+        .addInlineKeyboard(keyboardTemplate)
         .get()
     );
   }
 
-  if (template) {
+  if (keyboardTemplate) {
     return (
       new telegramTemplate
         // eslint-disable-next-line new-cap
-        .Text(templateMessage)
-        .addReplyKeyboard(template)
+        .Text(messageTemplate)
+        .addReplyKeyboard(keyboardTemplate)
         .get()
     );
   }
 
-  return templateMessage;
+  return messageTemplate;
 };
 
 module.exports = templateResponse;

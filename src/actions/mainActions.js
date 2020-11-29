@@ -1,6 +1,6 @@
 const { messageDefaultAction } = require('./commonActions');
-const { aboutUsTemplate } = require('../templates/aboutUsTemplate.js');
-const { mainMenuTemplate, mainMenuMessageTemplate } = require('../templates/mainMenuTemplate');
+const { aboutUsMessageTemplate } = require('../templates/aboutUsTemplate.js');
+const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templates/mainMenuTemplate');
 const { templateResponse } = require('../middlewares');
 const { userService } = require('../services');
 
@@ -13,13 +13,13 @@ const startAction = async (message) => {
 
   if (!result.succeeded) return messageDefaultAction();
 
-  const messageStart = `Здравствуй, ${message.from.first_name}\n ${aboutUsTemplate}`;
-  return templateResponse(messageStart, mainMenuTemplate);
+  const messageStart = `Здравствуй, ${message.from.first_name}\n ${aboutUsMessageTemplate}`;
+  return templateResponse(messageStart, mainMenuKeyboardTemplate);
 };
 
-const mainMenuAction = () => templateResponse(mainMenuMessageTemplate, mainMenuTemplate);
+const mainMenuAction = () => templateResponse(mainMenuMessageTemplate, mainMenuKeyboardTemplate);
 
-const aboutUsAction = () => templateResponse(aboutUsTemplate);
+const aboutUsAction = () => templateResponse(aboutUsMessageTemplate);
 
 module.exports = {
   startAction,

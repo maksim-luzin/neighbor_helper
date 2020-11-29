@@ -1,3 +1,3 @@
-const aboutUsTemplate = 'Я бот для организации взаимопомощи соседей.';
+const aboutUsMessageTemplate = 'Я бот для организации взаимопомощи соседей.';
 
-module.exports = aboutUsTemplate;
+module.exports = aboutUsMessageTemplate;

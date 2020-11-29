@@ -1,1 +1,1 @@
-exports.aboutUsMessageTemplate = require('./aboutUsTemplate');
+exports.aboutUsMessageTemplate = require('./aboutUsMessageTemplate');

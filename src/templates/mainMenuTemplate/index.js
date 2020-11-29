@@ -1,2 +1,2 @@
-exports.mainMenuKeyboardTemplate = require('./mainMenuTemplate').mainMenuKeyboardTemplate;
-exports.mainMenuMessageTemplate = require('./mainMenuTemplate').mainMenuMessageTemplate;
+exports.mainMenuKeyboardTemplate = require('./mainMenuKeyboardTemplate');
+exports.mainMenuMessageTemplate = require('./mainMenuMessageTemplate');

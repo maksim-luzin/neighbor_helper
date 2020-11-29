@@ -12,7 +12,4 @@ const mainMenuKeyboardTemplate = [
   ['Язык', BUTTON_ABOUT_US],
 ];
 
-const mainMenuMessageTemplate = 'Главное меню';
-
-exports.mainMenuKeyboardTemplate = mainMenuKeyboardTemplate;
-exports.mainMenuMessageTemplate = mainMenuMessageTemplate;
+module.exports = mainMenuKeyboardTemplate;

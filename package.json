@@ -1,6 +1,9 @@
 {
   "name": "neighbor_helper",
   "version": "1.0.0",
+  "files": [
+    "bin"
+  ],
   "description": "",
   "main": "bot.js",
   "scripts": {
@@ -9,7 +12,13 @@
     "lint": "eslint ./src",
     "lint-fix": "eslint ./src --fix",
     "eslintLocal": "eslint ./local.js",
-    "debug": "nodemon ./local.js --exec \"npm run eslintLocal && node\""
+    "debug": "nodemon ./local.js --exec \"npm run eslintLocal && node\"",
+    "gulp": "./node_modules/.bin/gulp",
+    "transpile": "npm run lint && gulp",
+    "claudia": "./node_modules/.bin/claudia",
+    "create": "npm run transpile && claudia create --profile ChatbotsStudioInternship --region eu-central-1  --api-module bin/bot",
+    "registrate": "npm run transpile && claudia update --profile ChatbotsStudioInternship --configure-telegram-bot",
+    "update": "npm run transpile && claudia update --profile ChatbotsStudioInternship"
   },
   "dependencies": {
     "claudia-bot-builder": "^4.5.0",
@@ -28,10 +37,15 @@
     "@types/sequelize": "^4.28.9",
     "@types/winston": "^2.4.4",
     "axios": "^0.21.0",
+    "claudia": "^5.12.0",
+    "del": "^6.0.0",
     "eslint": "^7.13.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "express": "^4.17.1",
+    "gulp": "^4.0.2",
+    "gulp-if": "^3.0.0",
+    "gulp-uglify-es": "^2.0.0",
     "ngrok": "^3.3.0",
     "nodemon": "^2.0.6"
   },

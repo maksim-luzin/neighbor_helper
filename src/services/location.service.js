@@ -86,7 +86,7 @@ module.exports = {
       return new ServiceResponse({
         succeeded: false,
         message: `Error occurred while getting user's locations with telegramId=${telegramId}. `
-               + `${e}.`,
+          + `${e}.`,
       });
     }
   },

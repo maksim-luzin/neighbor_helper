@@ -5,9 +5,11 @@
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/bot.js",
+    "start": "nodemon src/bot.js --exec \"npm run lint\"",
     "lint": "eslint ./src",
-    "lint-fix": "eslint ./src --fix"
+    "lint-fix": "eslint ./src --fix",
+    "eslintLocal": "eslint ./local.js",
+    "debug": "nodemon ./local.js --exec \"npm run eslintLocal && node\""
   },
   "dependencies": {
     "claudia-bot-builder": "^4.5.0",
@@ -21,21 +23,24 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6",
+    "@types/morgan": "^1.9.2",
     "@types/node": "^14.14.7",
     "@types/sequelize": "^4.28.9",
     "@types/winston": "^2.4.4",
-    "@types/morgan": "^1.9.2",
+    "axios": "^0.21.0",
     "eslint": "^7.13.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "eslint-plugin-import": "^2.22.1",
+    "express": "^4.17.1",
+    "ngrok": "^3.3.0",
+    "nodemon": "^2.0.6"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paratskiy-organization/neighbor_helper.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/paratskiy-organization/neighbor_helper/issues"
   },

@@ -56,16 +56,16 @@ module.exports = {
       return new ServiceResponse({
         succeeded: true,
         message: `No locations were found using user's telegramId=${authorTelegramId} `
-               + `and location's localName=${localLocationName}`,
+          + `and location's localName=${localLocationName}`,
       });
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,
         message: 'Error occurred while creating assignment with '
-               + `title=${title}, telegramId=${authorTelegramId}, description=${description}, `
-               + `reward=${reward}, link=${link}, pictureUrl=${pictureUrl}, `
-               + `category=${category},  localLocationName=${localLocationName}. `
-               + `${e}`,
+          + `title=${title}, telegramId=${authorTelegramId}, description=${description}, `
+          + `reward=${reward}, link=${link}, pictureUrl=${pictureUrl}, `
+          + `category=${category},  localLocationName=${localLocationName}. `
+          + `${e}`,
       });
     }
   },
@@ -170,14 +170,14 @@ module.exports = {
       return new ServiceResponse({
         succeeded: true,
         message: `Assigment with id=${assignmentId} wasn't`
-               + `found on user with telegramId=${telegramId}.`,
+          + `found on user with telegramId=${telegramId}.`,
       });
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,
         message: 'Error occurred while deleting assignment with '
-               + `telegramId=${telegramId}, assignmentId=${assignmentId}. `
-               + `${e}.`,
+          + `telegramId=${telegramId}, assignmentId=${assignmentId}. `
+          + `${e}.`,
       });
     }
   },
@@ -208,8 +208,8 @@ module.exports = {
       return new ServiceResponse({
         succeeded: false,
         message: 'Error occurred while updating assignment with '
-               + `authorTelegramId=${telegramId}, id=${assignmentId}, status=${status}. `
-               + `${e}.`,
+          + `authorTelegramId=${telegramId}, id=${assignmentId}, status=${status}. `
+          + `${e}.`,
       });
     }
   },
@@ -265,8 +265,8 @@ module.exports = {
       return new ServiceResponse({
         succeeded: false,
         message: 'Error occurred while adding assignment to favorites with '
-               + `telegramId=${telegramId}, id=${assignmentId}. `
-               + `${e}.`,
+          + `telegramId=${telegramId}, id=${assignmentId}. `
+          + `${e}.`,
       });
     }
   },

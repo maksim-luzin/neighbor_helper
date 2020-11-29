@@ -1,0 +1,1 @@
+exports.defaultMessageTemplate = require('./defaultMessageTemplate');

@@ -52,8 +52,13 @@ app.post(webhookPath, async (req, res) => {
   const parsedMessage = parser(req.body);
   const botResponse = await handlers(parsedMessage);
 
-  responder(parsedMessage, botResponse, token);
-
+  try {
+    if (botResponse) {
+      await responder(parsedMessage, botResponse, token);
+    }
+  } catch (e) {
+    console.log(e);
+  }
   res.sendStatus(200);
 });
 

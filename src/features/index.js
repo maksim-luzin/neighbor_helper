@@ -4,6 +4,7 @@ const callbackHandler = require('./callbackHandler');
 
 // eslint-disable-next-line import/no-unresolved
 const { messageDefaultAction } = require('../actions/commonActions');
+const { mainMenuAction } = require('../actions/mainActions');
 
 const handlers = async (request) => {
   try {
@@ -28,7 +29,7 @@ const handlers = async (request) => {
       return response;
     }
 
-    return messageDefaultAction();
+    return mainMenuAction();
   } catch (err) {
     return messageDefaultAction();
   }

@@ -3,7 +3,7 @@ const {
   BUTTON_ABOUT_US,
 } = require('../../constants/button.text').MAIN_MENU;
 
-const mainMenuTemplate = [
+const mainMenuKeyboardTemplate = [
   ['Редактировать радиус'],
   [BUTTON_ADD_LOCATION],
   ['Мои объявления'],
@@ -14,5 +14,5 @@ const mainMenuTemplate = [
 
 const mainMenuMessageTemplate = 'Главное меню';
 
-exports.mainMenuTemplate = mainMenuTemplate;
+exports.mainMenuKeyboardTemplate = mainMenuKeyboardTemplate;
 exports.mainMenuMessageTemplate = mainMenuMessageTemplate;

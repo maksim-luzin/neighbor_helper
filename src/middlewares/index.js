@@ -1,1 +1,0 @@
-exports.templateResponse = require('./responseMiddleware');

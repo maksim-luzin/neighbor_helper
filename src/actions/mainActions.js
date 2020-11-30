@@ -1,8 +1,8 @@
+const { telegramTemplate } = require('claudia-bot-builder');
 const { messageDefaultAction } = require('./commonActions');
 const { aboutUsMessageTemplate } = require('../templates/aboutUsTemplate.js');
 const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templates/mainMenuTemplate');
 const { rangeKeyboardTemplate, rangeMessageTemplate } = require('../templates/rangeTemplate');
-const { templateResponse } = require('../middlewares');
 const { userService } = require('../services');
 
 const startAction = async (message) => {
@@ -15,23 +15,27 @@ const startAction = async (message) => {
   if (!result.succeeded) return messageDefaultAction();
 
   const messageStart = `Здравствуй, ${message.from.first_name}\n ${aboutUsMessageTemplate}`;
-  return templateResponse(messageStart, mainMenuKeyboardTemplate);
+
+  return new telegramTemplate.Text(messageStart)
+    .addReplyKeyboard(mainMenuKeyboardTemplate)
+    .get();
 };
 
-const mainMenuAction = () => templateResponse(mainMenuMessageTemplate, mainMenuKeyboardTemplate);
+const mainMenuAction = () => new telegramTemplate.Text(mainMenuMessageTemplate)
+  .addReplyKeyboard(mainMenuKeyboardTemplate)
+  .get();
 
-const aboutUsAction = () => templateResponse(aboutUsMessageTemplate);
+const aboutUsAction = () => new telegramTemplate.Text(aboutUsMessageTemplate)
+  .get();
 
 const showRangeAction = async (message) => {
   const result = await userService.getOne({ telegramId: message.from.id, params: ['range'] });
 
   if (!result.succeeded) return messageDefaultAction();
 
-  return templateResponse(
-    rangeMessageTemplate(result.model.range),
-    rangeKeyboardTemplate,
-    true,
-  );
+  return new telegramTemplate.Text(rangeMessageTemplate(result.model.range))
+    .addInlineKeyboard(rangeKeyboardTemplate)
+    .get();
 };
 
 const changeRangeAction = async (callbackQuery) => {

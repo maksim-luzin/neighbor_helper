@@ -1,10 +1,11 @@
 const {
   BUTTON_ADD_LOCATION,
   BUTTON_ABOUT_US,
+  BUTTON_CHANGE_RANGE,
 } = require('../../constants/button.text').MAIN_MENU;
 
 const mainMenuKeyboardTemplate = [
-  ['Редактировать радиус'],
+  [BUTTON_CHANGE_RANGE],
   [BUTTON_ADD_LOCATION],
   ['Мои объявления'],
   ['Подать объявление'],

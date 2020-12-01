@@ -1,6 +1,6 @@
 const ownAssignmentInlineKeyboardTemplate = (status) => {
   const visibilityEvent = (status === 'done')
-    ? { text: 'Отметить как невыполненное', callback_data: 'markAssignmentAsNotCompleted' }
+    ? { text: 'Отметить как невыполненное', callback_data: 'markAssignmentAsNotCompletedAction' }
     : { text: 'Отметить как выполненное', callback_data: 'markAssignmentAsCompletedAction' };
 
   return [

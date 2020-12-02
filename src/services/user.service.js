@@ -33,18 +33,25 @@ module.exports = {
     }
   },
 
-  async update({ telegramId = null, newRange = null, newLocale = null }) {
+  async update({
+    telegramId = null,
+    newRange = null,
+    newLocale = null,
+    updatedState = null,
+  }) {
     try {
       const foundUser = await User.findOne({
         where: {
           telegramId,
         },
+        attributes: ['telegramId', 'range', 'locale', 'state'],
       });
 
       if (foundUser) {
         await foundUser.update({
           range: newRange || foundUser.range,
           locale: newLocale || foundUser.locale,
+          state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
         });
 
         return new ServiceResponse({ succeeded: true });
@@ -62,7 +69,7 @@ module.exports = {
     }
   },
 
-  async getOne({ telegramId, params }) { // params: ['locale', 'range'] - example
+  async getOne({ telegramId, params }) { // params: ['locale', 'range', 'state'] - example
     try {
       const foundUser = await User.findOne({
         where: {

@@ -58,7 +58,7 @@ module.exports = {
     }
   },
 
-  async getAllByTelegramId({ telegramId }) {
+  async getAllByTelegramId(telegramId) {
     try {
       const foundLocations = await User.findOne({
         where: {
@@ -67,7 +67,7 @@ module.exports = {
         attributes: [],
         include: [{
           model: Location,
-          attributes: ['localName'],
+          attributes: ['id', 'localName'],
         }],
       });
 

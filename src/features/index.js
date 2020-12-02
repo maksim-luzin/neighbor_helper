@@ -2,7 +2,6 @@ const locationHandler = require('./locationHandler');
 const textHandler = require('./textHandler');
 const callbackQueryHandler = require('./callbackQueryHandler');
 
-// eslint-disable-next-line import/no-unresolved
 const { messageDefaultAction } = require('../actions/commonActions');
 const { mainMenuAction } = require('../actions/mainActions');
 

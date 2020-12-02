@@ -70,7 +70,7 @@ module.exports = {
     }
   },
 
-  async getAllNearby({ telegramId, category = null, localLocationName }) {
+  async getAllNearby({ telegramId, category = null, locationId }) {
     try {
       const foundRangeAndCoordinates = await User.findOne({
         where: {
@@ -80,13 +80,13 @@ module.exports = {
         include: [{
           model: Location,
           where: {
-            localName: localLocationName,
+            id: locationId,
           },
           attributes: ['coordinates'],
         }],
       });
 
-      const categoryCondition = category ? `AND a.category = ${category}` : '';
+      const categoryCondition = category ? `AND a.category = '${category}'` : '';
       const nearbyAssignments = await sequelize.query(
         `SELECT a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
         FROM "Assignments" a

@@ -119,15 +119,10 @@ module.exports = {
         where: {
           telegramId,
         },
-        attributes: [],
         include: [{
           model: Assignment,
           as: 'favoriteAssignments',
-          attributes: ['title', 'description', 'reward', 'pictureUrl', 'authorTelegramId'],
-          include: [{
-            model: Location,
-            attributes: ['globalName'],
-          }],
+          include: [{ model: Location }],
         }],
       });
 

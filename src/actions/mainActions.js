@@ -1,8 +1,9 @@
 const { telegramTemplate } = require('claudia-bot-builder');
 const { messageDefaultAction } = require('./commonActions');
-const { aboutUsMessageTemplate } = require('../templates/aboutUsTemplate.js');
+const { aboutUsMessageTemplate } = require('../templates/aboutUsTemplate');
 const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templates/mainMenuTemplate');
 const { rangeKeyboardTemplate, rangeMessageTemplate } = require('../templates/rangeTemplate');
+const flowStateManager = require('../flows');
 const { userService } = require('../services');
 
 const startAction = async (message) => {
@@ -77,10 +78,30 @@ const changeRangeAction = async (callbackQuery) => {
   };
 };
 
+const goBackAction = async (request) => {
+  let result;
+
+  result = await userService.getOne({ telegramId: request.from.id, params: ['state'] });
+  if (!result.succeeded) return messageDefaultAction();
+
+  result = await userService.update({
+    telegramId: request.from.id,
+    updatedState: {
+      isLastFlowStepCalled: true,
+    },
+  });
+
+  if (!result.succeeded) return messageDefaultAction();
+
+  result = await flowStateManager(request);
+  return result;
+};
+
 module.exports = {
   startAction,
   mainMenuAction,
   aboutUsAction,
   showRangeAction,
   changeRangeAction,
+  goBackAction,
 };

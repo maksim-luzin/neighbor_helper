@@ -35,6 +35,9 @@ module.exports = (sequelize, DataTypes) => {
       values: ['ua', 'ru', 'en'],
       defaultValue: 'en',
     },
+    state: {
+      type: DataTypes.JSONB,
+    },
   }, {
     sequelize,
     modelName: USER_MODEL_NAME,

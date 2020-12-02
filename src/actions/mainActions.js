@@ -3,6 +3,8 @@ const { messageDefaultAction } = require('./commonActions');
 const { aboutUsMessageTemplate } = require('../templates/aboutUsTemplate.js');
 const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templates/mainMenuTemplate');
 const { rangeKeyboardTemplate, rangeMessageTemplate } = require('../templates/rangeTemplate');
+const { myAssignmentsKeyboardTemplate } = require('../templates/assignmentTemplate');
+
 const { userService } = require('../services');
 
 const startAction = async (message) => {
@@ -77,10 +79,14 @@ const changeRangeAction = async (callbackQuery) => {
   };
 };
 
+const myAssignmentAction = () => new telegramTemplate
+  .Text('Выберите фильтр').addReplyKeyboard(myAssignmentsKeyboardTemplate).get();
+
 module.exports = {
   startAction,
   mainMenuAction,
   aboutUsAction,
   showRangeAction,
   changeRangeAction,
+  myAssignmentAction,
 };

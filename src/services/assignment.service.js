@@ -119,15 +119,10 @@ module.exports = {
         where: {
           telegramId,
         },
-        attributes: [],
         include: [{
           model: Assignment,
           as: 'favoriteAssignments',
-          attributes: ['title', 'description', 'reward', 'pictureUrl', 'authorTelegramId'],
-          include: [{
-            model: Location,
-            attributes: ['globalName'],
-          }],
+          include: [{ model: Location }],
         }],
       });
 
@@ -146,6 +141,42 @@ module.exports = {
       return new ServiceResponse({
         succeeded: false,
         message: 'Error occurred while getting all favorite assignments with '
+          + `telegramId=${telegramId}. `
+          + `${e}`,
+      });
+    }
+  },
+
+  async getCreated({ telegramId }) {
+    try {
+      const createdAssignments = await User.findOne({
+        where: {
+          telegramId,
+        },
+        include: [{
+          model: Assignment,
+          as: 'createdAssignments',
+          include: [{ model: Location }],
+        }],
+      });
+
+      return new ServiceResponse({
+        succeeded: true,
+        model: createdAssignments.dataValues.createdAssignments.map((elem) => ({
+          title: elem.dataValues.title,
+          description: elem.dataValues.description,
+          status: elem.dataValues.status,
+          reward: elem.dataValues.reward,
+          authorTelegramId: elem.dataValues.authorTelegramId,
+          pictureUrl: elem.dataValues.pictureUrl,
+          locationName: elem.dataValues.Location.dataValues.globalName,
+          localLocationName: elem.dataValues.Location.dataValues.localName,
+        })),
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while getting created assignments with '
           + `telegramId=${telegramId}. `
           + `${e}`,
       });

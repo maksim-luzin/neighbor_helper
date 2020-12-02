@@ -2,6 +2,7 @@ exports.MAIN_MENU = {
   BUTTON_ABOUT_US: 'О нас',
   BUTTON_ADD_LOCATION: 'Добавить локацию',
   BUTTON_CHANGE_RANGE: 'Редактировать радиус',
+  BUTTON_MY_ASSIGNMENT: 'Мои объявления',
 };
 
 exports.CHANGE_RANGE = {
@@ -12,4 +13,9 @@ exports.CHANGE_RANGE = {
 exports.COMMON = {
   BUTTON_BACK: 'Назад',
   BUTTON_HOME: 'Домой',
+};
+
+exports.MY_ASSIGNMENTS_MENU = {
+  BUTTON_FAVORITE_ASSIGNMENTS: 'Избранные',
+  BUTTON_CREATED_ASSIGNMENTS: 'Поданные объявления',
 };

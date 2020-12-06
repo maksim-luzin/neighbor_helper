@@ -5,6 +5,11 @@ module.exports = {
       'state',
       {
         type: Sequelize.JSONB,
+        defaultValue: {
+          data: '',
+          step: '',
+          cache: '',
+        },
       },
     );
   },

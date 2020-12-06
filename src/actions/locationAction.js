@@ -2,7 +2,6 @@
 const openGeocoder = require('node-open-geocoder');
 const { telegramTemplate } = require('claudia-bot-builder');
 
-const { messageDefaultAction } = require('./commonActions');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
 const { update } = require('../services').userService;
 const { create, updateLocation } = require('../services').locationService;
@@ -113,7 +112,7 @@ async function addGlobalName(location, resolve, reject) {
 
 async function addLocationNamesToKeyboard(message) {
   const result = await getAllByTelegramId({ telegramId: message.from.id });
-  if (!result.succeeded) return messageDefaultAction();
+  if (!result.succeeded) throw Error(result.message);
   const locations = result.model || [];
 
   const addLocationNamesKeyboardTemplate = locations.map(({ localName }) => [localName]).sort();
@@ -137,7 +136,7 @@ async function createNewLocation(message, state) {
     ...state.data,
     localName: message.text,
   });
-  if (!result.succeeded) return messageDefaultAction();
+  if (!result.succeeded) throw Error(result.message);
 }
 
 // eslint-disable-next-line consistent-return
@@ -146,5 +145,5 @@ async function updateOldLocation(message, state) {
     ...state.data,
     id: state.cache[message.text],
   });
-  if (!result.succeeded) return messageDefaultAction();
+  if (!result.succeeded) throw Error(result.message);
 }

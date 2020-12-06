@@ -31,14 +31,11 @@ const {
 } = require('../actions/mainActions');
 
 const { createdAssignmentsAction, favoriteAssignmentsAction } = require('../actions/myAssignmentAction');
-const { messageDefaultAction } = require('../actions/commonActions');
 
 const textHandlers = async (request, state) => {
   let response = false;
-  // eslint-disable-next-line default-case
   switch (request.text) {
     case '/start':
-      // eslint-disable-next-line no-case-declarations
       response = await startAction(request);
       return response;
 
@@ -69,7 +66,6 @@ const textHandlers = async (request, state) => {
       return response;
 
     default:
-      // eslint-disable-next-line no-use-before-define
       response = await stateDefaultHandler(request, state);
       if (response) return response;
       return mainMenuAction(request);

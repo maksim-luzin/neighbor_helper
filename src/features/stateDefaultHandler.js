@@ -1,4 +1,3 @@
-// eslint-disable-next-line consistent-return
 const {
   addLocalNameLocationAction,
 } = require('../actions/locationAction');

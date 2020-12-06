@@ -1,11 +1,27 @@
 const { telegramTemplate } = require('claudia-bot-builder');
 const { chooseCategoryKeyboardTemplate, chooseCategoryMessageTemplate } = require('../../../templates/categoryTemplate');
+const { messageDefaultAction } = require('../../../actions/commonActions');
 
-const chooseAssignmentCategoryFlowStep = (request, state, flow) => {
+const { userService } = require('../../../services');
+
+const chooseAssignmentCategoryFlowStep = async (request, state, flow) => {
   if (!state.data.chosenCategory
-    || (state.isLastFlowStepCalled
-      && flow.indexOf(state.lastFlowStep) <= flow.indexOf(chooseAssignmentCategoryFlowStep.name))) {
-    if (flow.indexOf(chooseAssignmentCategoryFlowStep.name) === 0 && !state.isLastFlowStepCalled) {
+      || (flow[state.currentFlowStep] - 1 === flow.chooseAssignmentCategoryFlowStep
+      && state.isPreviousFlowStepCalled)
+      || flow[state.currentFlowStep] + 1 === flow.chooseAssignmentCategoryFlowStep) {
+    const result = await userService.update({
+      telegramId: request.from.id,
+      params: {
+        state: {
+          currentFlowStep: 'chooseAssignmentCategoryFlowStep',
+          isPreviousFlowStepCalled: false,
+        },
+      },
+    });
+
+    if (!result.succeeded) return messageDefaultAction();
+
+    if (flow.chooseAssignmentCategoryFlowStep === 0 && !state.isPreviousFlowStepCalled) {
       return new telegramTemplate.Text(chooseCategoryMessageTemplate)
         .addInlineKeyboard(chooseCategoryKeyboardTemplate)
         .get();

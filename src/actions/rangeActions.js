@@ -2,13 +2,13 @@ const { messageDefaultAction } = require('./commonActions');
 const flowStateManager = require('../flows');
 const { userService } = require('../services');
 
-const findAssignmentAction = async (message) => {
+const changeRangeAction = async (message) => {
   let result;
   result = await userService.update({
     telegramId: message.from.id,
     params: {
       state: {
-        flowName: 'findAssignmentFlow',
+        flowName: 'changeRangeFlow',
         currentFlowStep: null,
         isPreviousFlowStepCalled: false,
         data: {},
@@ -23,47 +23,23 @@ const findAssignmentAction = async (message) => {
   return result;
 };
 
-const chooseAssignmentLocationAction = async (callbackQuery) => {
+const changeRangeNumberAction = async (callbackQuery) => {
   let result;
 
-  const chosenLocationId = callbackQuery.data.split('.')[1];
+  const chosenRangeResult = callbackQuery.data.split('.')[1];
 
   result = await userService.update({
     telegramId: callbackQuery.from.id,
     params: {
       state: {
         data: {
-          chosenLocationId,
+          chosenRangeResult,
         },
         isPreviousFlowStepCalled: false,
       },
     },
     returnState: true,
   });
-  if (!result.succeeded) return messageDefaultAction();
-
-  result = await flowStateManager(callbackQuery, result.model);
-  return result;
-};
-
-const chooseAssignmentCategoryAction = async (callbackQuery) => {
-  let result;
-
-  const chosenCategory = callbackQuery.data.split('.')[1];
-
-  result = await userService.update({
-    telegramId: callbackQuery.from.id,
-    params: {
-      state: {
-        data: {
-          chosenCategory,
-        },
-        isPreviousFlowStepCalled: false,
-      },
-    },
-    returnState: true,
-  });
-
   if (!result.succeeded) return messageDefaultAction();
 
   result = await flowStateManager(callbackQuery, result.model);
@@ -71,7 +47,6 @@ const chooseAssignmentCategoryAction = async (callbackQuery) => {
 };
 
 module.exports = {
-  findAssignmentAction,
-  chooseAssignmentCategoryAction,
-  chooseAssignmentLocationAction,
+  changeRangeAction,
+  changeRangeNumberAction,
 };

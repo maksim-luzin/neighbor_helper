@@ -3,15 +3,15 @@ const { chooseAssignmentLocationFlowStep } = require('../assignmentFlowSteps');
 const { getNearbyAssignmentsFlowStep } = require('../assignmentFlowSteps');
 
 const findAssignmentFlow = async (request, state) => {
-  const flow = [
-    chooseAssignmentCategoryFlowStep.name,
-    chooseAssignmentLocationFlowStep.name,
-    getNearbyAssignmentsFlowStep.name,
-  ];
+  const flow = {
+    chooseAssignmentCategoryFlowStep: 0,
+    chooseAssignmentLocationFlowStep: 1,
+    getNearbyAssignmentsFlowStep: 2,
+  };
 
   let flowStepResult;
 
-  flowStepResult = chooseAssignmentCategoryFlowStep(request, state, flow);
+  flowStepResult = await chooseAssignmentCategoryFlowStep(request, state, flow);
   if (flowStepResult) return flowStepResult;
 
   flowStepResult = await chooseAssignmentLocationFlowStep(request, state, flow);

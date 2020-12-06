@@ -2,16 +2,31 @@ const { telegramTemplate } = require('claudia-bot-builder');
 const { chooseLocationKeyboardTemplate, chooseLocationMessageTemplate } = require('../../../templates/locationTemplate');
 const { messageDefaultAction } = require('../../../actions/commonActions');
 
+const { userService } = require('../../../services');
 const { locationService } = require('../../../services');
 
 const chooseAssignmentLocationFlowStep = async (request, state, flow) => {
   if (!state.data.chosenLocationId
-    || (state.isLastFlowStepCalled
-      && flow.indexOf(state.lastFlowStep) <= flow.indexOf(chooseAssignmentLocationFlowStep.name))) {
-    const result = await locationService.getAllByTelegramId(request.from.id);
+    || (flow[state.currentFlowStep] - 1 === flow.chooseAssignmentLocationFlowStep
+    && state.isPreviousFlowStepCalled)
+    || flow[state.currentFlowStep] + 1 === flow.chooseAssignmentLocationFlowStep) {
+    let result;
+
+    result = await userService.update({
+      telegramId: request.from.id,
+      params: {
+        state: {
+          currentFlowStep: 'chooseAssignmentLocationFlowStep',
+          isPreviousFlowStepCalled: false,
+        },
+      },
+    });
     if (!result.succeeded) return messageDefaultAction();
 
-    if (flow.indexOf(chooseAssignmentLocationFlowStep.name) === 0 && !state.isLastFlowStepCalled) {
+    result = await locationService.getAllByTelegramId(request.from.id);
+    if (!result.succeeded) return messageDefaultAction();
+
+    if (flow.chooseAssignmentLocationFlowStep === 0 && !state.isPreviousFlowStepCalled) {
       return new telegramTemplate.Text(chooseLocationMessageTemplate)
         .addInlineKeyboard(chooseLocationKeyboardTemplate(result.model.map((elem) => ({
           callback_data: `chooseAssignmentLocationAction.${elem.id}`,

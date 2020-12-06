@@ -34,37 +34,59 @@ module.exports = {
   },
 
   async update({
-    telegramId = null,
-    newRange = null,
-    newLocale = null,
-    updatedState = null,
+    telegramId,
+    params, // ['range', 'locale', 'state' ...]
   }) {
     try {
-      const foundUser = await User.findOne({
-        where: {
-          telegramId,
-        },
-        attributes: ['telegramId', 'range', 'locale', 'state'],
-      });
+      const attributes = Object.getOwnPropertyNames(params);
+      attributes.push('telegramId');
 
-      if (foundUser) {
-        await foundUser.update({
-          range: newRange || foundUser.range,
-          locale: newLocale || foundUser.locale,
-          state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
+      if (params.state) {
+        const foundUser = await User.findOne({
+          where: {
+            telegramId,
+          },
+          attributes,
         });
+        if (foundUser) {
+          // eslint-disable-next-line no-param-reassign
+          params.state = {
+            ...foundUser.state,
+            ...params.state,
+          };
+          if (params.state.data) {
+            if (Object.keys(params.state.data).length !== 0) {
+              // eslint-disable-next-line no-param-reassign
+              params.state.data = {
+                ...foundUser.state.data,
+                ...params.state.data,
+              };
+            }
+          }
+        }
 
-        return new ServiceResponse({ succeeded: true });
+        const updatedUser = await foundUser.update(params);
+
+        return new ServiceResponse({
+          succeeded: true,
+          model: params.state ? updatedUser.state : null,
+        });
       }
-      return new ServiceResponse({
-        succeeded: true,
-        message: `User with such telegramId=${telegramId} was not found.`,
-      });
-    } catch {
+
+      // проверка на стейт нужна, чтобы не делать лишний селект, т.к. при обновлении стейта
+      // он необходим, а при обновлении языка - нет.
+      await User.update(
+        params,
+        { where: { telegramId } },
+      );
+
+      return new ServiceResponse({ succeeded: true });
+    } catch (e) {
       return new ServiceResponse({
         succeeded: false,
         message: `Error occurred while updating user with telegramId=${telegramId}`
-          + `with values newRange=${newRange} and newLocale=${newLocale}`,
+          + `with values params=${params}`
+          + `${e}.`,
       });
     }
   },

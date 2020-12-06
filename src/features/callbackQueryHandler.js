@@ -1,5 +1,4 @@
 const {
-  changeRangeAction,
   mainMenuAction,
   goBackAction,
 } = require('../actions/mainActions');
@@ -9,11 +8,15 @@ const {
   chooseAssignmentLocationAction,
 } = require('../actions/assignmentActions');
 
+const {
+  changeRangeNumberAction,
+} = require('../actions/rangeActions');
+
 const callbackQueryHandler = async (callbackQuery) => {
   let response;
   switch (callbackQuery.data.split('.')[0]) {
     case 'changeRangeAction':
-      response = await changeRangeAction(callbackQuery);
+      response = await changeRangeNumberAction(callbackQuery);
       return response;
 
     case 'chooseAssignmentCategoryAction':

@@ -67,7 +67,7 @@ module.exports = {
         attributes: [],
         include: [{
           model: Location,
-          attributes: ['localName'],
+          attributes: ['localName', 'id'],
         }],
       });
 
@@ -90,4 +90,27 @@ module.exports = {
       });
     }
   },
+
+  // eslint-disable-next-line consistent-return
+  async updateLocation({ id, coordinates, ...data }) {
+    try {
+      const result = await Location.update(
+        {
+          ...data,
+          coordinates: { type: 'Point', coordinates },
+        },
+        {
+          where: { id },
+          returning: true,
+        },
+      );
+      if (result[0]) return new ServiceResponse({ succeeded: true });
+    } catch {
+      return new ServiceResponse({
+        succeeded: false,
+        message: `Error occurred while updating location with id=${id}`,
+      });
+    }
+  },
+
 };

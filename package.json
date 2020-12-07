@@ -24,6 +24,7 @@
     "claudia-bot-builder": "^4.5.0",
     "dotenv": "^8.2.0",
     "morgan": "^1.10.0",
+    "node-open-geocoder": "^4.0.1",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^6.3.5",

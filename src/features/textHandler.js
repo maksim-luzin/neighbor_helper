@@ -8,7 +8,18 @@ const {
   BUTTON_FAVORITE_ASSIGNMENTS,
   BUTTON_CREATED_ASSIGNMENTS,
 } = require('../constants/button.text').MY_ASSIGNMENTS_MENU;
-const { BUTTON_HOME } = require('../constants/button.text').COMMON;
+const {
+  BUTTON_HOME,
+  BUTTON_BACK,
+} = require('../constants/button.text').COMMON;
+
+const {
+  buttonBackHandler,
+} = require('./buttonHandlers');
+
+const {
+  stateDefaultHandler,
+} = require('./stateDefaultHandler');
 
 const {
   startAction,
@@ -16,15 +27,15 @@ const {
   aboutUsAction,
   showRangeAction,
   myAssignmentAction,
+  addMenuAddLocationAction,
 } = require('../actions/mainActions');
 
 const { createdAssignmentsAction, favoriteAssignmentsAction } = require('../actions/myAssignmentAction');
 
-const textHandlers = async (request) => {
-  let response;
+const textHandlers = async (request, state) => {
+  let response = false;
   switch (request.text) {
     case '/start':
-      // eslint-disable-next-line no-case-declarations
       response = await startAction(request);
       return response;
 
@@ -45,10 +56,19 @@ const textHandlers = async (request) => {
       return createdAssignmentsAction(request);
 
     case BUTTON_HOME:
-      return mainMenuAction();
+      return mainMenuAction(request);
+
+    case BUTTON_ADD_LOCATION:
+      return addMenuAddLocationAction(request);
+
+    case BUTTON_BACK:
+      response = await buttonBackHandler(request, state);
+      return response;
 
     default:
-      return mainMenuAction();
+      response = await stateDefaultHandler(request, state);
+      if (response) return response;
+      return mainMenuAction(request);
   }
 };
 

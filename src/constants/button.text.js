@@ -19,3 +19,7 @@ exports.MY_ASSIGNMENTS_MENU = {
   BUTTON_FAVORITE_ASSIGNMENTS: 'Избранные',
   BUTTON_CREATED_ASSIGNMENTS: 'Поданные объявления',
 };
+
+exports.ADD_LOCATIONS_MENU = {
+  BUTTON_ADD_CURRENT_LOCATION: 'Текущая локация',
+};

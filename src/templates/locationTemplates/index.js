@@ -4,3 +4,5 @@ exports.addLocationNameMessageTemplate = require('./addLocationNameMessageTempla
 exports.addLocationNameKeyboardTemplate = require('./addLocationNameKeyboardTemplate');
 exports.returnMainMenuMessageAfterCreateLocationTemplate = require('./returnMainMenuMessageTemplate').returnMainMenuMessageAfterCreateLocationTemplate;
 exports.returnMainMenuMessageAfterUpdateLocationTemplate = require('./returnMainMenuMessageTemplate').returnMainMenuMessageAfterUpdateLocationTemplate;
+exports.addAssignmentLocationMessageTemplate = require('./addAssignmentLocationMessageTemplate');
+exports.addAssignmentLocationKeyboardTemplate = require('./addAssignmentLocationKeyboardTemplate');

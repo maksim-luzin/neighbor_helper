@@ -1,4 +1,4 @@
-const asignmentTextTemplate = ({
+const assignmentMessageTemplate = ({
   title,
   description,
   reward,
@@ -9,4 +9,4 @@ const asignmentTextTemplate = ({
   return `${title}\n\n${description}\n\nНаграда: ${reward}\nЛокация: ${locationName}`;
 };
 
-module.exports = asignmentTextTemplate;
+module.exports = assignmentMessageTemplate;

@@ -3,8 +3,18 @@ const {
 } = require('../actions/locationAction');
 
 const {
+  addFoundAssignmentCategoryAction,
+  addFoundAssignmentLocationAction,
+} = require('../actions/assignmentActions');
+
+const {
   ADD_LOCATION_NAME,
 } = require('../constants/flow.step').ADD_LOCATION;
+
+const {
+  CHOOSE_CATEGORY,
+  CHOOSE_LOCATION,
+} = require('../constants/flow.step').FIND_ASSIGNMENTS;
 
 // eslint-disable-next-line consistent-return
 const stateDefaultHandler = async (request, state) => {
@@ -12,8 +22,13 @@ const stateDefaultHandler = async (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
     case ADD_LOCATION_NAME:
-      // eslint-disable-next-line no-case-declarations
       response = await addLocalNameLocationAction(request, state);
+      return response;
+    case CHOOSE_CATEGORY:
+      response = await addFoundAssignmentCategoryAction(request, state);
+      return response;
+    case CHOOSE_LOCATION:
+      response = await addFoundAssignmentLocationAction(request, state);
       return response;
   }
 };

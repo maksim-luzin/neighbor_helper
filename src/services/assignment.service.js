@@ -37,7 +37,7 @@ module.exports = {
       });
 
       if (result) {
-        if (result.dataValues.Locations.length !== 0) {
+        if (result.Locations.length !== 0) {
           await Assignment.create({
             title,
             description,
@@ -45,8 +45,8 @@ module.exports = {
             link,
             pictureUrl,
             category,
-            authorTelegramId: result.dataValues.telegramId,
-            locationId: result.dataValues.Locations[0].id,
+            authorTelegramId: result.telegramId,
+            locationId: result.Locations[0].id,
           });
         }
 
@@ -70,7 +70,7 @@ module.exports = {
     }
   },
 
-  async getAllNearby({ telegramId, category = null, localLocationName }) {
+  async getAllNearby({ telegramId, category = null, locationId }) {
     try {
       const foundRangeAndCoordinates = await User.findOne({
         where: {
@@ -80,21 +80,21 @@ module.exports = {
         include: [{
           model: Location,
           where: {
-            localName: localLocationName,
+            id: locationId,
           },
           attributes: ['coordinates'],
         }],
       });
 
-      const categoryCondition = category ? `AND a.category = ${category}` : '';
+      const categoryCondition = category ? `AND a.category = '${category}'` : '';
       const nearbyAssignments = await sequelize.query(
         `SELECT a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
         FROM "Assignments" a
         INNER JOIN "Locations" l ON a."locationId" = l.id
         WHERE ST_DWithin(l.coordinates, 
-        ST_MakePoint(${foundRangeAndCoordinates.dataValues.Locations[0].dataValues.coordinates.coordinates[0]},
-        ${foundRangeAndCoordinates.dataValues.Locations[0].dataValues.coordinates.coordinates[1]}), 
-        ${foundRangeAndCoordinates.dataValues.range} * 1000)
+        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
+        ${foundRangeAndCoordinates.range} * 1000)
         ${categoryCondition}
         ORDER BY l.coordinates <-> l.coordinates`,
       );
@@ -128,13 +128,13 @@ module.exports = {
 
       return new ServiceResponse({
         succeeded: true,
-        model: favoriteAssignments.dataValues.favoriteAssignments.map((elem) => ({
-          title: elem.dataValues.title,
-          description: elem.dataValues.description,
-          reward: elem.dataValues.reward,
-          authorTelegramId: elem.dataValues.authorTelegramId,
-          pictureUrl: elem.dataValues.pictureUrl,
-          locationName: elem.dataValues.Location.dataValues.globalName,
+        model: favoriteAssignments.favoriteAssignments.map((elem) => ({
+          title: elem.title,
+          description: elem.description,
+          reward: elem.reward,
+          authorTelegramId: elem.authorTelegramId,
+          pictureUrl: elem.pictureUrl,
+          locationName: elem.Location.globalName,
         })),
       });
     } catch (e) {
@@ -162,15 +162,15 @@ module.exports = {
 
       return new ServiceResponse({
         succeeded: true,
-        model: createdAssignments.dataValues.createdAssignments.map((elem) => ({
-          title: elem.dataValues.title,
-          description: elem.dataValues.description,
-          status: elem.dataValues.status,
-          reward: elem.dataValues.reward,
-          authorTelegramId: elem.dataValues.authorTelegramId,
-          pictureUrl: elem.dataValues.pictureUrl,
-          locationName: elem.dataValues.Location.dataValues.globalName,
-          localLocationName: elem.dataValues.Location.dataValues.localName,
+        model: createdAssignments.createdAssignments.map((elem) => ({
+          title: elem.title,
+          description: elem.description,
+          status: elem.status,
+          reward: elem.reward,
+          authorTelegramId: elem.authorTelegramId,
+          pictureUrl: elem.pictureUrl,
+          locationName: elem.Location.globalName,
+          localLocationName: elem.Location.localName,
         })),
       });
     } catch (e) {

@@ -4,6 +4,15 @@ const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templa
 const { rangeKeyboardTemplate, rangeMessageTemplate } = require('../templates/rangeTemplate');
 const { myAssignmentsKeyboardTemplate } = require('../templates/assignmentTemplate');
 const { create, update } = require('../services').userService;
+const {
+  chooseCategoryKeyboardTemplate,
+  chooseCategoryMessageTemplate,
+} = require('../templates/categoryTemplates');
+
+const {
+  CHOOSE_CATEGORY,
+  CHOOSE_LOCATION,
+} = require('../constants/flow.step').FIND_ASSIGNMENTS;
 const setState = require('../helpers/setState');
 
 const {
@@ -26,7 +35,7 @@ const startAction = async (message) => {
 
   if (!result.succeeded) throw Error(result.message);
 
-  const messageStart = `Здравствуй, ${message.from.first_name}\n ${aboutUsMessageTemplate}`;
+  const messageStart = `Здравствуй, ${message.from.first_name}.\n${aboutUsMessageTemplate}`;
 
   return new telegramTemplate.Text(messageStart)
     .addReplyKeyboard(
@@ -116,6 +125,17 @@ const addMenuAddLocationAction = async (message) => {
   );
 };
 
+const findAssignmentsAction = async (message) => {
+  await setState(message.from.id, CHOOSE_CATEGORY);
+  return (
+    new telegramTemplate.Text(chooseCategoryMessageTemplate)
+      .addReplyKeyboard(
+        chooseCategoryKeyboardTemplate,
+      )
+      .get()
+  );
+};
+
 module.exports = {
   startAction,
   mainMenuAction,
@@ -124,4 +144,5 @@ module.exports = {
   changeRangeAction,
   myAssignmentAction,
   addMenuAddLocationAction,
+  findAssignmentsAction,
 };

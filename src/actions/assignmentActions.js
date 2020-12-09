@@ -7,6 +7,7 @@ const {
   publicAssignmentInlineKeyboardTemplate,
   findAssignmentsMessageTemplate,
   findAssignmentsKeyboardTemplate,
+  favoriteAssignmentsMessageTemplate,
 } = require('../templates/assignmentTemplate');
 
 const {
@@ -32,18 +33,42 @@ const favoriteAssignmentsAction = async (request) => {
 
   const assignments = result.model;
 
-  return assignments.map((assignment) => {
+  if (assignments.length === 0) {
+    return new telegramTemplate.Text(
+      favoriteAssignmentsMessageTemplate.noFavoriteAssignmentsMessageTemplate,
+    )
+      .get();
+  }
+
+  const basicResponse = [
+    new telegramTemplate.Text(
+      favoriteAssignmentsMessageTemplate.favoriteAssignmentsMessageTemplate,
+    )
+      .get(),
+  ];
+
+  const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate
         .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
-        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
+        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({
+          isFavorite: true,
+          assignmentId: assignment.id,
+          fromFavorites: true,
+        }))
         .get();
     }
 
     return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
-      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
+      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({
+        isFavorite: true,
+        assignmentId: assignment.id,
+        fromFavorites: true,
+      }))
       .get();
   });
+
+  return basicResponse.concat(assignmentsResponse);
 };
 
 const createdAssignmentsAction = async (request, page = 0) => {
@@ -143,22 +168,94 @@ const addFoundAssignmentLocationAction = async (message, state) => {
       .get(),
   ];
 
-  const assignmentsResponse = result.model.map((assignment, index) => {
+  const assignmentsResponse = result.model.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate.Photo(assignment.pictureUrl,
         assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }))
-        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(false))
+        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(
+          {
+            isFavorite: assignment.isFavorite,
+            assignmentId: assignment.id,
+          },
+        ))
         .get();
     }
 
     return new telegramTemplate.Text(
       assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }),
     )
-      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(false))
+      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(
+        {
+          isFavorite: assignment.isFavorite,
+          assignmentId: assignment.id,
+        },
+      ))
       .get();
   });
 
   return basicResponse.concat(assignmentsResponse);
+};
+
+const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites }) => {
+  const result = await assignmentService.removeFromFavorites({
+    telegramId: request.from.id,
+    assignmentId,
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  if (fromFavorites === 'false') {
+    return {
+      method: 'editMessageText',
+      body: {
+        chat_id: request.message.chat.id,
+        message_id: request.message.message_id,
+        text: request.message.text,
+        reply_markup: {
+          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+            {
+              isFavorite: false,
+              assignmentId,
+            },
+          ),
+        },
+      },
+    };
+  }
+
+  return {
+    method: 'deleteMessage',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+    },
+  };
+};
+
+const addToFavoritesAction = async (request, assignmentId) => {
+  const result = await assignmentService.addToFavorites({
+    telegramId: request.from.id,
+    assignmentId,
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  return {
+    method: 'editMessageText',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      text: request.message.text,
+      reply_markup: {
+        inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+          {
+            isFavorite: true,
+            assignmentId,
+          },
+        ),
+      },
+    },
+  };
 };
 
 module.exports = {
@@ -166,4 +263,6 @@ module.exports = {
   createdAssignmentsAction,
   addFoundAssignmentCategoryAction,
   addFoundAssignmentLocationAction,
+  removeFromFavoritesAction,
+  addToFavoritesAction,
 };

@@ -98,6 +98,8 @@ module.exports = {
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
         ${foundRangeAndCoordinates.range} * 1000)
         ${categoryCondition}
+        AND a."authorTelegramId" <> ${telegramId}
+        AND a.status <> 'done'
         ORDER BY l.coordinates <-> l.coordinates`,
       );
 

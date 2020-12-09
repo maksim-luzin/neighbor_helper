@@ -7,6 +7,7 @@ const {
 } = require('../templates/assignmentTemplate');
 
 const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
+const { PAGE_SIZE } = require('../constants/pageSize');
 
 const favoriteAssignmentsAction = async (request) => {
   const result = await assignmentService.getAllFavorites({
@@ -28,8 +29,8 @@ const favoriteAssignmentsAction = async (request) => {
   });
 };
 
-const createdAssignmentsAction = async (request, page = 0, size = 1) => {
-  const limit = size ? +size : 3;
+const createdAssignmentsAction = async (request, page = 0) => {
+  const limit = PAGE_SIZE ? +PAGE_SIZE : 3;
   const offset = page ? page * limit : 0;
 
   const result = await assignmentService.getCreated({

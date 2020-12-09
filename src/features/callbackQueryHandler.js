@@ -6,7 +6,7 @@ const {
   mainMenuAction,
 } = require('../actions/mainActions');
 
-const { createdAssignmentsAction } = require('../actions/myAssignmentAction');
+const { createdAssignmentsAction } = require('../actions/assignmentActions');
 
 const callbackQueryHandler = async (callbackQuery) => {
   let response;

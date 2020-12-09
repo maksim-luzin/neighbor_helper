@@ -30,7 +30,7 @@ const {
   addMenuAddLocationAction,
 } = require('../actions/mainActions');
 
-const { createdAssignmentsAction, favoriteAssignmentsAction } = require('../actions/myAssignmentAction');
+const { createdAssignmentsAction, favoriteAssignmentsAction } = require('../actions/assignmentActions');
 
 const textHandlers = async (request, state) => {
   let response = false;

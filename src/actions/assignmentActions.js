@@ -2,7 +2,7 @@ const { telegramTemplate } = require('claudia-bot-builder');
 const { locationService, assignmentService } = require('../services');
 
 const {
-  assignmentTextTemplate,
+  assignmentMessageTemplate,
   ownAssignmentInlineKeyboardTemplate,
   publicAssignmentInlineKeyboardTemplate,
   findAssignmentsMessageTemplate,
@@ -22,6 +22,9 @@ const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNME
 
 const setState = require('../helpers/setState');
 
+const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
+const { PAGE_SIZE } = require('../constants/pageSize');
+
 const favoriteAssignmentsAction = async (request) => {
   const result = await assignmentService.getAllFavorites({
     telegramId: request.from.id,
@@ -31,35 +34,52 @@ const favoriteAssignmentsAction = async (request) => {
 
   return assignments.map((assignment) => {
     if (assignment.pictureUrl) {
-      return new telegramTemplate.Photo(assignment.pictureUrl, assignmentTextTemplate(assignment))
+      return new telegramTemplate
+        .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
         .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
         .get();
     }
 
-    return new telegramTemplate.Text(assignmentTextTemplate(assignment))
+    return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
       .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
       .get();
   });
 };
 
-const createdAssignmentsAction = async (request) => {
+const createdAssignmentsAction = async (request, page = 0) => {
+  const limit = PAGE_SIZE ? +PAGE_SIZE : 3;
+  const offset = page ? page * limit : 0;
+
   const result = await assignmentService.getCreated({
     telegramId: request.from.id,
+    limit,
+    offset,
+    page,
   });
 
+  const { pagingData } = result;
   const assignments = result.model;
 
-  return assignments.map((assignment) => {
+  const assignmentsView = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
-      return new telegramTemplate.Photo(assignment.pictureUrl, assignmentTextTemplate(assignment))
+      return new telegramTemplate
+        .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
         .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
         .get();
     }
 
-    return new telegramTemplate.Text(assignmentTextTemplate(assignment))
+    return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
       .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
       .get();
   });
+
+  assignmentsView.push(
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  );
+
+  return assignmentsView;
 };
 
 const addFoundAssignmentCategoryAction = async (message, state) => {
@@ -126,13 +146,13 @@ const addFoundAssignmentLocationAction = async (message, state) => {
   const assignmentsResponse = result.model.map((assignment, index) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate.Photo(assignment.pictureUrl,
-        assignmentTextTemplate({ ...assignment, locationName: assignment.globalName }))
+        assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }))
         .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(false))
         .get();
     }
 
     return new telegramTemplate.Text(
-      assignmentTextTemplate({ ...assignment, locationName: assignment.globalName }),
+      assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }),
     )
       .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(false))
       .get();

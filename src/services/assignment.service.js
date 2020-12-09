@@ -8,6 +8,8 @@ const {
   },
 } = require('../database');
 
+const getPagingData = require('../helpers/getPagingData');
+
 const ServiceResponse = require('../helpers/ServiceResponse');
 
 module.exports = {
@@ -147,30 +149,31 @@ module.exports = {
     }
   },
 
-  async getCreated({ telegramId }) {
+  async getCreated({
+    telegramId, limit, offset, page,
+  }) {
     try {
-      const createdAssignments = await User.findOne({
+      const createdAssignments = await Assignment.findAndCountAll({
         where: {
-          telegramId,
+          authorTelegramId: telegramId,
         },
-        include: [{
-          model: Assignment,
-          as: 'createdAssignments',
-          include: [{ model: Location }],
-        }],
+        include: [{ model: Location }],
+        limit,
+        offset,
       });
 
       return new ServiceResponse({
         succeeded: true,
-        model: createdAssignments.createdAssignments.map((elem) => ({
-          title: elem.title,
-          description: elem.description,
-          status: elem.status,
-          reward: elem.reward,
-          authorTelegramId: elem.authorTelegramId,
-          pictureUrl: elem.pictureUrl,
-          locationName: elem.Location.globalName,
-          localLocationName: elem.Location.localName,
+        pagingData: getPagingData(createdAssignments, page, limit),
+        model: createdAssignments.rows.map((elem) => ({
+          title: elem.dataValues.title,
+          description: elem.dataValues.description,
+          status: elem.dataValues.status,
+          reward: elem.dataValues.reward,
+          authorTelegramId: elem.dataValues.authorTelegramId,
+          pictureUrl: elem.dataValues.pictureUrl,
+          locationName: elem.dataValues.Location.dataValues.globalName,
+          localLocationName: elem.dataValues.Location.dataValues.localName,
         })),
       });
     } catch (e) {

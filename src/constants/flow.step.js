@@ -8,3 +8,8 @@ exports.FIND_ASSIGNMENTS = {
   CHOOSE_LOCATION: 'findAssignment.chooseLocation',
   GET_ASSIGNMENTS: 'findAssignment.getAssignments',
 };
+
+exports.MY_ASSIGNMENTS = {
+  GET_CREATED_ASSIGNMENTS: 'myAssignment.getCreatedAssignments',
+  GET_FAVORITE_ASSIGNMENTS: 'myAssignment.getFavoriteAssignments',
+};

@@ -19,20 +19,27 @@ const {
 } = require('../constants/button.text').COMMON;
 
 const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
+const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
 
 const setState = require('../helpers/setState');
 
 const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
 const { PAGE_SIZE } = require('../constants/pageSize');
+const { getPagination } = require('../helpers/pagination');
 
-const favoriteAssignmentsAction = async (request) => {
+const favoriteAssignmentsAction = async (request, page = 0) => {
   const result = await assignmentService.getAllFavorites({
     telegramId: request.from.id,
+    pagination: getPagination(page, PAGE_SIZE),
+    page,
   });
 
+  await setState(request.from.id, myAssignmentsFlowSteps.GET_FAVORITE_ASSIGNMENTS);
+
+  const { pagingData } = result;
   const assignments = result.model;
 
-  return assignments.map((assignment) => {
+  const assignmentsView = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate
         .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
@@ -44,16 +51,22 @@ const favoriteAssignmentsAction = async (request) => {
       .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
       .get();
   });
+
+  assignmentsView.push(
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  );
+
+  return assignmentsView;
 };
 
 const createdAssignmentsAction = async (request, page = 0) => {
-  const limit = PAGE_SIZE ? +PAGE_SIZE : 3;
-  const offset = page ? page * limit : 0;
+  await setState(request.from.id, myAssignmentsFlowSteps.GET_CREATED_ASSIGNMENTS);
 
   const result = await assignmentService.getCreated({
     telegramId: request.from.id,
-    limit,
-    offset,
+    pagination: getPagination(page, PAGE_SIZE),
     page,
   });
 

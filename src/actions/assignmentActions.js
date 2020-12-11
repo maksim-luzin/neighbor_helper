@@ -8,6 +8,7 @@ const {
   findAssignmentsMessageTemplate,
   findAssignmentsKeyboardTemplate,
   favoriteAssignmentsMessageTemplate,
+  createdAssignmentsMessageTemplate,
 } = require('../templates/assignmentTemplate');
 
 const {
@@ -54,6 +55,12 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
       .get(),
   ];
 
+  const paginationResponse = [
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  ];
+
   const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate
@@ -75,13 +82,9 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
       .get();
   });
 
-  assignmentsResponse.push(
-    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
-      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
-      .get(),
-  );
+  if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
 
-  return basicResponse.concat(assignmentsResponse);
+  return basicResponse.concat(assignmentsResponse, paginationResponse);
 };
 
 const createdAssignmentsAction = async (request, page = 0) => {
@@ -96,7 +99,27 @@ const createdAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
-  const assignmentsView = assignments.map((assignment) => {
+  if (assignments.length === 0) {
+    return new telegramTemplate.Text(
+      createdAssignmentsMessageTemplate.noCreatedAssignmentsMessageTemplate,
+    )
+      .get();
+  }
+
+  const basicResponse = [
+    new telegramTemplate.Text(
+      createdAssignmentsMessageTemplate.createdAssignmentsMessageTemplate,
+    )
+      .get(),
+  ];
+
+  const paginationResponse = [
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  ];
+
+  const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate
         .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
@@ -109,13 +132,9 @@ const createdAssignmentsAction = async (request, page = 0) => {
       .get();
   });
 
-  assignmentsView.push(
-    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
-      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
-      .get(),
-  );
+  if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
 
-  return assignmentsView;
+  return basicResponse.concat(assignmentsResponse, paginationResponse);
 };
 
 const addFoundAssignmentCategoryAction = async (message, state) => {

@@ -167,27 +167,37 @@ const addFoundAssignmentCategoryAction = async (message, state) => {
       .get());
 };
 
-const addFoundAssignmentLocationAction = async (message, state) => {
+const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) => {
+  const locationId = state.data.locationId
+    ? state.data.locationId
+    : state.cache.find((elem) => elem.localName === request.text).id;
+
   const result = await assignmentService.getAllNearby({
-    telegramId: message.from.id,
+    telegramId: request.from.id,
     category: state.data.foundAssignmentChosenCategory,
-    locationId: state.cache.find((elem) => elem.localName === message.text).id,
+    locationId,
+    pagination: getPagination(page, PAGE_SIZE),
+    page,
   });
 
-  if (!result.succeeded) throw Error(result.message);
+  if (!result.succeeded) throw Error(result.request);
+
+  const { pagingData } = result;
+  const assignments = result.model;
 
   await setState(
-    message.from.id,
+    request.from.id,
     findAssignmentsFlowSteps.GET_ASSIGNMENTS,
     {
       ...state.data,
+      locationId,
     },
-    {
+    [
       ...state.cache,
-    },
+    ],
   );
 
-  if (result.model.length === 0) {
+  if (assignments.length === 0) {
     return (
       new telegramTemplate
         .Text(findAssignmentsMessageTemplate.notFoundAssignmentsMessageTemplate)
@@ -202,7 +212,13 @@ const addFoundAssignmentLocationAction = async (message, state) => {
       .get(),
   ];
 
-  const assignmentsResponse = result.model.map((assignment) => {
+  const paginationResponse = [
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  ];
+
+  const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate.Photo(assignment.pictureUrl,
         assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }))
@@ -227,7 +243,9 @@ const addFoundAssignmentLocationAction = async (message, state) => {
       .get();
   });
 
-  return basicResponse.concat(assignmentsResponse);
+  if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
+
+  return basicResponse.concat(assignmentsResponse, paginationResponse);
 };
 
 const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites }) => {

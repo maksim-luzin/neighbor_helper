@@ -72,7 +72,13 @@ module.exports = {
     }
   },
 
-  async getAllNearby({ telegramId, category = null, locationId }) {
+  async getAllNearby({
+    telegramId,
+    category = null,
+    locationId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
       const foundRangeAndCoordinates = await User.findOne({
         where: {
@@ -100,7 +106,22 @@ module.exports = {
         ${categoryCondition}
         AND a."authorTelegramId" <> ${telegramId}
         AND a.status <> 'done'
-        ORDER BY l.coordinates <-> l.coordinates`,
+        ORDER BY l.coordinates <-> l.coordinates
+        LIMIT ${limit} 
+        OFFSET ${offset}`,
+      );
+
+      const nearbyAssignmentsCount = await sequelize.query(
+        `SELECT COUNT(a.id) 
+        FROM "Assignments" a
+        INNER JOIN "Locations" l ON a."locationId" = l.id
+        WHERE ST_DWithin(l.coordinates, 
+        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
+        ${foundRangeAndCoordinates.range} * 1000)
+        ${categoryCondition}
+        AND a."authorTelegramId" <> ${telegramId}
+        AND a.status <> 'done'`,
       );
 
       // eslint-disable-next-line no-restricted-syntax
@@ -117,6 +138,7 @@ module.exports = {
 
       return new ServiceResponse({
         succeeded: true,
+        pagingData: getPagingData(nearbyAssignmentsCount[0][0], page, limit),
         model: nearbyAssignments[0],
       });
     } catch (e) {

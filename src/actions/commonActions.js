@@ -2,10 +2,12 @@ const { telegramTemplate } = require('claudia-bot-builder');
 const { defaultMessageTemplate } = require('../templates/defaultMessageTemplate');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
 const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
+const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
 
 const {
   favoriteAssignmentsAction,
   createdAssignmentsAction,
+  addFoundAssignmentLocationAction,
 } = require('./assignmentActions');
 
 const messageDefaultAction = () => (
@@ -26,6 +28,10 @@ const paginationAction = async (request, page, state) => {
       break;
     case myAssignmentsFlowSteps.GET_FAVORITE_ASSIGNMENTS:
       response = await favoriteAssignmentsAction(request, page, state);
+
+      break;
+    case findAssignmentsFlowSteps.GET_ASSIGNMENTS:
+      response = await addFoundAssignmentLocationAction({ request, page, state });
 
       break;
     default:

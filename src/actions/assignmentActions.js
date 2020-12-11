@@ -36,6 +36,8 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
     page,
   });
 
+  if (!result.succeeded) throw Error(result.message);
+
   await setState(request.from.id, myAssignmentsFlowSteps.GET_FAVORITE_ASSIGNMENTS);
 
   const { pagingData } = result;
@@ -88,13 +90,15 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
 };
 
 const createdAssignmentsAction = async (request, page = 0) => {
-  await setState(request.from.id, myAssignmentsFlowSteps.GET_CREATED_ASSIGNMENTS);
-
   const result = await assignmentService.getCreated({
     telegramId: request.from.id,
     pagination: getPagination(page, PAGE_SIZE),
     page,
   });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  await setState(request.from.id, myAssignmentsFlowSteps.GET_CREATED_ASSIGNMENTS);
 
   const { pagingData } = result;
   const assignments = result.model;

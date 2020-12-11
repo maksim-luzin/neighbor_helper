@@ -8,7 +8,7 @@ const {
   },
 } = require('../database');
 
-const getPagingData = require('../helpers/getPagingData');
+const { getPagingData } = require('../helpers/pagination');
 
 const ServiceResponse = require('../helpers/ServiceResponse');
 
@@ -115,28 +115,34 @@ module.exports = {
     }
   },
 
-  async getAllFavorites({ telegramId }) {
+  async getAllFavorites({
+    telegramId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
-      const favoriteAssignments = await User.findOne({
+      const favoriteAssignments = await FavoriteAssignment.findAndCountAll({
         where: {
           telegramId,
         },
         include: [{
           model: Assignment,
-          as: 'favoriteAssignments',
           include: [{ model: Location }],
         }],
+        limit,
+        offset,
       });
 
       return new ServiceResponse({
         succeeded: true,
-        model: favoriteAssignments.favoriteAssignments.map((elem) => ({
-          title: elem.title,
-          description: elem.description,
-          reward: elem.reward,
-          authorTelegramId: elem.authorTelegramId,
-          pictureUrl: elem.pictureUrl,
-          locationName: elem.Location.globalName,
+        pagingData: getPagingData(favoriteAssignments, page, limit),
+        model: favoriteAssignments.rows.map((elem) => ({
+          title: elem.Assignment.dataValues.title,
+          description: elem.Assignment.dataValues.description,
+          reward: elem.Assignment.dataValues.reward,
+          authorTelegramId: elem.Assignment.dataValues.authorTelegramId,
+          pictureUrl: elem.Assignment.dataValues.pictureUrl,
+          locationName: elem.Assignment.dataValues.Location.globalName,
         })),
       });
     } catch (e) {
@@ -150,7 +156,9 @@ module.exports = {
   },
 
   async getCreated({
-    telegramId, limit, offset, page,
+    telegramId,
+    pagination: { limit, offset },
+    page,
   }) {
     try {
       const createdAssignments = await Assignment.findAndCountAll({

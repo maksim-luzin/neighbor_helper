@@ -4,3 +4,4 @@ exports.ownAssignmentInlineKeyboardTemplate = require('./assignmentInlineKeyboar
 exports.publicAssignmentInlineKeyboardTemplate = require('./assignmentInlineKeyboardTemplate').publicAssignmentInlineKeyboardTemplate;
 exports.findAssignmentsMessageTemplate = require('./findAssignmentsMessageTemplate');
 exports.findAssignmentsKeyboardTemplate = require('./findAssignmentsKeyboardTemplate');
+exports.favoriteAssignmentsMessageTemplate = require('./favoriteAssignmentsMessageTemplate.js');

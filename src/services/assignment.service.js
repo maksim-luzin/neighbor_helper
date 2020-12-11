@@ -90,7 +90,7 @@ module.exports = {
 
       const categoryCondition = category ? `AND a.category = '${category}'` : '';
       const nearbyAssignments = await sequelize.query(
-        `SELECT a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
+        `SELECT a.id, a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
         FROM "Assignments" a
         INNER JOIN "Locations" l ON a."locationId" = l.id
         WHERE ST_DWithin(l.coordinates, 
@@ -98,8 +98,22 @@ module.exports = {
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
         ${foundRangeAndCoordinates.range} * 1000)
         ${categoryCondition}
+        AND a."authorTelegramId" <> ${telegramId}
+        AND a.status <> 'done'
         ORDER BY l.coordinates <-> l.coordinates`,
       );
+
+      // eslint-disable-next-line no-restricted-syntax
+      for await (const assignment of nearbyAssignments[0]) {
+        const foundFavorite = await FavoriteAssignment.findOne({
+          where: {
+            telegramId,
+            assignmentId: assignment.id,
+          },
+        });
+        // eslint-disable-next-line no-param-reassign
+        assignment.isFavorite = !!foundFavorite;
+      }
 
       return new ServiceResponse({
         succeeded: true,
@@ -258,51 +272,38 @@ module.exports = {
 
   async addToFavorites({ telegramId, assignmentId }) {
     try {
-      const foundUser = await User.findOne({
+      await FavoriteAssignment.findOrCreate({
         where: {
           telegramId,
+          assignmentId,
         },
-        attributes: ['telegramId'],
+        defaults: {
+          telegramId,
+          assignmentId,
+        },
       });
 
-      if (foundUser) {
-        const foundAssignment = await Assignment.findOne({
-          where: {
-            id: assignmentId,
-          },
-          attributes: ['id'],
-        });
-
-        if (foundAssignment) {
-          const foundFavoriteAssignment = await FavoriteAssignment.findOne({
-            where: {
-              telegramId,
-              assignmentId,
-            },
-            attributes: ['assignmentId'],
-          });
-          if (!foundFavoriteAssignment) {
-            await FavoriteAssignment.create({
-              telegramId,
-              assignmentId,
-            });
-            return new ServiceResponse({ succeeded: true });
-          }
-          return new ServiceResponse({
-            succeeded: true,
-            message: 'Assignment is already in favorites!',
-          });
-        }
-        return new ServiceResponse({
-          succeeded: true,
-          message: `Assignment with id=${assignmentId} was not found.`,
-        });
-      }
-
+      return new ServiceResponse({ succeeded: true });
+    } catch (e) {
       return new ServiceResponse({
-        succeeded: true,
-        message: `User with telegramId=${telegramId} was not found.`,
+        succeeded: false,
+        message: 'Error occurred while adding assignment to favorites with '
+          + `telegramId=${telegramId}, id=${assignmentId}. `
+          + `${e}.`,
       });
+    }
+  },
+
+  async removeFromFavorites({ telegramId, assignmentId }) {
+    try {
+      await FavoriteAssignment.destroy({
+        where: {
+          telegramId,
+          assignmentId,
+        },
+      });
+
+      return new ServiceResponse({ succeeded: true });
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,

@@ -10,10 +10,17 @@ const ownAssignmentInlineKeyboardTemplate = (status) => {
   ];
 };
 
-const publicAssignmentInlineKeyboardTemplate = ({ isFavorite }) => {
+const publicAssignmentInlineKeyboardTemplate = ({
+  isFavorite,
+  assignmentId,
+  fromFavorites = false,
+}) => {
   const favoriteEvent = isFavorite
-    ? { text: 'Убрать из избранных', callback_data: 'removeFromFavoritesAction' }
-    : { text: 'В избранные', callback_data: 'addToFavoritesAction' };
+    ? {
+      text: 'Убрать из избранных',
+      callback_data: `removeFromFavoritesAction.${assignmentId}.${fromFavorites}`,
+    }
+    : { text: 'В избранные', callback_data: `addToFavoritesAction.${assignmentId}` };
 
   return [
     [{ text: 'Связаться с автором', callback_data: 'contactTheAuthorAction' }],

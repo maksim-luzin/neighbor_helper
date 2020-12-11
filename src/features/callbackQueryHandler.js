@@ -1,14 +1,11 @@
 const {
   changeRangeAction,
-} = require('../actions/mainActions');
-
-const {
   mainMenuAction,
 } = require('../actions/mainActions');
 
-const { createdAssignmentsAction } = require('../actions/assignmentActions');
+const { paginationAction } = require('../actions/commonActions');
 
-const callbackQueryHandler = async (callbackQuery) => {
+const callbackQueryHandler = async (callbackQuery, state) => {
   let response;
   switch (callbackQuery.data.split('.')[0]) {
     case 'changeRangeAction':
@@ -16,7 +13,7 @@ const callbackQueryHandler = async (callbackQuery) => {
       return response;
 
     case 'paginationAction':
-      response = await createdAssignmentsAction(callbackQuery, +callbackQuery.data.split('.')[1]);
+      response = await paginationAction(callbackQuery, +callbackQuery.data.split('.')[1], state);
       return response;
 
     default:

@@ -8,3 +8,7 @@ exports.FIND_ASSIGNMENTS = {
   CHOOSE_LOCATION: 'findAssignment.chooseLocation',
   GET_ASSIGNMENTS: 'findAssignment.getAssignments',
 };
+
+exports.CHANGE_RANGE = {
+  CHANGE_RANGE: 'changeRange.ChangeRange',
+};

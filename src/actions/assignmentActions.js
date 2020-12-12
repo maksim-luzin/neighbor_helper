@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 const { telegramTemplate } = require('claudia-bot-builder');
 const { locationService, assignmentService } = require('../services');
 
@@ -24,6 +25,8 @@ const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNME
 const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
 
 const setState = require('../helpers/setState');
+
+const { deleteMessage } = require('../helpers/telegram');
 
 const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
 const { PAGE_SIZE } = require('../constants/pageSize');
@@ -127,12 +130,18 @@ const createdAssignmentsAction = async (request, page = 0) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate
         .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
-        .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
+        .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate({
+          status: assignment.status,
+          assignmentId: assignment.id,
+        }))
         .get();
     }
 
     return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
-      .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
+      .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate({
+        status: assignment.status,
+        assignmentId: assignment.id,
+      }))
       .get();
   });
 
@@ -310,6 +319,19 @@ const addToFavoritesAction = async (request, assignmentId) => {
   };
 };
 
+const removeAssignmentAction = async (request, assignmentId) => {
+  const result = await assignmentService.delete({
+    telegramId: request.from.id,
+    assignmentId,
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  const response = await createdAssignmentsAction(request);
+
+  return response.concat(await deleteMessage(request));
+};
+
 module.exports = {
   favoriteAssignmentsAction,
   createdAssignmentsAction,
@@ -317,4 +339,5 @@ module.exports = {
   addFoundAssignmentLocationAction,
   removeFromFavoritesAction,
   addToFavoritesAction,
+  removeAssignmentAction,
 };

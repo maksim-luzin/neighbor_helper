@@ -210,6 +210,7 @@ module.exports = {
         succeeded: true,
         pagingData: getPagingData(createdAssignments, page, limit),
         model: createdAssignments.rows.map((elem) => ({
+          id: elem.dataValues.id,
           title: elem.dataValues.title,
           description: elem.dataValues.description,
           status: elem.dataValues.status,

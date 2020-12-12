@@ -173,6 +173,7 @@ module.exports = {
         succeeded: true,
         pagingData: getPagingData(favoriteAssignments, page, limit),
         model: favoriteAssignments.rows.map((elem) => ({
+          id: elem.Assignment.dataValues.id,
           title: elem.Assignment.dataValues.title,
           description: elem.Assignment.dataValues.description,
           reward: elem.Assignment.dataValues.reward,

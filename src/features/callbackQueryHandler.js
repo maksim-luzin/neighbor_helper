@@ -53,7 +53,6 @@ const callbackQueryHandler = async (callbackQuery, state) => {
       return response;
 
     case 'removeAssignmentAction':
-      console.log(splitCallbackQueryData);
       response = await removeAssignmentAction(callbackQuery, splitCallbackQueryData[1]);
       return response;
 

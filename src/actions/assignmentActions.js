@@ -127,12 +127,18 @@ const createdAssignmentsAction = async (request, page = 0) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate
         .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
-        .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
+        .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate({
+          status: assignment.status,
+          assignmentId: assignment.id,
+        }))
         .get();
     }
 
     return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
-      .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
+      .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate({
+        status: assignment.status,
+        assignmentId: assignment.id,
+      }))
       .get();
   });
 
@@ -310,6 +316,59 @@ const addToFavoritesAction = async (request, assignmentId) => {
   };
 };
 
+const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {
+  console.log(request)
+  const result = await assignmentService.update({
+    telegramId: request.from.id,
+    assignmentId,
+    status: 'done',
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  return {
+    method: 'editMessageReplyMarkup',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      reply_markup: {
+        inline_keyboard: ownAssignmentInlineKeyboardTemplate(
+          {
+            assignmentId,
+            status: 'done',
+          },
+        ),
+      },
+    },
+  };
+};
+
+const markAssignmentAsNotCompletedAction = async ({ request, assignmentId }) => {
+  const result = await assignmentService.update({
+    telegramId: request.from.id,
+    assignmentId,
+    status: 'notDone',
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  return {
+    method: 'editMessageReplyMarkup',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      reply_markup: {
+        inline_keyboard: ownAssignmentInlineKeyboardTemplate(
+          {
+            assignmentId,
+            status: 'notDone',
+          },
+        ),
+      },
+    },
+  };
+};
+
 module.exports = {
   favoriteAssignmentsAction,
   createdAssignmentsAction,
@@ -317,4 +376,6 @@ module.exports = {
   addFoundAssignmentLocationAction,
   removeFromFavoritesAction,
   addToFavoritesAction,
+  markAssignmentAsNotCompletedAction,
+  markAssignmentAsCompletedAction,
 };

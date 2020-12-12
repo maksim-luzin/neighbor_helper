@@ -1,8 +1,4 @@
 const {
-  changeRangeAction,
-} = require('../actions/mainActions');
-
-const {
   mainMenuAction,
 } = require('../actions/mainActions');
 
@@ -16,10 +12,6 @@ const callbackQueryHandler = async (callbackQuery) => {
   let response;
   const splitCallbackQueryData = callbackQuery.data.split('.');
   switch (splitCallbackQueryData[0]) {
-    case 'changeRangeAction':
-      response = await changeRangeAction(callbackQuery);
-      return response;
-
     case 'paginationAction':
       response = await createdAssignmentsAction(callbackQuery, splitCallbackQueryData[1]);
       return response;

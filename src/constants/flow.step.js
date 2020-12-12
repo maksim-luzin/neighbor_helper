@@ -8,3 +8,15 @@ exports.FIND_ASSIGNMENTS = {
   CHOOSE_LOCATION: 'findAssignment.chooseLocation',
   GET_ASSIGNMENTS: 'findAssignment.getAssignments',
 };
+
+exports.ADD_ASSIGNMENT = {
+  CHOOSE_CATEGORY: 'addAssignment.chooseCategory',
+  ADD_TITLE: 'addAssignment.addTitle',
+  ADD_DESCRIPTION: 'addAssignment.addDescription',
+  CHOOSE_LOCATION: 'addAssignment.chooseLocation',
+  ADD_REWARD: 'addAssignment.addReward',
+  ADD_PICTURE: 'addAssignment.addPicture',
+  ADD_LINK_TELEGRAPH: 'addAssignment.addLinkTelegraph',
+  SHOW_ASSIGNMENT: 'addAssignment.showAssignment',
+  PUBLISH_ASSIGNMENT: 'addAssignment.publishAssignment',
+};

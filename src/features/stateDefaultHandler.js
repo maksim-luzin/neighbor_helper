@@ -36,7 +36,7 @@ const stateDefaultHandler = async (request, state) => {
       response = await addFoundAssignmentCategoryAction(request, state);
       return response;
     case CHOOSE_LOCATION:
-      response = await addFoundAssignmentLocationAction(request, state);
+      response = await addFoundAssignmentLocationAction({ request, state });
       return response;
     case CHANGE_RANGE:
       response = await changeRangeAction(request, state);

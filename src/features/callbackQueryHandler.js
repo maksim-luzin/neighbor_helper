@@ -1,20 +1,23 @@
 const {
+  changeRangeAction,
   mainMenuAction,
 } = require('../actions/mainActions');
 
+const { paginationAction } = require('../actions/commonActions');
 const {
-  createdAssignmentsAction,
   removeFromFavoritesAction,
   addToFavoritesAction,
 } = require('../actions/assignmentActions');
 
-const callbackQueryHandler = async (callbackQuery) => {
+const { deleteMessage } = require('../helpers/telegram');
+
+const callbackQueryHandler = async (callbackQuery, state) => {
   let response;
   const splitCallbackQueryData = callbackQuery.data.split('.');
   switch (splitCallbackQueryData[0]) {
     case 'paginationAction':
-      response = await createdAssignmentsAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      response = await paginationAction(callbackQuery, +splitCallbackQueryData[1], state);
+      return response.concat(await deleteMessage(callbackQuery));
 
     case 'removeFromFavoritesAction':
       response = await removeFromFavoritesAction(

@@ -9,6 +9,11 @@ exports.FIND_ASSIGNMENTS = {
   GET_ASSIGNMENTS: 'findAssignment.getAssignments',
 };
 
+exports.MY_ASSIGNMENTS = {
+  GET_CREATED_ASSIGNMENTS: 'myAssignment.getCreatedAssignments',
+  GET_FAVORITE_ASSIGNMENTS: 'myAssignment.getFavoriteAssignments',
+};
+
 exports.CHANGE_RANGE = {
   CHANGE_RANGE: 'changeRange.ChangeRange',
 };

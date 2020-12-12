@@ -8,7 +8,7 @@ const {
   },
 } = require('../database');
 
-const getPagingData = require('../helpers/getPagingData');
+const { getPagingData } = require('../helpers/pagination');
 
 const ServiceResponse = require('../helpers/ServiceResponse');
 
@@ -72,7 +72,13 @@ module.exports = {
     }
   },
 
-  async getAllNearby({ telegramId, category = null, locationId }) {
+  async getAllNearby({
+    telegramId,
+    category = null,
+    locationId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
       const foundRangeAndCoordinates = await User.findOne({
         where: {
@@ -100,7 +106,22 @@ module.exports = {
         ${categoryCondition}
         AND a."authorTelegramId" <> ${telegramId}
         AND a.status <> 'done'
-        ORDER BY l.coordinates <-> l.coordinates`,
+        ORDER BY l.coordinates <-> l.coordinates
+        LIMIT ${limit} 
+        OFFSET ${offset}`,
+      );
+
+      const nearbyAssignmentsCount = await sequelize.query(
+        `SELECT COUNT(a.id) 
+        FROM "Assignments" a
+        INNER JOIN "Locations" l ON a."locationId" = l.id
+        WHERE ST_DWithin(l.coordinates, 
+        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
+        ${foundRangeAndCoordinates.range} * 1000)
+        ${categoryCondition}
+        AND a."authorTelegramId" <> ${telegramId}
+        AND a.status <> 'done'`,
       );
 
       // eslint-disable-next-line no-restricted-syntax
@@ -117,6 +138,7 @@ module.exports = {
 
       return new ServiceResponse({
         succeeded: true,
+        pagingData: getPagingData(nearbyAssignmentsCount[0][0], page, limit),
         model: nearbyAssignments[0],
       });
     } catch (e) {
@@ -129,29 +151,34 @@ module.exports = {
     }
   },
 
-  async getAllFavorites({ telegramId }) {
+  async getAllFavorites({
+    telegramId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
-      const favoriteAssignments = await User.findOne({
+      const favoriteAssignments = await FavoriteAssignment.findAndCountAll({
         where: {
           telegramId,
         },
         include: [{
           model: Assignment,
-          as: 'favoriteAssignments',
           include: [{ model: Location }],
         }],
+        limit,
+        offset,
       });
 
       return new ServiceResponse({
         succeeded: true,
-        model: favoriteAssignments.favoriteAssignments.map((elem) => ({
-          id: elem.id,
-          title: elem.title,
-          description: elem.description,
-          reward: elem.reward,
-          authorTelegramId: elem.authorTelegramId,
-          pictureUrl: elem.pictureUrl,
-          locationName: elem.Location.globalName,
+        pagingData: getPagingData(favoriteAssignments, page, limit),
+        model: favoriteAssignments.rows.map((elem) => ({
+          title: elem.Assignment.dataValues.title,
+          description: elem.Assignment.dataValues.description,
+          reward: elem.Assignment.dataValues.reward,
+          authorTelegramId: elem.Assignment.dataValues.authorTelegramId,
+          pictureUrl: elem.Assignment.dataValues.pictureUrl,
+          locationName: elem.Assignment.dataValues.Location.globalName,
         })),
       });
     } catch (e) {
@@ -165,7 +192,9 @@ module.exports = {
   },
 
   async getCreated({
-    telegramId, limit, offset, page,
+    telegramId,
+    pagination: { limit, offset },
+    page,
   }) {
     try {
       const createdAssignments = await Assignment.findAndCountAll({

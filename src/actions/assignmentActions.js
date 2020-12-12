@@ -319,12 +319,63 @@ const addToFavoritesAction = async (request, assignmentId) => {
   };
 };
 
+const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {
+  const result = await assignmentService.update({
+    telegramId: request.from.id,
+    assignmentId,
+    status: 'done',
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  return {
+    method: 'editMessageReplyMarkup',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      reply_markup: {
+        inline_keyboard: ownAssignmentInlineKeyboardTemplate(
+          {
+            assignmentId,
+            status: 'done',
+          },
+        ),
+      },
+    },
+  };
+};
+
+const markAssignmentAsNotCompletedAction = async ({ request, assignmentId }) => {
+  const result = await assignmentService.update({
+    telegramId: request.from.id,
+    assignmentId,
+    status: 'notDone',
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  return {
+    method: 'editMessageReplyMarkup',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      reply_markup: {
+        inline_keyboard: ownAssignmentInlineKeyboardTemplate(
+          {
+            assignmentId,
+            status: 'notDone',
+          },
+        ),
+      },
+    },
+  };
+};
+
 const removeAssignmentAction = async (request, assignmentId) => {
   const result = await assignmentService.delete({
     telegramId: request.from.id,
     assignmentId,
   });
-
   if (!result.succeeded) throw Error(result.message);
 
   const response = await createdAssignmentsAction(request);
@@ -340,4 +391,6 @@ module.exports = {
   removeFromFavoritesAction,
   addToFavoritesAction,
   removeAssignmentAction,
+  markAssignmentAsNotCompletedAction,
+  markAssignmentAsCompletedAction,
 };

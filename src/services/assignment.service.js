@@ -201,6 +201,9 @@ module.exports = {
         where: {
           authorTelegramId: telegramId,
         },
+        order: [
+          ['id', 'ASC'],
+        ],
         include: [{ model: Location }],
         limit,
         offset,

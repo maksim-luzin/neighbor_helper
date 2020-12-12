@@ -1,7 +1,11 @@
 const { telegramTemplate } = require('claudia-bot-builder');
 const { aboutUsMessageTemplate } = require('../templates/aboutUsTemplate');
 const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templates/mainMenuTemplate');
-const { rangeKeyboardTemplate, rangeMessageTemplate } = require('../templates/rangeTemplate');
+const {
+  rangeKeyboardTemplate,
+  rangeMessageTemplate,
+  rangeResponseMessageTemplate,
+} = require('../templates/rangeTemplate');
 const { myAssignmentsKeyboardTemplate } = require('../templates/assignmentTemplate');
 const { create, update } = require('../services').userService;
 const {
@@ -23,6 +27,10 @@ const {
 const {
   ADD_LOCATION,
 } = require('../constants/flow.step').ADD_LOCATION;
+
+const {
+  CHANGE_RANGE,
+} = require('../constants/flow.step').CHANGE_RANGE;
 
 const { userService } = require('../services');
 
@@ -60,53 +68,38 @@ const mainMenuAction = async (message) => {
 
 const aboutUsAction = () => aboutUsMessageTemplate;
 
-const showRangeAction = async (message) => {
+const showRangeAction = async (message, state) => {
   const result = await userService.getOne({ telegramId: message.from.id, params: ['range'] });
 
   if (!result.succeeded) throw Error(result.message);
 
+  await setState(message.from.id, CHANGE_RANGE);
+
   return new telegramTemplate.Text(rangeMessageTemplate(result.model.range))
-    .addInlineKeyboard(rangeKeyboardTemplate)
+    .addReplyKeyboard(rangeKeyboardTemplate)
     .get();
 };
 
-const changeRangeAction = async (callbackQuery) => {
-  let result = await userService.getOne({
-    telegramId: callbackQuery.from.id,
-    params: ['range'],
-  });
+const changeRangeAction = async (message, state) => {
+  if (Math.sign(message.text) === 1 && message.text <= 1000) {
+    const result = await userService.update({
+      telegramId: message.from.id,
+      newRange: message.text,
+    });
 
-  if (!result.succeeded) throw Error(result.message);
+    if (!result.succeeded) throw Error(result.message);
 
-  let newRange = result.model.range;
-  if (callbackQuery.data.split('.')[1] === '+') { // см. пояснение
-    newRange = result.model.range + 1; // в src/templates/rangeTemplate/rangeKeyboardTemplate.js
-  } else if (result.model.range > 1) {
-    newRange = result.model.range - 1;
+    return new telegramTemplate
+      .Text(rangeResponseMessageTemplate.rangeSuccessResponseMessageTemplate)
+      .addReplyKeyboard(
+        mainMenuKeyboardTemplate,
+        { one_time_keyboard: true },
+      )
+      .get();
   }
-
-  if (newRange === result.model.range) {
-    return null;
-  }
-
-  result = await userService.update({
-    telegramId: callbackQuery.from.id,
-    newRange,
-  });
-
-  if (!result.succeeded) throw Error(result.message);
-
-  return {
-    method: 'editMessageText',
-    body: {
-      chat_id: callbackQuery.message.chat.id,
-      message_id: callbackQuery.message.message_id,
-      text: rangeMessageTemplate(newRange),
-      reply_markup: {
-        inline_keyboard: rangeKeyboardTemplate,
-      },
-    },
-  };
+  return new telegramTemplate
+    .Text(rangeResponseMessageTemplate.rangeErrorResponseMessageTemplate)
+    .get();
 };
 
 const myAssignmentAction = () => new telegramTemplate

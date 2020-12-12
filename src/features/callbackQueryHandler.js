@@ -13,10 +13,6 @@ const callbackQueryHandler = async (callbackQuery, state) => {
   let response;
   const splitCallbackQueryData = callbackQuery.data.split('.');
   switch (splitCallbackQueryData[0]) {
-    case 'changeRangeAction':
-      response = await changeRangeAction(callbackQuery);
-      return response;
-
     case 'paginationAction':
       response = await paginationAction(callbackQuery, +splitCallbackQueryData[1], state);
       return response;

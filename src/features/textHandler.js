@@ -1,9 +1,11 @@
+const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
 const {
   BUTTON_ABOUT_US,
   BUTTON_ADD_LOCATION,
   BUTTON_CHANGE_RANGE,
   BUTTON_MY_ASSIGNMENT,
   BUTTON_FIND_ASSIGNMENTS,
+  BUTTON_ADD_ASSIGNMENT,
 } = require('../constants/button.text').MAIN_MENU;
 const {
   BUTTON_FAVORITE_ASSIGNMENTS,
@@ -38,6 +40,7 @@ const {
   myAssignmentAction,
   addMenuAddLocationAction,
   findAssignmentsAction,
+  addMenuSelectCategoryForCreatedAssignmentAction,
 } = require('../actions/mainActions');
 
 const {
@@ -45,15 +48,51 @@ const {
   favoriteAssignmentsAction,
 } = require('../actions/assignmentActions');
 
+const {
+  PUBLISH_ASSIGNMENT,
+} = require('../constants/button.text').ADD_ASSIGNMENT;
+
+const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
+
 const textHandlers = async (request, state) => {
   let response = false;
+
+  // Выбор категории для поиска обьявлений
+  if (state.step === findAssignmentsFlowSteps.CHOOSE_CATEGORY) {
+    // eslint-disable-next-line default-case
+    switch (request.text) {
+      // Выбор категории
+      // TODO: заменить на константы, когда будет локализация
+      case BUTTON_HELP:
+        request.text = 'help';
+        response = await categoryHandler(request, state);
+        return response;
+      case BUTTON_BARTER:
+        request.text = 'barter';
+        response = await categoryHandler(request, state);
+        return response;
+      case BUTTON_REPAIR:
+        request.text = 'repair';
+        response = await categoryHandler(request, state);
+        return response;
+      case BUTTON_EDUCATION:
+        request.text = 'education';
+        response = await categoryHandler(request, state);
+        return response;
+      case BUTTON_OTHER:
+        request.text = 'other';
+        response = await categoryHandler(request, state);
+        return response;
+    }
+  }
+
   switch (request.text) {
     case '/start':
       response = await startAction(request);
       return response;
 
     case BUTTON_ABOUT_US:
-      return aboutUsAction();
+      return aboutUsAction(request);
 
     case BUTTON_CHANGE_RANGE:
       response = await showRangeAction(request);
@@ -78,31 +117,16 @@ const textHandlers = async (request, state) => {
     case BUTTON_ADD_LOCATION:
       return addMenuAddLocationAction(request);
 
-      // Выбор категории
-      // TODO: заменить на константы, когда будет локализация
-    case BUTTON_HELP:
-      request.text = 'help';
-      response = await categoryHandler(request, state);
-      return response;
-    case BUTTON_BARTER:
-      request.text = 'barter';
-      response = await categoryHandler(request, state);
-      return response;
-    case BUTTON_REPAIR:
-      request.text = 'repair';
-      response = await categoryHandler(request, state);
-      return response;
-    case BUTTON_EDUCATION:
-      request.text = 'education';
-      response = await categoryHandler(request, state);
-      return response;
-    case BUTTON_OTHER:
-      request.text = 'other';
-      response = await categoryHandler(request, state);
-      return response;
-
     case BUTTON_BACK:
       response = await buttonBackHandler(request, state);
+      return response;
+
+    case BUTTON_ADD_ASSIGNMENT:
+      response = await addMenuSelectCategoryForCreatedAssignmentAction(request, state);
+      return response;
+
+    case PUBLISH_ASSIGNMENT:
+      response = await publishAddAssignmentAction(request, state);
       return response;
 
     default:

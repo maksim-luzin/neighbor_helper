@@ -16,6 +16,17 @@ const {
   CHOOSE_LOCATION,
 } = require('../constants/flow.step').FIND_ASSIGNMENTS;
 
+const { ADD_ASSIGNMENT } = require('../constants/flow.step');
+
+const {
+  chooseCategoryAssignmentAction,
+  addTitleForAddAssignmentAction,
+  addDescriptionForAddAssignmentAction,
+  chooseLocationForAddAssignmentAction,
+  addRewardForAddAssignmentAction,
+  addPictureForAddAssignmentAction,
+} = require('../actions/addAssignmentAction');
+
 // eslint-disable-next-line consistent-return
 const stateDefaultHandler = async (request, state) => {
   let response = false;
@@ -27,8 +38,30 @@ const stateDefaultHandler = async (request, state) => {
     case CHOOSE_CATEGORY:
       response = await addFoundAssignmentCategoryAction(request, state);
       return response;
-    case CHOOSE_LOCATION:
-      response = await addFoundAssignmentLocationAction(request, state);
+
+    // Add assignmet
+    case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
+      response = await chooseCategoryAssignmentAction(request, state);
+      return response;
+
+    case ADD_ASSIGNMENT.ADD_TITLE:
+      response = await addTitleForAddAssignmentAction(request, state);
+      return response;
+
+    case ADD_ASSIGNMENT.ADD_DESCRIPTION:
+      response = await addDescriptionForAddAssignmentAction(request, state);
+      return response;
+
+    case ADD_ASSIGNMENT.CHOOSE_LOCATION:
+      response = await chooseLocationForAddAssignmentAction(request, state);
+      return response;
+
+    case ADD_ASSIGNMENT.ADD_REWARD:
+      response = await addRewardForAddAssignmentAction(request, state);
+      return response;
+
+    case ADD_ASSIGNMENT.ADD_PICTURE:
+      response = await addPictureForAddAssignmentAction(request, state);
       return response;
   }
 };

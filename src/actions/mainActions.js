@@ -4,6 +4,7 @@ const { mainMenuKeyboardTemplate, mainMenuMessageTemplate } = require('../templa
 const { rangeKeyboardTemplate, rangeMessageTemplate } = require('../templates/rangeTemplate');
 const { myAssignmentsKeyboardTemplate } = require('../templates/assignmentTemplate');
 const { create, update } = require('../services').userService;
+const responseMessage = require('../helpers/responseMessage');
 const {
   chooseCategoryKeyboardTemplate,
   chooseCategoryMessageTemplate,
@@ -13,6 +14,8 @@ const {
   CHOOSE_CATEGORY,
   CHOOSE_LOCATION,
 } = require('../constants/flow.step').FIND_ASSIGNMENTS;
+
+const { ADD_ASSIGNMENT } = require('../constants/flow.step');
 const setState = require('../helpers/setState');
 
 const {
@@ -37,28 +40,39 @@ const startAction = async (message) => {
 
   const messageStart = `Здравствуй, ${message.from.first_name}.\n${aboutUsMessageTemplate}`;
 
-  return new telegramTemplate.Text(messageStart)
-    .addReplyKeyboard(
-      mainMenuKeyboardTemplate,
-      { one_time_keyboard: true },
-    )
-    .get();
+  return [
+    {
+      method: 'deleteMessage',
+      body: {
+        message_id: message.message_id,
+      },
+    },
+    new telegramTemplate
+      .Text(messageStart)
+      .addReplyKeyboard(
+        mainMenuKeyboardTemplate,
+        { one_time_keyboard: true },
+      )
+      // eslint-disable-next-line comma-dangle
+      .get()
+  ];
 };
 
 const mainMenuAction = async (message) => {
   // eslint-disable-next-line no-use-before-define
   await setState(message.from.id);
-  return (
-    new telegramTemplate.Text(mainMenuMessageTemplate)
-      .addReplyKeyboard(
-        mainMenuKeyboardTemplate,
-        { one_time_keyboard: true },
-      )
-      .get()
+  return responseMessage(
+    message,
+    mainMenuMessageTemplate,
+    mainMenuKeyboardTemplate,
   );
 };
 
-const aboutUsAction = () => aboutUsMessageTemplate;
+const aboutUsAction = (message) => responseMessage(
+  message,
+  aboutUsMessageTemplate,
+  mainMenuKeyboardTemplate,
+);
 
 const showRangeAction = async (message) => {
   const result = await userService.getOne({ telegramId: message.from.id, params: ['range'] });
@@ -115,13 +129,10 @@ const myAssignmentAction = () => new telegramTemplate
 const addMenuAddLocationAction = async (message) => {
   // eslint-disable-next-line no-use-before-define
   await setState(message.from.id, ADD_LOCATION);
-  return (
-    new telegramTemplate.Text(addLocationMessageTemplate)
-      .addReplyKeyboard(
-        addLocationKeyboardTemplate,
-        { one_time_keyboard: true },
-      )
-      .get()
+  return responseMessage(
+    message,
+    addLocationMessageTemplate,
+    addLocationKeyboardTemplate,
   );
 };
 
@@ -135,6 +146,14 @@ const findAssignmentsAction = async (message) => {
       .get()
   );
 };
+const addMenuSelectCategoryForCreatedAssignmentAction = async (message) => {
+  await setState(message.from.id, ADD_ASSIGNMENT.CHOOSE_CATEGORY);
+  return responseMessage(
+    message,
+    chooseCategoryMessageTemplate,
+    chooseCategoryKeyboardTemplate,
+  );
+};
 
 module.exports = {
   startAction,
@@ -145,4 +164,5 @@ module.exports = {
   myAssignmentAction,
   addMenuAddLocationAction,
   findAssignmentsAction,
+  addMenuSelectCategoryForCreatedAssignmentAction,
 };

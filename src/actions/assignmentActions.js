@@ -26,7 +26,7 @@ const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
 
 const setState = require('../helpers/setState');
 
-const { deleteMessage } = require('../helpers/telegram');
+const { deleteMessage, editMessageReplyMarkup } = require('../helpers/telegram');
 
 const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
 const { PAGE_SIZE } = require('../constants/pageSize');
@@ -266,31 +266,19 @@ const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites 
   if (!result.succeeded) throw Error(result.message);
 
   if (fromFavorites === 'false') {
-    return {
-      method: 'editMessageText',
-      body: {
-        chat_id: request.message.chat.id,
-        message_id: request.message.message_id,
-        text: request.message.text,
-        reply_markup: {
-          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
-            {
-              isFavorite: false,
-              assignmentId,
-            },
-          ),
+    return editMessageReplyMarkup(request, {
+      inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+        {
+          isFavorite: false,
+          assignmentId,
         },
-      },
-    };
+      ),
+    });
   }
 
-  return {
-    method: 'deleteMessage',
-    body: {
-      chat_id: request.message.chat.id,
-      message_id: request.message.message_id,
-    },
-  };
+  const response = await favoriteAssignmentsAction(request);
+
+  return response.concat(await deleteMessage(request));
 };
 
 const addToFavoritesAction = async (request, assignmentId) => {
@@ -301,22 +289,14 @@ const addToFavoritesAction = async (request, assignmentId) => {
 
   if (!result.succeeded) throw Error(result.message);
 
-  return {
-    method: 'editMessageText',
-    body: {
-      chat_id: request.message.chat.id,
-      message_id: request.message.message_id,
-      text: request.message.text,
-      reply_markup: {
-        inline_keyboard: publicAssignmentInlineKeyboardTemplate(
-          {
-            isFavorite: true,
-            assignmentId,
-          },
-        ),
+  return editMessageReplyMarkup(request, {
+    inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+      {
+        isFavorite: true,
+        assignmentId,
       },
-    },
-  };
+    ),
+  });
 };
 
 const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {
@@ -328,21 +308,14 @@ const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {
 
   if (!result.succeeded) throw Error(result.message);
 
-  return {
-    method: 'editMessageReplyMarkup',
-    body: {
-      chat_id: request.message.chat.id,
-      message_id: request.message.message_id,
-      reply_markup: {
-        inline_keyboard: ownAssignmentInlineKeyboardTemplate(
-          {
-            assignmentId,
-            status: 'done',
-          },
-        ),
+  return editMessageReplyMarkup(request, {
+    inline_keyboard: ownAssignmentInlineKeyboardTemplate(
+      {
+        assignmentId,
+        status: 'done',
       },
-    },
-  };
+    ),
+  });
 };
 
 const markAssignmentAsNotCompletedAction = async ({ request, assignmentId }) => {
@@ -354,21 +327,14 @@ const markAssignmentAsNotCompletedAction = async ({ request, assignmentId }) => 
 
   if (!result.succeeded) throw Error(result.message);
 
-  return {
-    method: 'editMessageReplyMarkup',
-    body: {
-      chat_id: request.message.chat.id,
-      message_id: request.message.message_id,
-      reply_markup: {
-        inline_keyboard: ownAssignmentInlineKeyboardTemplate(
-          {
-            assignmentId,
-            status: 'notDone',
-          },
-        ),
+  return editMessageReplyMarkup(request, {
+    inline_keyboard: ownAssignmentInlineKeyboardTemplate(
+      {
+        assignmentId,
+        status: 'notDone',
       },
-    },
-  };
+    ),
+  });
 };
 
 const removeAssignmentAction = async (request, assignmentId) => {

@@ -8,15 +8,8 @@ const {
 } = require('../actions/assignmentActions');
 
 const {
-  ADD_LOCATION_NAME,
-} = require('../constants/flow.step').ADD_LOCATION;
-
-const {
-  CHOOSE_CATEGORY,
-  CHOOSE_LOCATION,
-} = require('../constants/flow.step').FIND_ASSIGNMENTS;
-
-const { ADD_ASSIGNMENT } = require('../constants/flow.step');
+  changeRangeAction,
+} = require('../actions/mainActions');
 
 const {
   chooseCategoryAssignmentAction,
@@ -26,6 +19,21 @@ const {
   addRewardForAddAssignmentAction,
   addPictureForAddAssignmentAction,
 } = require('../actions/addAssignmentAction');
+
+const {
+  ADD_LOCATION_NAME,
+} = require('../constants/flow.step').ADD_LOCATION;
+
+const {
+  CHOOSE_CATEGORY,
+  CHOOSE_LOCATION,
+} = require('../constants/flow.step').FIND_ASSIGNMENTS;
+
+const {
+  CHANGE_RANGE,
+} = require('../constants/flow.step').CHANGE_RANGE;
+
+const { ADD_ASSIGNMENT } = require('../constants/flow.step');
 
 // eslint-disable-next-line consistent-return
 const stateDefaultHandler = async (request, state) => {
@@ -37,6 +45,12 @@ const stateDefaultHandler = async (request, state) => {
       return response;
     case CHOOSE_CATEGORY:
       response = await addFoundAssignmentCategoryAction(request, state);
+      return response;
+    case CHOOSE_LOCATION:
+      response = await addFoundAssignmentLocationAction({ request, state });
+      return response;
+    case CHANGE_RANGE:
+      response = await changeRangeAction(request, state);
       return response;
 
     // Add assignmet

@@ -1,20 +1,11 @@
 const {
-  BUTTON_MORE,
-  BUTTON_LESS,
-} = require('../../constants/button.text').CHANGE_RANGE;
+  BUTTON_HOME,
+} = require('../../constants/button.text').COMMON;
 
 const rangeKeyboardTemplate = [
-  [
-    {
-      text: BUTTON_LESS,
-      callback_data: 'changeRangeAction.-', // callback_data является строкой, поэтому я
-      // кладу название экшена, который должен сработать, и через точку пишу минус, означающий что
-      // было вызвано уменьшение радиуса. В экшене идёт сплит строки.
-    },
-    {
-      text: BUTTON_MORE,
-      callback_data: 'changeRangeAction.+',
-    }],
+  ['1', '3', '5'],
+  ['10', '20', '50'],
+  [BUTTON_HOME],
 ];
 
 module.exports = rangeKeyboardTemplate;

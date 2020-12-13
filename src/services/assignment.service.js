@@ -8,6 +8,8 @@ const {
   },
 } = require('../database');
 
+const { getPagingData } = require('../helpers/pagination');
+
 const ServiceResponse = require('../helpers/ServiceResponse');
 
 module.exports = {
@@ -70,7 +72,13 @@ module.exports = {
     }
   },
 
-  async getAllNearby({ telegramId, category = null, locationId }) {
+  async getAllNearby({
+    telegramId,
+    category = null,
+    locationId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
       const foundRangeAndCoordinates = await User.findOne({
         where: {
@@ -88,7 +96,7 @@ module.exports = {
 
       const categoryCondition = category ? `AND a.category = '${category}'` : '';
       const nearbyAssignments = await sequelize.query(
-        `SELECT a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
+        `SELECT a.id, a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
         FROM "Assignments" a
         INNER JOIN "Locations" l ON a."locationId" = l.id
         WHERE ST_DWithin(l.coordinates, 
@@ -96,11 +104,41 @@ module.exports = {
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
         ${foundRangeAndCoordinates.range} * 1000)
         ${categoryCondition}
-        ORDER BY l.coordinates <-> l.coordinates`,
+        AND a."authorTelegramId" <> ${telegramId}
+        AND a.status <> 'done'
+        ORDER BY l.coordinates <-> l.coordinates
+        LIMIT ${limit} 
+        OFFSET ${offset}`,
       );
+
+      const nearbyAssignmentsCount = await sequelize.query(
+        `SELECT COUNT(a.id) 
+        FROM "Assignments" a
+        INNER JOIN "Locations" l ON a."locationId" = l.id
+        WHERE ST_DWithin(l.coordinates, 
+        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
+        ${foundRangeAndCoordinates.range} * 1000)
+        ${categoryCondition}
+        AND a."authorTelegramId" <> ${telegramId}
+        AND a.status <> 'done'`,
+      );
+
+      // eslint-disable-next-line no-restricted-syntax
+      for await (const assignment of nearbyAssignments[0]) {
+        const foundFavorite = await FavoriteAssignment.findOne({
+          where: {
+            telegramId,
+            assignmentId: assignment.id,
+          },
+        });
+        // eslint-disable-next-line no-param-reassign
+        assignment.isFavorite = !!foundFavorite;
+      }
 
       return new ServiceResponse({
         succeeded: true,
+        pagingData: getPagingData(nearbyAssignmentsCount[0][0], page, limit),
         model: nearbyAssignments[0],
       });
     } catch (e) {
@@ -113,28 +151,34 @@ module.exports = {
     }
   },
 
-  async getAllFavorites({ telegramId }) {
+  async getAllFavorites({
+    telegramId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
-      const favoriteAssignments = await User.findOne({
+      const favoriteAssignments = await FavoriteAssignment.findAndCountAll({
         where: {
           telegramId,
         },
         include: [{
           model: Assignment,
-          as: 'favoriteAssignments',
           include: [{ model: Location }],
         }],
+        limit,
+        offset,
       });
 
       return new ServiceResponse({
         succeeded: true,
-        model: favoriteAssignments.favoriteAssignments.map((elem) => ({
-          title: elem.title,
-          description: elem.description,
-          reward: elem.reward,
-          authorTelegramId: elem.authorTelegramId,
-          pictureUrl: elem.pictureUrl,
-          locationName: elem.Location.globalName,
+        pagingData: getPagingData(favoriteAssignments, page, limit),
+        model: favoriteAssignments.rows.map((elem) => ({
+          title: elem.Assignment.dataValues.title,
+          description: elem.Assignment.dataValues.description,
+          reward: elem.Assignment.dataValues.reward,
+          authorTelegramId: elem.Assignment.dataValues.authorTelegramId,
+          pictureUrl: elem.Assignment.dataValues.pictureUrl,
+          locationName: elem.Assignment.dataValues.Location.globalName,
         })),
       });
     } catch (e) {
@@ -147,30 +191,33 @@ module.exports = {
     }
   },
 
-  async getCreated({ telegramId }) {
+  async getCreated({
+    telegramId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
-      const createdAssignments = await User.findOne({
+      const createdAssignments = await Assignment.findAndCountAll({
         where: {
-          telegramId,
+          authorTelegramId: telegramId,
         },
-        include: [{
-          model: Assignment,
-          as: 'createdAssignments',
-          include: [{ model: Location }],
-        }],
+        include: [{ model: Location }],
+        limit,
+        offset,
       });
 
       return new ServiceResponse({
         succeeded: true,
-        model: createdAssignments.createdAssignments.map((elem) => ({
-          title: elem.title,
-          description: elem.description,
-          status: elem.status,
-          reward: elem.reward,
-          authorTelegramId: elem.authorTelegramId,
-          pictureUrl: elem.pictureUrl,
-          locationName: elem.Location.globalName,
-          localLocationName: elem.Location.localName,
+        pagingData: getPagingData(createdAssignments, page, limit),
+        model: createdAssignments.rows.map((elem) => ({
+          title: elem.dataValues.title,
+          description: elem.dataValues.description,
+          status: elem.dataValues.status,
+          reward: elem.dataValues.reward,
+          authorTelegramId: elem.dataValues.authorTelegramId,
+          pictureUrl: elem.dataValues.pictureUrl,
+          locationName: elem.dataValues.Location.dataValues.globalName,
+          localLocationName: elem.dataValues.Location.dataValues.localName,
         })),
       });
     } catch (e) {
@@ -247,51 +294,38 @@ module.exports = {
 
   async addToFavorites({ telegramId, assignmentId }) {
     try {
-      const foundUser = await User.findOne({
+      await FavoriteAssignment.findOrCreate({
         where: {
           telegramId,
+          assignmentId,
         },
-        attributes: ['telegramId'],
+        defaults: {
+          telegramId,
+          assignmentId,
+        },
       });
 
-      if (foundUser) {
-        const foundAssignment = await Assignment.findOne({
-          where: {
-            id: assignmentId,
-          },
-          attributes: ['id'],
-        });
-
-        if (foundAssignment) {
-          const foundFavoriteAssignment = await FavoriteAssignment.findOne({
-            where: {
-              telegramId,
-              assignmentId,
-            },
-            attributes: ['assignmentId'],
-          });
-          if (!foundFavoriteAssignment) {
-            await FavoriteAssignment.create({
-              telegramId,
-              assignmentId,
-            });
-            return new ServiceResponse({ succeeded: true });
-          }
-          return new ServiceResponse({
-            succeeded: true,
-            message: 'Assignment is already in favorites!',
-          });
-        }
-        return new ServiceResponse({
-          succeeded: true,
-          message: `Assignment with id=${assignmentId} was not found.`,
-        });
-      }
-
+      return new ServiceResponse({ succeeded: true });
+    } catch (e) {
       return new ServiceResponse({
-        succeeded: true,
-        message: `User with telegramId=${telegramId} was not found.`,
+        succeeded: false,
+        message: 'Error occurred while adding assignment to favorites with '
+          + `telegramId=${telegramId}, id=${assignmentId}. `
+          + `${e}.`,
       });
+    }
+  },
+
+  async removeFromFavorites({ telegramId, assignmentId }) {
+    try {
+      await FavoriteAssignment.destroy({
+        where: {
+          telegramId,
+          assignmentId,
+        },
+      });
+
+      return new ServiceResponse({ succeeded: true });
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,

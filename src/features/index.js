@@ -27,7 +27,7 @@ const handlers = async (request) => {
         return await locationHandler(message, state);
       }
 
-      if (message.photo && state.step === ADD_ASSIGNMENT.ADD_PICTURE) {
+      if (message.photo && state.step === ADD_ASSIGNMENT.SHOW_ASSIGNMENT) {
         return await pictureHandler(message, state);
       }
 

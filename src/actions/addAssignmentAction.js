@@ -16,7 +16,6 @@ const {
   ADD_DESCRIPTION,
   CHOOSE_LOCATION,
   ADD_REWARD,
-  ADD_PICTURE,
   SHOW_ASSIGNMENT,
   PUBLISH_ASSIGNMENT,
 } = require('../constants/flow.step').ADD_ASSIGNMENT;
@@ -43,12 +42,15 @@ const {
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
 
-const chooseCategoryAssignmentAction = async (message, state) => {
+const chooseCategoryAssignmentAction = async (message, state, categoryHandler) => {
   const { text } = message;
-  if (!(text === BUTTON_BACK || validationInputCategory(text))) return;
+  if (!categoryHandler && !(text === BUTTON_BACK || validationInputCategory(text))) return;
+  // eslint-disable-next-line no-nested-ternary
   const category = text === BUTTON_BACK
     ? state.data.category
-    : text;
+    : categoryHandler
+      ? text
+      : assignmentCategory[text];
 
   await setState(
     message.from.id,
@@ -60,10 +62,7 @@ const chooseCategoryAssignmentAction = async (message, state) => {
   );
 
   // eslint-disable-next-line consistent-return
-  const response = commonKeyboard(addTitleAssignmentMessageTemplate, message);
-
-  // eslint-disable-next-line consistent-return
-  return response;
+  return commonKeyboard(addTitleAssignmentMessageTemplate, message);
 };
 
 const addTitleForAddAssignmentAction = async (message, state) => {
@@ -143,7 +142,7 @@ const addRewardForAddAssignmentAction = async (message, state) => {
 
   await setState(
     message.from.id,
-    ADD_PICTURE,
+    SHOW_ASSIGNMENT,
     data,
     state.cache,
   );
@@ -153,7 +152,7 @@ const addRewardForAddAssignmentAction = async (message, state) => {
 };
 
 const addPictureForAddAssignmentAction = async (message, state) => {
-  const data = { ...state.data };
+  let data = { ...state.data };
   let pictureUrl;
 
   const photo = message.photo
@@ -167,12 +166,13 @@ const addPictureForAddAssignmentAction = async (message, state) => {
   if (photo) {
     const { length } = photo;
     pictureUrl = photo[length - 1].file_id;
+    data = { ...data, pictureUrl };
   }
   if (text === BUTTON_SKIP && data.pictureUrl) delete data.pictureUrl;
 
   await setState(
     message.from.id,
-    SHOW_ASSIGNMENT,
+    PUBLISH_ASSIGNMENT,
     data,
     state.cache,
   );
@@ -198,8 +198,6 @@ const addPictureForAddAssignmentAction = async (message, state) => {
 
 const publishAddAssignmentAction = async (message, state) => {
   await setState(message.from.id);
-  const assignment = state.data;
-  assignment.category = assignmentCategory[assignment.category];
   const result = await create(state.data);
   if (!result.succeeded) throw Error(result.message);
   return responseMessage(

@@ -24,8 +24,6 @@ exports.ADD_ASSIGNMENT = {
   ADD_DESCRIPTION: 'addAssignment.addDescription',
   CHOOSE_LOCATION: 'addAssignment.chooseLocation',
   ADD_REWARD: 'addAssignment.addReward',
-  ADD_PICTURE: 'addAssignment.addPicture',
-  ADD_LINK_TELEGRAPH: 'addAssignment.addLinkTelegraph',
   SHOW_ASSIGNMENT: 'addAssignment.showAssignment',
   PUBLISH_ASSIGNMENT: 'addAssignment.publishAssignment',
 };

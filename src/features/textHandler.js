@@ -54,38 +54,9 @@ const {
 
 const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
 
+// eslint-disable-next-line consistent-return
 const textHandlers = async (request, state) => {
   let response = false;
-
-  // Выбор категории для поиска обьявлений
-  if (state.step === findAssignmentsFlowSteps.CHOOSE_CATEGORY) {
-    // eslint-disable-next-line default-case
-    switch (request.text) {
-      // Выбор категории
-      // TODO: заменить на константы, когда будет локализация
-      case BUTTON_HELP:
-        request.text = 'help';
-        response = await categoryHandler(request, state);
-        return response;
-      case BUTTON_BARTER:
-        request.text = 'barter';
-        response = await categoryHandler(request, state);
-        return response;
-      case BUTTON_REPAIR:
-        request.text = 'repair';
-        response = await categoryHandler(request, state);
-        return response;
-      case BUTTON_EDUCATION:
-        request.text = 'education';
-        response = await categoryHandler(request, state);
-        return response;
-      case BUTTON_OTHER:
-        request.text = 'other';
-        response = await categoryHandler(request, state);
-        return response;
-    }
-  }
-
   switch (request.text) {
     case '/start':
       response = await startAction(request);
@@ -119,6 +90,29 @@ const textHandlers = async (request, state) => {
 
     case BUTTON_BACK:
       response = await buttonBackHandler(request, state);
+      return response;
+
+    // Выбор категории
+    // TODO: заменить на константы, когда будет локализация
+    case BUTTON_HELP:
+      request.text = 'help';
+      response = await categoryHandler(request, state);
+      return response;
+    case BUTTON_BARTER:
+      request.text = 'barter';
+      response = await categoryHandler(request, state);
+      return response;
+    case BUTTON_REPAIR:
+      request.text = 'repair';
+      response = await categoryHandler(request, state);
+      return response;
+    case BUTTON_EDUCATION:
+      request.text = 'education';
+      response = await categoryHandler(request, state);
+      return response;
+    case BUTTON_OTHER:
+      request.text = 'other';
+      response = await categoryHandler(request, state);
       return response;
 
     case BUTTON_ADD_ASSIGNMENT:

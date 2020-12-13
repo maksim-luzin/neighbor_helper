@@ -55,7 +55,7 @@ const stateDefaultHandler = async (request, state) => {
 
     // Add assignmet
     case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
-      response = await chooseCategoryAssignmentAction(request, state);
+      response = await chooseCategoryAssignmentAction(request, state, false);
       return response;
 
     case ADD_ASSIGNMENT.ADD_TITLE:
@@ -74,7 +74,7 @@ const stateDefaultHandler = async (request, state) => {
       response = await addRewardForAddAssignmentAction(request, state);
       return response;
 
-    case ADD_ASSIGNMENT.ADD_PICTURE:
+    case ADD_ASSIGNMENT.SHOW_ASSIGNMENT:
       response = await addPictureForAddAssignmentAction(request, state);
       return response;
   }

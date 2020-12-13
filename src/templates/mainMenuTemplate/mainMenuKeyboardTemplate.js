@@ -4,14 +4,15 @@ const {
   BUTTON_CHANGE_RANGE,
   BUTTON_MY_ASSIGNMENT,
   BUTTON_FIND_ASSIGNMENTS,
+  BUTTON_ADD_ASSIGNMENT,
 } = require('../../constants/button.text').MAIN_MENU;
 
 const mainMenuKeyboardTemplate = [
   [BUTTON_CHANGE_RANGE],
   [BUTTON_ADD_LOCATION],
   [BUTTON_MY_ASSIGNMENT],
-  ['Подать объявление'],
   [BUTTON_FIND_ASSIGNMENTS],
+  [BUTTON_ADD_ASSIGNMENT],
   ['Язык', BUTTON_ABOUT_US],
 ];
 

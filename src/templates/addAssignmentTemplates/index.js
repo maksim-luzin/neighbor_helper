@@ -1,0 +1,11 @@
+exports.addTitleAssignmentMessageTemplate = require('./addTitleAssignmentMessageTemplate');
+exports.addDescriptionAssignmentMessageTemplate = require('./addDescriptionAssignmentMessageTemplate');
+exports.chooseCategoryAssignmentMessageTemplate = require('./chooseCategoryAssignmentMessageTemplate');
+exports.addRewardAssignmentMessageTemplate = require('./addRewardAssignmentMessageTemplate');
+exports.addPictureAssignmentMessageTemplate = require('./addPictureAssignmentMessageTemplate');
+exports.chooseLocationAssignmentMessageTemplate = require('./chooseLocationAssignmentMessageTemplate');
+exports.addLinkTelegraphAssignmentMessageTemplate = require('./addLinkTelegraphAssignmentMessageTemplate');
+exports.returnMainMenuAfterCreateAssignmentMessageTemplate = require('./publishAssignnmentMessageTemplate');
+exports.previewAssignnmentKeyboardTemplate = require('./previewAssignnmentKeyboardTemplate');
+exports.previewAssignnmentMessageTemplate = require('./previewAssignnmentMessageTemplate');
+exports.publishAssignnmentMessageTemplate = require('./publishAssignnmentMessageTemplate');

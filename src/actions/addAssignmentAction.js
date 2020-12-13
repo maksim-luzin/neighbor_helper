@@ -178,6 +178,7 @@ const addPictureForAddAssignmentAction = async (message, state) => {
   );
   let assignment = `*${state.data.title}*\n ${state.data.description}`;
   if (state.data.reward) assignment += `\n\`Награда: ${state.data.reward}\``;
+  assignment += `\n\`Категория: ${categoryNameToShow(state.data.category)}\``;
   assignment += `\n\`Локация: ${state.cache}\``;
 
   if (photo) {
@@ -239,4 +240,12 @@ function skipCommonKeyboard(resMessage, message) {
     resMessage,
     skipCommonKeyboardTemplate,
   );
+}
+
+function categoryNameToShow(category) {
+  const response = Object.entries(assignmentCategory).find((elem) => {
+    if (category === elem[1]) return true;
+    return false;
+  })[0];
+  return response;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const { Text, Pause } = require('claudia-bot-builder').telegramTemplate;
 
 module.exports.pause = (time) => new Pause(time).get();
@@ -15,6 +16,15 @@ module.exports.deleteMessage = (request) => ({
   body: {
     chat_id: request.message.chat.id,
     message_id: request.message.message_id,
+  },
+});
+
+module.exports.editMessageReplyMarkup = (request, reply_markup) => ({
+  method: 'editMessageReplyMarkup',
+  body: {
+    chat_id: request.message.chat.id,
+    message_id: request.message.message_id,
+    reply_markup,
   },
 });
 

@@ -37,7 +37,9 @@ const handlers = async (request) => {
     }
 
     if (originalRequest.callback_query) {
-      return await callbackQueryHandler(originalRequest.callback_query);
+      // eslint-disable-next-line no-use-before-define
+      state = await stateLoad(originalRequest.callback_query);
+      return await callbackQueryHandler(originalRequest.callback_query, state);
     }
 
     return messageDefaultAction();

@@ -10,6 +10,14 @@ module.exports.hideInlineKeyboard = (messageId) => ({
   },
 });
 
+module.exports.deleteMessage = (request) => ({
+  method: 'deleteMessage',
+  body: {
+    chat_id: request.message.chat.id,
+    message_id: request.message.message_id,
+  },
+});
+
 module.exports.sendText = (messageEnum, userLang, extraButton) => {
   const langEnum = userLang ? messageEnum[userLang] : messageEnum;
   const keyboard = messageEnum.keyboard || langEnum.keyboard;

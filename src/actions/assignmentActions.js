@@ -2,11 +2,13 @@ const { telegramTemplate } = require('claudia-bot-builder');
 const { locationService, assignmentService } = require('../services');
 
 const {
-  assignmentTextTemplate,
+  assignmentMessageTemplate,
   ownAssignmentInlineKeyboardTemplate,
   publicAssignmentInlineKeyboardTemplate,
   findAssignmentsMessageTemplate,
   findAssignmentsKeyboardTemplate,
+  favoriteAssignmentsMessageTemplate,
+  createdAssignmentsMessageTemplate,
 } = require('../templates/assignmentTemplate');
 
 const {
@@ -19,47 +21,124 @@ const {
 } = require('../constants/button.text').COMMON;
 
 const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
+const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
 
 const setState = require('../helpers/setState');
 
-const favoriteAssignmentsAction = async (request) => {
+const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
+const { PAGE_SIZE } = require('../constants/pageSize');
+const { getPagination } = require('../helpers/pagination');
+
+const favoriteAssignmentsAction = async (request, page = 0) => {
   const result = await assignmentService.getAllFavorites({
     telegramId: request.from.id,
+    pagination: getPagination(page, PAGE_SIZE),
+    page,
   });
 
+  if (!result.succeeded) throw Error(result.message);
+
+  await setState(request.from.id, myAssignmentsFlowSteps.GET_FAVORITE_ASSIGNMENTS);
+
+  const { pagingData } = result;
   const assignments = result.model;
 
-  return assignments.map((assignment) => {
+  if (assignments.length === 0) {
+    return new telegramTemplate.Text(
+      favoriteAssignmentsMessageTemplate.noFavoriteAssignmentsMessageTemplate,
+    )
+      .get();
+  }
+
+  const basicResponse = [
+    new telegramTemplate.Text(
+      favoriteAssignmentsMessageTemplate.favoriteAssignmentsMessageTemplate,
+    )
+      .get(),
+  ];
+
+  const paginationResponse = [
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  ];
+
+  const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
-      return new telegramTemplate.Photo(assignment.pictureUrl, assignmentTextTemplate(assignment))
-        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
+      return new telegramTemplate
+        .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
+        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({
+          isFavorite: true,
+          assignmentId: assignment.id,
+          fromFavorites: true,
+        }))
         .get();
     }
 
-    return new telegramTemplate.Text(assignmentTextTemplate(assignment))
-      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({ isFavorite: true }))
+    return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
+      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({
+        isFavorite: true,
+        assignmentId: assignment.id,
+        fromFavorites: true,
+      }))
       .get();
   });
+
+  if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
+
+  return basicResponse.concat(assignmentsResponse, paginationResponse);
 };
 
-const createdAssignmentsAction = async (request) => {
+const createdAssignmentsAction = async (request, page = 0) => {
   const result = await assignmentService.getCreated({
     telegramId: request.from.id,
+    pagination: getPagination(page, PAGE_SIZE),
+    page,
   });
 
+  if (!result.succeeded) throw Error(result.message);
+
+  await setState(request.from.id, myAssignmentsFlowSteps.GET_CREATED_ASSIGNMENTS);
+
+  const { pagingData } = result;
   const assignments = result.model;
 
-  return assignments.map((assignment) => {
+  if (assignments.length === 0) {
+    return new telegramTemplate.Text(
+      createdAssignmentsMessageTemplate.noCreatedAssignmentsMessageTemplate,
+    )
+      .get();
+  }
+
+  const basicResponse = [
+    new telegramTemplate.Text(
+      createdAssignmentsMessageTemplate.createdAssignmentsMessageTemplate,
+    )
+      .get(),
+  ];
+
+  const paginationResponse = [
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  ];
+
+  const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
-      return new telegramTemplate.Photo(assignment.pictureUrl, assignmentTextTemplate(assignment))
+      return new telegramTemplate
+        .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
         .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
         .get();
     }
 
-    return new telegramTemplate.Text(assignmentTextTemplate(assignment))
+    return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
       .addInlineKeyboard(ownAssignmentInlineKeyboardTemplate(assignment.status))
       .get();
   });
+
+  if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
+
+  return basicResponse.concat(assignmentsResponse, paginationResponse);
 };
 
 const addFoundAssignmentCategoryAction = async (message, state) => {
@@ -88,27 +167,37 @@ const addFoundAssignmentCategoryAction = async (message, state) => {
       .get());
 };
 
-const addFoundAssignmentLocationAction = async (message, state) => {
+const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) => {
+  const locationId = state.data.locationId
+    ? state.data.locationId
+    : state.cache.find((elem) => elem.localName === request.text).id;
+
   const result = await assignmentService.getAllNearby({
-    telegramId: message.from.id,
+    telegramId: request.from.id,
     category: state.data.foundAssignmentChosenCategory,
-    locationId: state.cache.find((elem) => elem.localName === message.text).id,
+    locationId,
+    pagination: getPagination(page, PAGE_SIZE),
+    page,
   });
 
-  if (!result.succeeded) throw Error(result.message);
+  if (!result.succeeded) throw Error(result.request);
+
+  const { pagingData } = result;
+  const assignments = result.model;
 
   await setState(
-    message.from.id,
+    request.from.id,
     findAssignmentsFlowSteps.GET_ASSIGNMENTS,
     {
       ...state.data,
+      locationId,
     },
-    {
+    [
       ...state.cache,
-    },
+    ],
   );
 
-  if (result.model.length === 0) {
+  if (assignments.length === 0) {
     return (
       new telegramTemplate
         .Text(findAssignmentsMessageTemplate.notFoundAssignmentsMessageTemplate)
@@ -123,22 +212,102 @@ const addFoundAssignmentLocationAction = async (message, state) => {
       .get(),
   ];
 
-  const assignmentsResponse = result.model.map((assignment, index) => {
+  const paginationResponse = [
+    new telegramTemplate.Text(paginationMessageTemplate(pagingData))
+      .addInlineKeyboard(paginationKeyboardTemplate(pagingData))
+      .get(),
+  ];
+
+  const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
       return new telegramTemplate.Photo(assignment.pictureUrl,
-        assignmentTextTemplate({ ...assignment, locationName: assignment.globalName }))
-        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(false))
+        assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }))
+        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(
+          {
+            isFavorite: assignment.isFavorite,
+            assignmentId: assignment.id,
+          },
+        ))
         .get();
     }
 
     return new telegramTemplate.Text(
-      assignmentTextTemplate({ ...assignment, locationName: assignment.globalName }),
+      assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }),
     )
-      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(false))
+      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(
+        {
+          isFavorite: assignment.isFavorite,
+          assignmentId: assignment.id,
+        },
+      ))
       .get();
   });
 
-  return basicResponse.concat(assignmentsResponse);
+  if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
+
+  return basicResponse.concat(assignmentsResponse, paginationResponse);
+};
+
+const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites }) => {
+  const result = await assignmentService.removeFromFavorites({
+    telegramId: request.from.id,
+    assignmentId,
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  if (fromFavorites === 'false') {
+    return {
+      method: 'editMessageText',
+      body: {
+        chat_id: request.message.chat.id,
+        message_id: request.message.message_id,
+        text: request.message.text,
+        reply_markup: {
+          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+            {
+              isFavorite: false,
+              assignmentId,
+            },
+          ),
+        },
+      },
+    };
+  }
+
+  return {
+    method: 'deleteMessage',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+    },
+  };
+};
+
+const addToFavoritesAction = async (request, assignmentId) => {
+  const result = await assignmentService.addToFavorites({
+    telegramId: request.from.id,
+    assignmentId,
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  return {
+    method: 'editMessageText',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      text: request.message.text,
+      reply_markup: {
+        inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+          {
+            isFavorite: true,
+            assignmentId,
+          },
+        ),
+      },
+    },
+  };
 };
 
 module.exports = {
@@ -146,4 +315,6 @@ module.exports = {
   createdAssignmentsAction,
   addFoundAssignmentCategoryAction,
   addFoundAssignmentLocationAction,
+  removeFromFavoritesAction,
+  addToFavoritesAction,
 };

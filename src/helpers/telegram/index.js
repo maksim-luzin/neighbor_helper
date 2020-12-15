@@ -11,11 +11,11 @@ module.exports.hideInlineKeyboard = (messageId) => ({
   },
 });
 
-module.exports.deleteMessage = (request) => ({
+module.exports.deleteMessage = (request, step = 0) => ({
   method: 'deleteMessage',
   body: {
     chat_id: request.message.chat.id,
-    message_id: request.message.message_id,
+    message_id: request.message.message_id + step,
   },
 });
 

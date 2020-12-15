@@ -278,7 +278,9 @@ const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites 
 
   const response = await favoriteAssignmentsAction(request);
 
-  return response.concat(await deleteMessage(request));
+  return response.concat(await deleteMessage(request, 1))
+    .concat(await deleteMessage(request))
+    .concat(await deleteMessage(request, -1));
 };
 
 const addToFavoritesAction = async (request, assignmentId) => {
@@ -346,7 +348,9 @@ const removeAssignmentAction = async (request, assignmentId) => {
 
   const response = await createdAssignmentsAction(request);
 
-  return response.concat(await deleteMessage(request));
+  return response.concat(await deleteMessage(request, 1))
+    .concat(await deleteMessage(request))
+    .concat(await deleteMessage(request, -1));
 };
 
 module.exports = {

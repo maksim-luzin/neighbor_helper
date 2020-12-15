@@ -10,6 +10,9 @@ const {
   createdAssignmentsAction,
   removeFromFavoritesAction,
   addToFavoritesAction,
+  markAssignmentAsSpamAction,
+  confirmAssignmentAsSpamAction,
+  backFromConfirmAssignmentAsSpamAction,
 } = require('../actions/assignmentActions');
 
 const callbackQueryHandler = async (callbackQuery) => {
@@ -36,6 +39,21 @@ const callbackQueryHandler = async (callbackQuery) => {
 
     case 'addToFavoritesAction':
       response = await addToFavoritesAction(callbackQuery, splitCallbackQueryData[1]);
+      return response;
+
+    case 'markAssignmentAsSpamAction':
+      response = markAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
+      return response;
+
+    case 'confirmAssignmentAsSpamAction':
+      response = await confirmAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
+      return response;
+
+    case 'backFromConfirmAssignmentAsSpamAction':
+      response = await backFromConfirmAssignmentAsSpamAction(
+        callbackQuery,
+        splitCallbackQueryData[1],
+      );
       return response;
 
     default:

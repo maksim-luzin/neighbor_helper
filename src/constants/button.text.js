@@ -14,6 +14,7 @@ exports.CHANGE_RANGE = {
 exports.COMMON = {
   BUTTON_BACK: 'Назад',
   BUTTON_HOME: 'Домой',
+  BUTTON_CONFIRM: 'Да',
 };
 
 exports.CATEGORY = {

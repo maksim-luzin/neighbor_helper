@@ -133,6 +133,7 @@ module.exports = {
       INNER JOIN "FavoriteAssignments" FA ON A.id = fa."assignmentId"
       AND FA."telegramId" = ${telegramId}
       LEFT JOIN "Spams" S ON a.id = S."assignmentId"
+      AND S."telegramId" = ${telegramId}
       INNER JOIN "Locations" L on a."locationId" = L.id
       WHERE S."telegramId" IS NULL
       AND A.status <> 'done'`;

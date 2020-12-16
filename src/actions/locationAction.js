@@ -82,6 +82,7 @@ module.exports = {
   addLocalNameLocationAction,
 };
 
+//TODO refactoring
 async function addGlobalName(location, resolve, reject) {
   const response = await new Promise((resolve, reject) => (
     openGeocoder()

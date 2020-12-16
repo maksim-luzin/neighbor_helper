@@ -136,6 +136,8 @@ const chooseLocationForAddAssignmentAction = async (message, state) => {
 
 const addRewardForAddAssignmentAction = async (message, state) => {
   const { text } = message;
+
+  //TODO message destructuring
   let data = { ...state.data };
   if (text !== BUTTON_BACK) data = { ...data, reward: text };
   if (text === BUTTON_SKIP && data.reward) delete data.reward;
@@ -198,6 +200,7 @@ const addPictureForAddAssignmentAction = async (message, state) => {
 };
 
 const publishAddAssignmentAction = async (message, state) => {
+  // TODO 2 consistent requests
   await setState(message.from.id);
   const result = await create(state.data);
   if (!result.succeeded) throw Error(result.message);
@@ -242,6 +245,7 @@ function skipCommonKeyboard(resMessage, message) {
   );
 }
 
+// name function better + return category === elem[1]; (I'd prefer to use for of with return)
 function categoryNameToShow(category) {
   const response = Object.entries(assignmentCategory).find((elem) => {
     if (category === elem[1]) return true;

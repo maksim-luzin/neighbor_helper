@@ -105,7 +105,7 @@ module.exports = {
         FROM "Assignments" A
         INNER JOIN "Locations" L ON A."locationId" = L.id
         LEFT JOIN "Spams" S ON A.id = S."assignmentId"
-        AND s."telegramId" = ${telegramId}
+        AND S."telegramId" = ${telegramId}
         WHERE ST_DWithin(L.coordinates, 
         ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
@@ -124,7 +124,7 @@ module.exports = {
         FROM "Assignments" A
         INNER JOIN "Locations" L ON A."locationId" = L.id
         LEFT JOIN "Spams" S ON A.id = S."assignmentId"
-        AND s."telegramId" = ${telegramId}
+        AND S."telegramId" = ${telegramId}
         WHERE ST_DWithin(L.coordinates, 
         ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
@@ -158,11 +158,11 @@ module.exports = {
       const queryRecords = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
       + `A."pictureUrl", L."globalName"
       FROM "Assignments" A
-      INNER JOIN "FavoriteAssignments" FA ON A.id = fa."assignmentId"
+      INNER JOIN "FavoriteAssignments" FA ON A.id = FA."assignmentId"
       AND FA."telegramId" = ${telegramId}
-      LEFT JOIN "Spams" S ON a.id = S."assignmentId"
+      LEFT JOIN "Spams" S ON A.id = S."assignmentId"
       AND S."telegramId" = ${telegramId}
-      INNER JOIN "Locations" L on a."locationId" = L.id
+      INNER JOIN "Locations" L on A."locationId" = L.id
       WHERE S."telegramId" IS NULL
       AND A.status <> 'done'
       LIMIT ${limit} 
@@ -170,9 +170,9 @@ module.exports = {
 
       const queryCount = `SELECT COUNT(A.id) as count
       FROM "Assignments" A
-      INNER JOIN "FavoriteAssignments" FA ON A.id = fa."assignmentId"
+      INNER JOIN "FavoriteAssignments" FA ON A.id = FA."assignmentId"
       AND FA."telegramId" = ${telegramId}
-      LEFT JOIN "Spams" S ON a.id = S."assignmentId"
+      LEFT JOIN "Spams" S ON A.id = S."assignmentId"
       AND S."telegramId" = ${telegramId}
       WHERE S."telegramId" IS NULL
       AND A.status <> 'done'`;

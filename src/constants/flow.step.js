@@ -17,3 +17,13 @@ exports.MY_ASSIGNMENTS = {
 exports.CHANGE_RANGE = {
   CHANGE_RANGE: 'changeRange.ChangeRange',
 };
+
+exports.ADD_ASSIGNMENT = {
+  CHOOSE_CATEGORY: 'addAssignment.chooseCategory',
+  ADD_TITLE: 'addAssignment.addTitle',
+  ADD_DESCRIPTION: 'addAssignment.addDescription',
+  CHOOSE_LOCATION: 'addAssignment.chooseLocation',
+  ADD_REWARD: 'addAssignment.addReward',
+  SHOW_ASSIGNMENT: 'addAssignment.showAssignment',
+  PUBLISH_ASSIGNMENT: 'addAssignment.publishAssignment',
+};

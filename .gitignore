@@ -105,6 +105,8 @@ dist
 
 .idea
 
+#VS_CODE
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -118,3 +120,4 @@ dist
 #Claudia
 bin/
 claudia.json
+

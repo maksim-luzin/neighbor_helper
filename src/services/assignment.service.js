@@ -9,7 +9,7 @@ const {
   },
 } = require('../database');
 
-const getPagingData = require('../helpers/getPagingData');
+const { getPagingData } = require('../helpers/pagination');
 
 const ServiceResponse = require('../helpers/ServiceResponse');
 
@@ -73,7 +73,13 @@ module.exports = {
     }
   },
 
-  async getAllNearby({ telegramId, category = null, locationId }) {
+  async getAllNearby({
+    telegramId,
+    category = null,
+    locationId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
       const foundRangeAndCoordinates = await User.findOne({
         where: {
@@ -108,11 +114,29 @@ module.exports = {
         AND A."authorTelegramId" <> ${telegramId}
         AND A.status <> 'done'
         AND S."assignmentId" IS NULL
-        ORDER BY L.coordinates <-> L.coordinates`,
+        ORDER BY L.coordinates <-> L.coordinates
+        LIMIT ${limit} 
+        OFFSET ${offset}`,
       );
 
+      const nearbyAssignmentsCount = await sequelize.query(
+        `SELECT COUNT(A.id)
+        FROM "Assignments" A
+        INNER JOIN "Locations" L ON A."locationId" = L.id
+        LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+        AND s."telegramId" = ${telegramId}
+        WHERE ST_DWithin(L.coordinates, 
+        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
+        ${foundRangeAndCoordinates.range} * 1000)
+        ${categoryCondition}
+        AND A."authorTelegramId" <> ${telegramId}
+        AND A.status <> 'done'
+        AND S."assignmentId" IS NULL`,
+      );
       return new ServiceResponse({
         succeeded: true,
+        pagingData: getPagingData(nearbyAssignmentsCount[0][0], page, limit),
         model: nearbyAssignments[0],
       });
     } catch (e) {
@@ -125,9 +149,13 @@ module.exports = {
     }
   },
 
-  async getAllFavorites({ telegramId }) {
+  async getAllFavorites({
+    telegramId,
+    pagination: { limit, offset },
+    page,
+  }) {
     try {
-      const query = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
+      const queryRecords = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
       + `A."pictureUrl", L."globalName"
       FROM "Assignments" A
       INNER JOIN "FavoriteAssignments" FA ON A.id = fa."assignmentId"
@@ -136,13 +164,28 @@ module.exports = {
       AND S."telegramId" = ${telegramId}
       INNER JOIN "Locations" L on a."locationId" = L.id
       WHERE S."telegramId" IS NULL
+      AND A.status <> 'done'
+      LIMIT ${limit} 
+      OFFSET ${offset}`;
+
+      const queryCount = `SELECT COUNT(A.id) as count
+      FROM "Assignments" A
+      INNER JOIN "FavoriteAssignments" FA ON A.id = fa."assignmentId"
+      AND FA."telegramId" = ${telegramId}
+      LEFT JOIN "Spams" S ON a.id = S."assignmentId"
+      AND S."telegramId" = ${telegramId}
+      WHERE S."telegramId" IS NULL
       AND A.status <> 'done'`;
 
-      const result = await sequelize.query(query);
-      const favoriteAssignments = result[0];
+      const recordsResult = await sequelize.query(queryRecords);
+      const countResult = await sequelize.query(queryCount);
+
+      const favoriteAssignments = recordsResult[0];
+      favoriteAssignments.count = countResult[0][0].count;
 
       return new ServiceResponse({
         succeeded: true,
+        pagingData: getPagingData(favoriteAssignments, page, limit),
         model: favoriteAssignments.map((elem) => ({
           id: elem.id,
           title: elem.title,
@@ -164,13 +207,18 @@ module.exports = {
   },
 
   async getCreated({
-    telegramId, limit, offset, page,
+    telegramId,
+    pagination: { limit, offset },
+    page,
   }) {
     try {
       const createdAssignments = await Assignment.findAndCountAll({
         where: {
           authorTelegramId: telegramId,
         },
+        order: [
+          ['id', 'ASC'],
+        ],
         include: [{ model: Location }],
         limit,
         offset,
@@ -180,6 +228,7 @@ module.exports = {
         succeeded: true,
         pagingData: getPagingData(createdAssignments, page, limit),
         model: createdAssignments.rows.map((elem) => ({
+          id: elem.dataValues.id,
           title: elem.dataValues.title,
           description: elem.dataValues.description,
           status: elem.dataValues.status,

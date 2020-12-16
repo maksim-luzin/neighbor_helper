@@ -8,3 +8,4 @@ exports.favoriteAssignmentsMessageTemplate = require('./favoriteAssignmentsMessa
 exports.markAssignmentAsSpamMessageTemplate = require('./markAssignmentAsSpamMessageTemplate');
 exports.markAssignmentAsSpamKeyboardTemplate = require('./markAssignmentAsSpamKeyboardTemplate');
 exports.markAssignmentAsSpamAlertTemplate = require('./markAssignmentAsSpamAlertTemplate.js');
+exports.createdAssignmentsMessageTemplate = require('./createdAssignmentsMessageTemplate.js');

@@ -4,10 +4,12 @@ const textHandler = require('./textHandler');
 const callbackQueryHandler = require('./callbackQueryHandler');
 const { messageDefaultAction } = require('../actions/commonActions');
 const { create } = require('../services').userService;
+const pictureHandler = require('./pictureHandler');
 
 const {
   ADD_LOCATION,
-} = require('../constants/flow.step').ADD_LOCATION;
+  ADD_ASSIGNMENT,
+} = require('../constants/flow.step');
 
 const handlers = async (request) => {
   try {
@@ -21,8 +23,12 @@ const handlers = async (request) => {
       const { message } = originalRequest;
       // eslint-disable-next-line no-use-before-define
       state = await stateLoad(message);
-      if (message.location && state.step === ADD_LOCATION) {
+      if (message.location && state.step === ADD_LOCATION.ADD_LOCATION) {
         return await locationHandler(message, state);
+      }
+
+      if (message.photo && state.step === ADD_ASSIGNMENT.SHOW_ASSIGNMENT) {
+        return await pictureHandler(message, state);
       }
 
       if (message.text) {
@@ -31,14 +37,16 @@ const handlers = async (request) => {
     }
 
     if (originalRequest.callback_query) {
-      return await callbackQueryHandler(originalRequest.callback_query);
+      // eslint-disable-next-line no-use-before-define
+      state = await stateLoad(originalRequest.callback_query);
+      return await callbackQueryHandler(originalRequest.callback_query, state);
     }
 
     return messageDefaultAction();
   } catch (err) {
-    console.log(err.name);
-    console.log(err.message);
-    console.log(err.stack);
+    console.error(err.name);
+    console.error(err.message);
+    console.error(err.stack);
     return messageDefaultAction();
   }
 };

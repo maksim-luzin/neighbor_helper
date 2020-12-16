@@ -1,21 +1,23 @@
 const {
   changeRangeAction,
-} = require('../actions/mainActions');
-
-const {
   mainMenuAction,
 } = require('../actions/mainActions');
 
+const { paginationAction } = require('../actions/commonActions');
 const {
-  createdAssignmentsAction,
   removeFromFavoritesAction,
   addToFavoritesAction,
   markAssignmentAsSpamAction,
   confirmAssignmentAsSpamAction,
   backFromConfirmAssignmentAsSpamAction,
+  removeAssignmentAction,
+  markAssignmentAsNotCompletedAction,
+  markAssignmentAsCompletedAction,
 } = require('../actions/assignmentActions');
 
-const callbackQueryHandler = async (callbackQuery) => {
+const { deleteMessage } = require('../helpers/telegram');
+
+const callbackQueryHandler = async (callbackQuery, state) => {
   let response;
   const splitCallbackQueryData = callbackQuery.data.split('.');
   switch (splitCallbackQueryData[0]) {
@@ -24,8 +26,8 @@ const callbackQueryHandler = async (callbackQuery) => {
       return response;
 
     case 'paginationAction':
-      response = await createdAssignmentsAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      response = await paginationAction(callbackQuery, +splitCallbackQueryData[1], state);
+      return response.concat(await deleteMessage(callbackQuery));
 
     case 'removeFromFavoritesAction':
       response = await removeFromFavoritesAction(
@@ -35,6 +37,22 @@ const callbackQueryHandler = async (callbackQuery) => {
           fromFavorites: splitCallbackQueryData[2],
         },
       );
+      return response;
+
+    case 'markAssignmentAsNotCompletedAction':
+      response = await markAssignmentAsNotCompletedAction({
+        request: callbackQuery,
+        assignmentId: splitCallbackQueryData[1],
+      });
+
+      return response;
+
+    case 'markAssignmentAsCompletedAction':
+      response = await markAssignmentAsCompletedAction({
+        request: callbackQuery,
+        assignmentId: splitCallbackQueryData[1],
+      });
+
       return response;
 
     case 'addToFavoritesAction':
@@ -54,6 +72,10 @@ const callbackQueryHandler = async (callbackQuery) => {
         callbackQuery,
         splitCallbackQueryData[1],
       );
+      return response;
+
+    case 'removeAssignmentAction':
+      response = await removeAssignmentAction(callbackQuery, splitCallbackQueryData[1]);
       return response;
 
     default:

@@ -1,9 +1,11 @@
+const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
 const {
   BUTTON_ABOUT_US,
   BUTTON_ADD_LOCATION,
   BUTTON_CHANGE_RANGE,
   BUTTON_MY_ASSIGNMENT,
   BUTTON_FIND_ASSIGNMENTS,
+  BUTTON_ADD_ASSIGNMENT,
 } = require('../constants/button.text').MAIN_MENU;
 const {
   BUTTON_FAVORITE_ASSIGNMENTS,
@@ -38,6 +40,7 @@ const {
   myAssignmentAction,
   addMenuAddLocationAction,
   findAssignmentsAction,
+  addMenuSelectCategoryForCreatedAssignmentAction,
 } = require('../actions/mainActions');
 
 const {
@@ -45,6 +48,13 @@ const {
   favoriteAssignmentsAction,
 } = require('../actions/assignmentActions');
 
+const {
+  PUBLISH_ASSIGNMENT,
+} = require('../constants/button.text').ADD_ASSIGNMENT;
+
+const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
+
+// eslint-disable-next-line consistent-return
 const textHandlers = async (request, state) => {
   let response = false;
   switch (request.text) {
@@ -53,7 +63,7 @@ const textHandlers = async (request, state) => {
       return response;
 
     case BUTTON_ABOUT_US:
-      return aboutUsAction();
+      return aboutUsAction(request);
 
     case BUTTON_CHANGE_RANGE:
       response = await showRangeAction(request);
@@ -78,8 +88,12 @@ const textHandlers = async (request, state) => {
     case BUTTON_ADD_LOCATION:
       return addMenuAddLocationAction(request);
 
-      // Выбор категории
-      // TODO: заменить на константы, когда будет локализация
+    case BUTTON_BACK:
+      response = await buttonBackHandler(request, state);
+      return response;
+
+    // Выбор категории
+    // TODO: заменить на константы, когда будет локализация
     case BUTTON_HELP:
       request.text = 'help';
       response = await categoryHandler(request, state);
@@ -101,8 +115,12 @@ const textHandlers = async (request, state) => {
       response = await categoryHandler(request, state);
       return response;
 
-    case BUTTON_BACK:
-      response = await buttonBackHandler(request, state);
+    case BUTTON_ADD_ASSIGNMENT:
+      response = await addMenuSelectCategoryForCreatedAssignmentAction(request, state);
+      return response;
+
+    case PUBLISH_ASSIGNMENT:
+      response = await publishAddAssignmentAction(request, state);
       return response;
 
     default:

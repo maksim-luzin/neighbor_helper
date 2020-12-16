@@ -23,7 +23,6 @@ const publicAssignmentInlineKeyboardTemplate = ({
     : { text: 'В избранные', callback_data: `addToFavoritesAction.${assignmentId}` };
 
   return [
-    [{ text: 'Связаться с автором', callback_data: 'contactTheAuthorAction' }],
     [
       favoriteEvent,
       { text: 'Spam', callback_data: `markAssignmentAsSpamAction.${assignmentId}` },

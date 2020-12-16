@@ -98,12 +98,13 @@ module.exports = {
       const categoryCondition = category ? `AND A.category = '${category}'` : '';
       const nearbyAssignments = await sequelize.query(
         `SELECT A.id, A.title, A.description, A.reward, A."pictureUrl", L."globalName", A."authorTelegramId",
-        EXISTS (
+        U.username as "authorUsername", EXISTS (
         SELECT 1 FROM "FavoriteAssignments" FA 
         WHERE FA."assignmentId" = A.id
         AND FA."telegramId" = ${telegramId}) AS "isFavorite"
         FROM "Assignments" A
         INNER JOIN "Locations" L ON A."locationId" = L.id
+        INNER JOIN "Users" U on A."authorTelegramId" = U."telegramId"
         LEFT JOIN "Spams" S ON A.id = S."assignmentId"
         AND s."telegramId" = ${telegramId}
         WHERE ST_DWithin(L.coordinates, 
@@ -156,13 +157,14 @@ module.exports = {
   }) {
     try {
       const queryRecords = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
-      + `A."pictureUrl", L."globalName"
+      + `A."pictureUrl", L."globalName", U.username as "authorUsername"
       FROM "Assignments" A
       INNER JOIN "FavoriteAssignments" FA ON A.id = fa."assignmentId"
       AND FA."telegramId" = ${telegramId}
       LEFT JOIN "Spams" S ON a.id = S."assignmentId"
       AND S."telegramId" = ${telegramId}
       INNER JOIN "Locations" L on a."locationId" = L.id
+      INNER JOIN "Users" U on A."authorTelegramId" = U."telegramId"
       WHERE S."telegramId" IS NULL
       AND A.status <> 'done'
       LIMIT ${limit} 
@@ -192,6 +194,7 @@ module.exports = {
           description: elem.description,
           reward: elem.reward,
           authorTelegramId: elem.authorTelegramId,
+          authorUsername: elem.authorUsername,
           pictureUrl: elem.pictureUrl,
           locationName: elem.globalName,
         })),
@@ -219,7 +222,17 @@ module.exports = {
         order: [
           ['id', 'ASC'],
         ],
-        include: [{ model: Location }],
+        include:
+          [
+            {
+              model: Location,
+            },
+            {
+              model: User,
+              as: 'author',
+              attributes: ['username'],
+            },
+          ],
         limit,
         offset,
       });
@@ -234,6 +247,7 @@ module.exports = {
           status: elem.dataValues.status,
           reward: elem.dataValues.reward,
           authorTelegramId: elem.dataValues.authorTelegramId,
+          authorUsername: elem.author.username,
           pictureUrl: elem.dataValues.pictureUrl,
           locationName: elem.dataValues.Location.dataValues.globalName,
           localLocationName: elem.dataValues.Location.dataValues.localName,
@@ -411,14 +425,16 @@ module.exports = {
   async get({ telegramId, assignmentId }) {
     try {
       const query = `SELECT A.id, A.title, A.reward, A.description, 
-      A."pictureUrl", L."globalName" as "locationName",
-      EXISTS (
+      A."pictureUrl", L."globalName" as "locationName", U."username" as "authorUsername",
+      A."authorTelegramId", EXISTS (
       SELECT 1 FROM "FavoriteAssignments" FA 
       WHERE FA."assignmentId" = ${assignmentId}
       AND FA."telegramId" = ${telegramId}) AS "isFavorite"
       FROM "Assignments" A 
       INNER JOIN "Locations" L
       ON A."locationId" = L.id
+      INNER JOIN "Users" U
+      ON A."authorTelegramId" = U."telegramId"
       WHERE A.id = ${assignmentId}
       LIMIT 1`;
 

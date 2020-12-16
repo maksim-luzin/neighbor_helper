@@ -173,6 +173,7 @@ module.exports = {
         succeeded: true,
         pagingData: getPagingData(favoriteAssignments, page, limit),
         model: favoriteAssignments.rows.map((elem) => ({
+          id: elem.Assignment.dataValues.id,
           title: elem.Assignment.dataValues.title,
           description: elem.Assignment.dataValues.description,
           reward: elem.Assignment.dataValues.reward,
@@ -201,6 +202,9 @@ module.exports = {
         where: {
           authorTelegramId: telegramId,
         },
+        order: [
+          ['id', 'ASC'],
+        ],
         include: [{ model: Location }],
         limit,
         offset,
@@ -210,6 +214,7 @@ module.exports = {
         succeeded: true,
         pagingData: getPagingData(createdAssignments, page, limit),
         model: createdAssignments.rows.map((elem) => ({
+          id: elem.dataValues.id,
           title: elem.dataValues.title,
           description: elem.dataValues.description,
           status: elem.dataValues.status,

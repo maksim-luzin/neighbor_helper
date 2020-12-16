@@ -7,8 +7,8 @@ const { FAVORITE_ASSIGNMENT_MODEL_NAME } = require('../../constants').enums.data
 module.exports = (sequelize, DataTypes) => {
   class FavoriteAssignment extends Model {
     static associate(models) {
-      FavoriteAssignment.belongsTo(models.User, { foreignKey: 'telegramId', onDelete: 'CASCADE' });
-      FavoriteAssignment.belongsTo(models.Assignment, { foreignKey: 'assignmentId' });
+      FavoriteAssignment.belongsTo(models.User, { foreignKey: 'telegramId' });
+      FavoriteAssignment.belongsTo(models.Assignment, { foreignKey: 'assignmentId', onDelete: 'CASCADE' });
     }
   }
   FavoriteAssignment.init({

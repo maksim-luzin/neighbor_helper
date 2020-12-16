@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Assignment, { foreignKey: 'authorTelegramId', as: 'createdAssignments' });
 
       User.belongsToMany(models.Assignment, { through: 'FavoriteAssignments', foreignKey: 'telegramId', as: 'favoriteAssignments' });
+
+      User.belongsToMany(models.Assignment, { through: models.Spam, foreignKey: 'telegramId', as: 'spamAssignments' });
     }
   }
   User.init({

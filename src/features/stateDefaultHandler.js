@@ -43,9 +43,6 @@ const stateDefaultHandler = async (request, state) => {
     case ADD_LOCATION_NAME:
       response = await addLocalNameLocationAction(request, state);
       return response;
-    case CHOOSE_CATEGORY:
-      response = await addFoundAssignmentCategoryAction(request, state);
-      return response;
     case CHOOSE_LOCATION:
       response = await addFoundAssignmentLocationAction({ request, state });
       return response;

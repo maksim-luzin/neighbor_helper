@@ -2,16 +2,22 @@ const {
   Model,
 } = require('sequelize');
 
-const { FAVORITE_ASSIGNMENT_MODEL_NAME } = require('../../constants').enums.databaseModel;
+const { SPAM_MODEL_NAME } = require('../../constants').enums.databaseModel;
 
 module.exports = (sequelize, DataTypes) => {
-  class FavoriteAssignment extends Model {
+  class Spam extends Model {
     static associate(models) {
-      FavoriteAssignment.belongsTo(models.User, { foreignKey: 'telegramId' });
-      FavoriteAssignment.belongsTo(models.Assignment, { foreignKey: 'assignmentId', onDelete: 'CASCADE' });
+      Spam.belongsTo(models.User, { foreignKey: 'telegramId' });
+      Spam.belongsTo(models.Assignment, { foreignKey: 'assignmentId' });
     }
   }
-  FavoriteAssignment.init({
+  Spam.init({
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
     telegramId: {
       allowNull: false,
       primaryKey: true,
@@ -32,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: FAVORITE_ASSIGNMENT_MODEL_NAME,
+    modelName: SPAM_MODEL_NAME,
   });
-  return FavoriteAssignment;
+  return Spam;
 };

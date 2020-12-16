@@ -5,4 +5,7 @@ exports.publicAssignmentInlineKeyboardTemplate = require('./assignmentInlineKeyb
 exports.findAssignmentsMessageTemplate = require('./findAssignmentsMessageTemplate');
 exports.findAssignmentsKeyboardTemplate = require('./findAssignmentsKeyboardTemplate');
 exports.favoriteAssignmentsMessageTemplate = require('./favoriteAssignmentsMessageTemplate.js');
+exports.markAssignmentAsSpamMessageTemplate = require('./markAssignmentAsSpamMessageTemplate');
+exports.markAssignmentAsSpamKeyboardTemplate = require('./markAssignmentAsSpamKeyboardTemplate');
+exports.markAssignmentAsSpamAlertTemplate = require('./markAssignmentAsSpamAlertTemplate.js');
 exports.createdAssignmentsMessageTemplate = require('./createdAssignmentsMessageTemplate.js');

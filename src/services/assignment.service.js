@@ -4,6 +4,7 @@ const {
     User,
     Location,
     FavoriteAssignment,
+    Spam,
     sequelize,
   },
 } = require('../database');
@@ -94,48 +95,45 @@ module.exports = {
         }],
       });
 
-      const categoryCondition = category ? `AND a.category = '${category}'` : '';
+      const categoryCondition = category ? `AND A.category = '${category}'` : '';
       const nearbyAssignments = await sequelize.query(
-        `SELECT a.id, a.title, a.description, a.reward, a."pictureUrl", l."globalName", a."authorTelegramId"
-        FROM "Assignments" a
-        INNER JOIN "Locations" l ON a."locationId" = l.id
-        WHERE ST_DWithin(l.coordinates, 
+        `SELECT A.id, A.title, A.description, A.reward, A."pictureUrl", L."globalName", A."authorTelegramId",
+        EXISTS (
+        SELECT 1 FROM "FavoriteAssignments" FA 
+        WHERE FA."assignmentId" = A.id
+        AND FA."telegramId" = ${telegramId}) AS "isFavorite"
+        FROM "Assignments" A
+        INNER JOIN "Locations" L ON A."locationId" = L.id
+        LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+        AND S."telegramId" = ${telegramId}
+        WHERE ST_DWithin(L.coordinates, 
         ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
         ${foundRangeAndCoordinates.range} * 1000)
         ${categoryCondition}
-        AND a."authorTelegramId" <> ${telegramId}
-        AND a.status <> 'done'
-        ORDER BY l.coordinates <-> l.coordinates
+        AND A."authorTelegramId" <> ${telegramId}
+        AND A.status <> 'done'
+        AND S."assignmentId" IS NULL
+        ORDER BY L.coordinates <-> L.coordinates
         LIMIT ${limit} 
         OFFSET ${offset}`,
       );
 
       const nearbyAssignmentsCount = await sequelize.query(
-        `SELECT COUNT(a.id) 
-        FROM "Assignments" a
-        INNER JOIN "Locations" l ON a."locationId" = l.id
-        WHERE ST_DWithin(l.coordinates, 
+        `SELECT COUNT(A.id)
+        FROM "Assignments" A
+        INNER JOIN "Locations" L ON A."locationId" = L.id
+        LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+        AND S."telegramId" = ${telegramId}
+        WHERE ST_DWithin(L.coordinates, 
         ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
         ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
         ${foundRangeAndCoordinates.range} * 1000)
         ${categoryCondition}
-        AND a."authorTelegramId" <> ${telegramId}
-        AND a.status <> 'done'`,
+        AND A."authorTelegramId" <> ${telegramId}
+        AND A.status <> 'done'
+        AND S."assignmentId" IS NULL`,
       );
-
-      // eslint-disable-next-line no-restricted-syntax
-      for await (const assignment of nearbyAssignments[0]) {
-        const foundFavorite = await FavoriteAssignment.findOne({
-          where: {
-            telegramId,
-            assignmentId: assignment.id,
-          },
-        });
-        // eslint-disable-next-line no-param-reassign
-        assignment.isFavorite = !!foundFavorite;
-      }
-
       return new ServiceResponse({
         succeeded: true,
         pagingData: getPagingData(nearbyAssignmentsCount[0][0], page, limit),
@@ -157,29 +155,45 @@ module.exports = {
     page,
   }) {
     try {
-      const favoriteAssignments = await FavoriteAssignment.findAndCountAll({
-        where: {
-          telegramId,
-        },
-        include: [{
-          model: Assignment,
-          include: [{ model: Location }],
-        }],
-        limit,
-        offset,
-      });
+      const queryRecords = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
+      + `A."pictureUrl", L."globalName"
+      FROM "Assignments" A
+      INNER JOIN "FavoriteAssignments" FA ON A.id = FA."assignmentId"
+      AND FA."telegramId" = ${telegramId}
+      LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+      AND S."telegramId" = ${telegramId}
+      INNER JOIN "Locations" L on A."locationId" = L.id
+      WHERE S."telegramId" IS NULL
+      AND A.status <> 'done'
+      LIMIT ${limit} 
+      OFFSET ${offset}`;
+
+      const queryCount = `SELECT COUNT(A.id) as count
+      FROM "Assignments" A
+      INNER JOIN "FavoriteAssignments" FA ON A.id = FA."assignmentId"
+      AND FA."telegramId" = ${telegramId}
+      LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+      AND S."telegramId" = ${telegramId}
+      WHERE S."telegramId" IS NULL
+      AND A.status <> 'done'`;
+
+      const recordsResult = await sequelize.query(queryRecords);
+      const countResult = await sequelize.query(queryCount);
+
+      const favoriteAssignments = recordsResult[0];
+      favoriteAssignments.count = countResult[0][0].count;
 
       return new ServiceResponse({
         succeeded: true,
         pagingData: getPagingData(favoriteAssignments, page, limit),
-        model: favoriteAssignments.rows.map((elem) => ({
-          id: elem.Assignment.dataValues.id,
-          title: elem.Assignment.dataValues.title,
-          description: elem.Assignment.dataValues.description,
-          reward: elem.Assignment.dataValues.reward,
-          authorTelegramId: elem.Assignment.dataValues.authorTelegramId,
-          pictureUrl: elem.Assignment.dataValues.pictureUrl,
-          locationName: elem.Assignment.dataValues.Location.globalName,
+        model: favoriteAssignments.map((elem) => ({
+          id: elem.id,
+          title: elem.title,
+          description: elem.description,
+          reward: elem.reward,
+          authorTelegramId: elem.authorTelegramId,
+          pictureUrl: elem.pictureUrl,
+          locationName: elem.globalName,
         })),
       });
     } catch (e) {
@@ -336,6 +350,90 @@ module.exports = {
         succeeded: false,
         message: 'Error occurred while adding assignment to favorites with '
           + `telegramId=${telegramId}, id=${assignmentId}. `
+          + `${e}.`,
+      });
+    }
+  },
+
+  async markAsSpam({ telegramId, assignmentId }) {
+    try {
+      await Assignment.increment(
+        { spamScore: 1 },
+        {
+          where: {
+            id: assignmentId,
+          },
+          returning: false,
+        },
+      );
+
+      const assignment = await Assignment.findOne({
+        where: {
+          id: assignmentId,
+        },
+        attributes: ['id', 'spamScore'],
+      });
+
+      if (assignment.spamScore >= 5) {
+        await assignment.destroy();
+        await Spam.destroy(
+          {
+            where: {
+              assignmentId,
+            },
+          },
+        );
+      } else {
+        await Spam.findOrCreate({
+          where: {
+            telegramId,
+            assignmentId,
+          },
+          defaults: {
+            telegramId,
+            assignmentId,
+          },
+          attributes: ['id'],
+        });
+      }
+
+      return new ServiceResponse({ succeeded: true });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while marking assignment as spam with '
+          + `telegramId=${telegramId}, assignmentId=${assignmentId}. `
+          + `${e}.`,
+      });
+    }
+  },
+
+  async get({ telegramId, assignmentId }) {
+    try {
+      const query = `SELECT A.id, A.title, A.reward, A.description, 
+      A."pictureUrl", L."globalName" as "locationName",
+      EXISTS (
+      SELECT 1 FROM "FavoriteAssignments" FA 
+      WHERE FA."assignmentId" = ${assignmentId}
+      AND FA."telegramId" = ${telegramId}) AS "isFavorite"
+      FROM "Assignments" A 
+      INNER JOIN "Locations" L
+      ON A."locationId" = L.id
+      WHERE A.id = ${assignmentId}
+      LIMIT 1`;
+
+      const result = await sequelize.query(query);
+      const foundAssignment = result[0][0];
+
+      if (foundAssignment) {
+        return new ServiceResponse({ succeeded: true, model: foundAssignment });
+      }
+      return new ServiceResponse({ succeeded: true });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: 'Error occurred while getting assignment by id with '
+          + `assignmentId=${assignmentId}. `
           + `${e}.`,
       });
     }

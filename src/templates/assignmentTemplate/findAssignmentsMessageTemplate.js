@@ -1,5 +1,5 @@
 const foundAssignmentsMessageTemplate = 'Найденные объявления:';
-const notFoundAssignmentsMessageTemplate = 'Объявления в указанном радиусе не найдены!';
+const notFoundAssignmentsMessageTemplate = 'Объявления c заданными параметрами не были найдены в указанном радиусе!';
 
 module.exports = {
   foundAssignmentsMessageTemplate,

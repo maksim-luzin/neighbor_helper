@@ -9,6 +9,9 @@ const {
   findAssignmentsMessageTemplate,
   findAssignmentsKeyboardTemplate,
   favoriteAssignmentsMessageTemplate,
+  markAssignmentAsSpamMessageTemplate,
+  markAssignmentAsSpamKeyboardTemplate,
+  markAssignmentAsSpamAlertTemplate,
   createdAssignmentsMessageTemplate,
 } = require('../templates/assignmentTemplate');
 
@@ -266,14 +269,33 @@ const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites 
   if (!result.succeeded) throw Error(result.message);
 
   if (fromFavorites === 'false') {
-    return editMessageReplyMarkup(request, {
-      inline_keyboard: publicAssignmentInlineKeyboardTemplate(
-        {
-          isFavorite: false,
-          assignmentId,
+    if (!request.message.photo) {
+      return editMessageReplyMarkup(request, {
+        inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+          {
+            isFavorite: false,
+            assignmentId,
+          },
+        ),
+      });
+    }
+
+    return {
+      method: 'editMessageCaption',
+      body: {
+        chat_id: request.message.chat.id,
+        message_id: request.message.message_id,
+        caption: request.message.caption,
+        reply_markup: {
+          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+            {
+              isFavorite: false,
+              assignmentId,
+            },
+          ),
         },
-      ),
-    });
+      },
+    };
   }
 
   const response = await favoriteAssignmentsAction(request);
@@ -291,14 +313,47 @@ const addToFavoritesAction = async (request, assignmentId) => {
 
   if (!result.succeeded) throw Error(result.message);
 
-  return editMessageReplyMarkup(request, {
-    inline_keyboard: publicAssignmentInlineKeyboardTemplate(
-      {
-        isFavorite: true,
-        assignmentId,
+  if (!request.message.photo) {
+    return editMessageReplyMarkup(request, {
+      inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+        {
+          isFavorite: true,
+          assignmentId,
+        },
+      ),
+    });
+  }
+
+  return {
+    method: 'editMessageCaption',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      caption: request.message.caption,
+      reply_markup: {
+        inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+          {
+            isFavorite: true,
+            assignmentId,
+          },
+        ),
       },
-    ),
+    },
+  };
+};
+
+const removeAssignmentAction = async (request, assignmentId) => {
+  const result = await assignmentService.delete({
+    telegramId: request.from.id,
+    assignmentId,
   });
+  if (!result.succeeded) throw Error(result.message);
+
+  const response = await createdAssignmentsAction(request);
+
+  return response.concat(await deleteMessage(request, 1))
+    .concat(await deleteMessage(request))
+    .concat(await deleteMessage(request, -1));
 };
 
 const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {
@@ -339,18 +394,120 @@ const markAssignmentAsNotCompletedAction = async ({ request, assignmentId }) => 
   });
 };
 
-const removeAssignmentAction = async (request, assignmentId) => {
-  const result = await assignmentService.delete({
+const markAssignmentAsSpamAction = (request, assignmentId) => {
+  if (!request.message.photo) {
+    return {
+      method: 'editMessageText',
+      body: {
+        chat_id: request.message.chat.id,
+        message_id: request.message.message_id,
+        text: markAssignmentAsSpamMessageTemplate,
+        reply_markup: {
+          inline_keyboard: markAssignmentAsSpamKeyboardTemplate(assignmentId),
+        },
+      },
+    };
+  }
+
+  return {
+    method: 'editMessageCaption',
+    body: {
+      chat_id: request.message.chat.id,
+      message_id: request.message.message_id,
+      caption: markAssignmentAsSpamMessageTemplate,
+      reply_markup: {
+        inline_keyboard: markAssignmentAsSpamKeyboardTemplate(assignmentId),
+      },
+    },
+  };
+};
+
+const confirmAssignmentAsSpamAction = async (request, assignmentId) => {
+  const result = await assignmentService.markAsSpam({ telegramId: request.from.id, assignmentId });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  const deleteResponse = {
+    method: 'deleteMessage',
+    body: {
+      chat_id: request.from.id,
+      message_id: request.message.message_id,
+    },
+  };
+
+  const alertResponse = {
+    method: 'answerCallbackQuery',
+    body: {
+      callback_query_id: request.id,
+      text: markAssignmentAsSpamAlertTemplate,
+      show_alert: true,
+    },
+  };
+
+  return [deleteResponse, alertResponse];
+};
+
+const backFromConfirmAssignmentAsSpamAction = async (request, assignmentId) => {
+  const result = await assignmentService.get({
     telegramId: request.from.id,
     assignmentId,
   });
+
   if (!result.succeeded) throw Error(result.message);
 
-  const response = await createdAssignmentsAction(request);
+  if (result.model) {
+    const assignment = result.model;
 
-  return response.concat(await deleteMessage(request, 1))
-    .concat(await deleteMessage(request))
-    .concat(await deleteMessage(request, -1));
+    if (!request.message.photo) {
+      return {
+        method: 'editMessageText',
+        body: {
+          chat_id: request.message.chat.id,
+          message_id: request.message.message_id,
+          text: assignmentMessageTemplate({
+            ...assignment,
+            locationName: assignment.locationName,
+          }),
+          reply_markup: {
+            inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+              {
+                isFavorite: assignment.isFavorite,
+                assignmentId: assignment.id,
+              },
+            ),
+          },
+        },
+      };
+    }
+
+    return {
+      method: 'editMessageCaption',
+      body: {
+        chat_id: request.message.chat.id,
+        message_id: request.message.message_id,
+        caption: assignmentMessageTemplate({
+          ...assignment,
+          locationName: assignment.locationName,
+        }),
+        reply_markup: {
+          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+            {
+              isFavorite: assignment.isFavorite,
+              assignmentId: assignment.id,
+            },
+          ),
+        },
+      },
+    };
+  }
+
+  return {
+    method: 'deleteMessage',
+    body: {
+      chat_id: request.from.id,
+      message_id: request.message.message_id,
+    },
+  };
 };
 
 module.exports = {
@@ -360,6 +517,9 @@ module.exports = {
   addFoundAssignmentLocationAction,
   removeFromFavoritesAction,
   addToFavoritesAction,
+  markAssignmentAsSpamAction,
+  confirmAssignmentAsSpamAction,
+  backFromConfirmAssignmentAsSpamAction,
   removeAssignmentAction,
   markAssignmentAsNotCompletedAction,
   markAssignmentAsCompletedAction,

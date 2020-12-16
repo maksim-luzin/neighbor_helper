@@ -3,4 +3,5 @@ module.exports = {
   ASSIGNMENT_MODEL_NAME: 'Assignment',
   LOCATION_MODEL_NAME: 'Location',
   FAVORITE_ASSIGNMENT_MODEL_NAME: 'FavoriteAssignment',
+  SPAM_MODEL_NAME: 'Spam',
 };

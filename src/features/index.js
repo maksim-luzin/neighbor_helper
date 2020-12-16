@@ -6,11 +6,9 @@ const { messageDefaultAction } = require('../actions/commonActions');
 const { create } = require('../services').userService;
 const pictureHandler = require('./pictureHandler');
 
-const {
-  ADD_LOCATION,
-  ADD_ASSIGNMENT,
-} = require('../constants/flow.step');
+const { ADD_LOCATION, ADD_ASSIGNMENT } = require('../constants/flow.step');
 
+//TODO move originalRequest destructuring here
 const handlers = async (request) => {
   try {
     const { originalRequest } = request;
@@ -42,6 +40,12 @@ const handlers = async (request) => {
       return await callbackQueryHandler(originalRequest.callback_query, state);
     }
 
+    // TODO
+    // try {
+    // } catch (err) {
+    // } finally {
+    //   return messageDefaultAction();
+    // }
     return messageDefaultAction();
   } catch (err) {
     console.error(err.name);
@@ -53,19 +57,18 @@ const handlers = async (request) => {
 
 module.exports = handlers;
 
+//TODO line breaks
 async function stateLoad(message) {
   if (message.text === '/start') return { data: '', step: '', cache: '' };
   const result = await getOne({ telegramId: message.from.id, params: ['state'] });
   if (!result.succeeded) throw Error(result.message);
   if (!result.model) {
-    const resultCreate = await create(
-      {
-        telegramId: message.from.id,
-      },
-    );
+    const resultCreate = await create({
+      telegramId: message.from.id,
+    });
 
     if (!resultCreate.succeeded) throw Error(resultCreate.message);
-    throw Error('State haven\'t found');
+    throw Error("State haven't found");
   }
   const response = {
     step: result.model.state.step || '',

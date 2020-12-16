@@ -41,21 +41,26 @@ const stateDefaultHandler = async (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
     case ADD_LOCATION_NAME:
+      //TODO return addLocalNameLocationAction(...)
       response = await addLocalNameLocationAction(request, state);
       return response;
     case CHOOSE_LOCATION:
+      //TODO same
       response = await addFoundAssignmentLocationAction({ request, state });
       return response;
     case CHANGE_RANGE:
+      //TODO same
       response = await changeRangeAction(request, state);
       return response;
 
     // Add assignmet
     case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
+      //TODO same
       response = await chooseCategoryAssignmentAction(request, state, false);
       return response;
 
     case ADD_ASSIGNMENT.ADD_TITLE:
+      //TODO same
       response = await addTitleForAddAssignmentAction(request, state);
       return response;
 

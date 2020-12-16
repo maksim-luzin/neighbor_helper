@@ -19,6 +19,7 @@ const { deleteMessage } = require('../helpers/telegram');
 
 const callbackQueryHandler = async (callbackQuery, state) => {
   let response;
+  //TODO aray destructuring
   const splitCallbackQueryData = callbackQuery.data.split('.');
   switch (splitCallbackQueryData[0]) {
     case 'changeRangeAction':

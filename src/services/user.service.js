@@ -9,6 +9,7 @@ const ServiceResponse = require('../helpers/ServiceResponse');
 module.exports = {
   async create({ telegramId, username }) {
     try {
+      //TODO array destructuring const [, created]
       const result = await User.findOrCreate({
         where: {
           telegramId,

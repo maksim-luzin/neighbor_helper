@@ -50,10 +50,12 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
   const assignments = result.model;
 
   if (assignments.length === 0) {
-    return new telegramTemplate.Text(
-      favoriteAssignmentsMessageTemplate.noFavoriteAssignmentsMessageTemplate,
-    )
-      .get();
+    return [
+      new telegramTemplate.Text(
+        favoriteAssignmentsMessageTemplate.noFavoriteAssignmentsMessageTemplate,
+      )
+        .get(),
+    ];
   }
 
   const basicResponse = [
@@ -130,10 +132,12 @@ const createdAssignmentsAction = async (request, page = 0) => {
   const assignments = result.model;
 
   if (assignments.length === 0) {
-    return new telegramTemplate.Text(
-      createdAssignmentsMessageTemplate.noCreatedAssignmentsMessageTemplate,
-    )
-      .get();
+    return [
+      new telegramTemplate.Text(
+        createdAssignmentsMessageTemplate.noCreatedAssignmentsMessageTemplate,
+      )
+        .get(),
+    ];
   }
 
   const basicResponse = [
@@ -230,12 +234,12 @@ const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) =>
   );
 
   if (assignments.length === 0) {
-    return (
+    return [
       new telegramTemplate
         .Text(findAssignmentsMessageTemplate.notFoundAssignmentsMessageTemplate)
         .addReplyKeyboard(findAssignmentsKeyboardTemplate)
-        .get()
-    );
+        .get(),
+    ];
   }
 
   const basicResponse = [

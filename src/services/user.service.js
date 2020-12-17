@@ -7,14 +7,16 @@ const {
 const ServiceResponse = require('../helpers/ServiceResponse');
 
 module.exports = {
-  async create({ telegramId }) {
+  async create({ telegramId, username }) {
     try {
+      //TODO array destructuring const [, created]
       const result = await User.findOrCreate({
         where: {
           telegramId,
         },
         defaults: {
           telegramId,
+          username,
         },
       });
       const created = result[1];
@@ -25,10 +27,11 @@ module.exports = {
         succeeded: true,
         message: `User with such telegramId=${telegramId} already exists.`,
       });
-    } catch {
+    } catch (e) {
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while creating user with telegramId=${telegramId}.`,
+        message: `Error occurred while creating user with telegramId=${telegramId}.`
+               + `${e}.`,
       });
     }
   },

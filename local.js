@@ -15,7 +15,7 @@ const webhookPath = '/webhook';
 const token = config.TELEGRAM_TOKEN;
 
 if (!token) {
-  throw new Error("Cann't find TELEGRAM_TOKEN in your environments");
+  throw new Error('Cannot find TELEGRAM_TOKEN in your environments');
 }
 
 sequelize
@@ -38,7 +38,7 @@ const telegramConnect = async () => {
       url: `https://api.telegram.org/bot${token}/setWebhook?url=${url}${webhookPath}`,
     });
   } catch (err) {
-    throw new Error(`Cann't setup webhook, reason: ${err.message}`);
+    throw new Error(`Cannot setup webhook, reason: ${err.message}`);
   }
 };
 

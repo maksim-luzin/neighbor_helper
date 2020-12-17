@@ -49,6 +49,7 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
+  //TODO !assignments.length
   if (assignments.length === 0) {
     return [
       new telegramTemplate.Text(
@@ -73,23 +74,43 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
 
   const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
-      return new telegramTemplate
-        .Photo(assignment.pictureUrl, assignmentMessageTemplate(assignment))
-        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({
-          isFavorite: true,
-          assignmentId: assignment.id,
-          fromFavorites: true,
-        }))
-        .get();
+      return {
+        method: 'sendPhoto',
+        body: {
+          chat_id: request.chat.id,
+          caption: assignmentMessageTemplate(assignment),
+          photo: assignment.pictureUrl,
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+              {
+                isFavorite: true,
+                assignmentId: assignment.id,
+                fromFavorites: true,
+              },
+            ),
+          },
+        },
+      };
     }
 
-    return new telegramTemplate.Text(assignmentMessageTemplate(assignment))
-      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate({
-        isFavorite: true,
-        assignmentId: assignment.id,
-        fromFavorites: true,
-      }))
-      .get();
+    return {
+      method: 'sendMessage',
+      body: {
+        chat_id: request.chat.id,
+        text: assignmentMessageTemplate(assignment),
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+            {
+              isFavorite: true,
+              assignmentId: assignment.id,
+              fromFavorites: true,
+            },
+          ),
+        },
+      },
+    };
   });
 
   if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
@@ -111,6 +132,7 @@ const createdAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
+  //TODO !assignments.length
   if (assignments.length === 0) {
     return [
       new telegramTemplate.Text(
@@ -209,10 +231,12 @@ const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) =>
       locationId,
     },
     [
+      //TODO remove destructuring
       ...state.cache,
     ],
   );
 
+  //TODO !assignments.length
   if (assignments.length === 0) {
     return [
       new telegramTemplate
@@ -236,27 +260,44 @@ const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) =>
 
   const assignmentsResponse = assignments.map((assignment) => {
     if (assignment.pictureUrl) {
-      return new telegramTemplate.Photo(assignment.pictureUrl,
-        assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }))
-        .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(
-          {
-            isFavorite: assignment.isFavorite,
-            assignmentId: assignment.id,
+      return {
+        method: 'sendPhoto',
+        body: {
+          chat_id: request.chat.id,
+          caption: assignmentMessageTemplate({
+            ...assignment,
+            locationName: assignment.globalName,
+          }),
+          photo: assignment.pictureUrl,
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+              {
+                isFavorite: assignment.isFavorite,
+                assignmentId: assignment.id,
+              },
+            ),
           },
-        ))
-        .get();
+        },
+      };
     }
 
-    return new telegramTemplate.Text(
-      assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }),
-    )
-      .addInlineKeyboard(publicAssignmentInlineKeyboardTemplate(
-        {
-          isFavorite: assignment.isFavorite,
-          assignmentId: assignment.id,
+    return {
+      method: 'sendMessage',
+      body: {
+        chat_id: request.chat.id,
+        text: assignmentMessageTemplate({ ...assignment, locationName: assignment.globalName }),
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: publicAssignmentInlineKeyboardTemplate(
+            {
+              isFavorite: assignment.isFavorite,
+              assignmentId: assignment.id,
+            },
+          ),
         },
-      ))
-      .get();
+      },
+    };
   });
 
   if (pagingData.totalPages === 1) return basicResponse.concat(assignmentsResponse);
@@ -304,6 +345,7 @@ const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites 
 
   const response = await favoriteAssignmentsAction(request);
 
+  //TODO ...
   return response.concat(await deleteMessage(request, 1))
     .concat(await deleteMessage(request))
     .concat(await deleteMessage(request, -1));
@@ -355,6 +397,7 @@ const removeAssignmentAction = async (request, assignmentId) => {
 
   const response = await createdAssignmentsAction(request);
 
+  //TODO ...
   return response.concat(await deleteMessage(request, 1))
     .concat(await deleteMessage(request))
     .concat(await deleteMessage(request, -1));
@@ -468,6 +511,7 @@ const backFromConfirmAssignmentAsSpamAction = async (request, assignmentId) => {
         body: {
           chat_id: request.message.chat.id,
           message_id: request.message.message_id,
+          parse_mode: 'Markdown',
           text: assignmentMessageTemplate({
             ...assignment,
             locationName: assignment.locationName,
@@ -489,6 +533,7 @@ const backFromConfirmAssignmentAsSpamAction = async (request, assignmentId) => {
       body: {
         chat_id: request.message.chat.id,
         message_id: request.message.message_id,
+        parse_mode: 'Markdown',
         caption: assignmentMessageTemplate({
           ...assignment,
           locationName: assignment.locationName,

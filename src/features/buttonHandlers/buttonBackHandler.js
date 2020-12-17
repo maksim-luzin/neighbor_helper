@@ -20,6 +20,8 @@ const {
   addRewardForAddAssignmentAction,
 } = require('../../actions/addAssignmentAction');
 
+//TODO return function() (without await)
+
 // eslint-disable-next-line consistent-return
 const buttonBackHandler = async (request, state) => {
   let response;

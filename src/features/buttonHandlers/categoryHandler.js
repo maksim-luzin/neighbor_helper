@@ -9,6 +9,8 @@ const {
   chooseCategoryAssignmentAction,
 } = require('../../actions/addAssignmentAction');
 
+//TODO return function() (without await)
+
 // eslint-disable-next-line consistent-return
 const categoryHandler = async (request, state) => {
   let response;

@@ -41,6 +41,7 @@ const startAction = async (message) => {
   const result = await create(
     {
       telegramId: message.from.id,
+      username: message.from.username,
     },
   );
 
@@ -69,11 +70,17 @@ const startAction = async (message) => {
 const mainMenuAction = async (message) => {
   // eslint-disable-next-line no-use-before-define
   await setState(message.from.id);
-  return responseMessage(
-    message,
-    mainMenuMessageTemplate,
-    mainMenuKeyboardTemplate,
-  );
+  // TODO: при некоторых возвращениях "Домой" выпадает эксепшн.
+  //  Надо исправить. responseMessage временно заменён
+  // return responseMessage(
+  //   message,
+  //   mainMenuMessageTemplate,
+  //   mainMenuKeyboardTemplate,
+  // );
+  return new telegramTemplate
+    .Text(mainMenuMessageTemplate)
+    .addReplyKeyboard(mainMenuKeyboardTemplate)
+    .get();
 };
 
 const aboutUsAction = (message) => responseMessage(

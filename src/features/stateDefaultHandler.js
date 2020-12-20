@@ -37,48 +37,35 @@ const { ADD_ASSIGNMENT } = require('../constants/flow.step');
 
 // eslint-disable-next-line consistent-return
 const stateDefaultHandler = async (request, state) => {
-  let response = false;
   // eslint-disable-next-line default-case
   switch (state.step) {
     case ADD_LOCATION_NAME:
-      //TODO return addLocalNameLocationAction(...)
-      response = await addLocalNameLocationAction(request, state);
-      return response;
+      return await addLocalNameLocationAction(request, state);
+
     case CHOOSE_LOCATION:
-      //TODO same
-      response = await addFoundAssignmentLocationAction({ request, state });
-      return response;
+      return await addFoundAssignmentLocationAction({ request, state });
+
     case CHANGE_RANGE:
-      //TODO same
-      response = await changeRangeAction(request, state);
-      return response;
+      return await changeRangeAction(request, state);
 
     // Add assignmet
     case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
-      //TODO same
-      response = await chooseCategoryAssignmentAction(request, state, false);
-      return response;
+      return await chooseCategoryAssignmentAction(request, state, false);
 
     case ADD_ASSIGNMENT.ADD_TITLE:
-      //TODO same
-      response = await addTitleForAddAssignmentAction(request, state);
-      return response;
+      return await addTitleForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.ADD_DESCRIPTION:
-      response = await addDescriptionForAddAssignmentAction(request, state);
-      return response;
+      return await addDescriptionForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.CHOOSE_LOCATION:
-      response = await chooseLocationForAddAssignmentAction(request, state);
-      return response;
+      return await chooseLocationForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.ADD_REWARD:
-      response = await addRewardForAddAssignmentAction(request, state);
-      return response;
+      return await addRewardForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.SHOW_ASSIGNMENT:
-      response = await addPictureForAddAssignmentAction(request, state);
-      return response;
+      return await addPictureForAddAssignmentAction(request, state);
   }
 };
 

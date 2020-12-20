@@ -12,5 +12,6 @@ module.exports = {
     'no-console': 'off',
     'no-unused-vars': 'off',
     'linebreak-style': 'off',
+    'no-return-await': 'off',
   },
 };

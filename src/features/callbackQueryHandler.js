@@ -19,65 +19,53 @@ const { deleteMessage } = require('../helpers/telegram');
 
 const callbackQueryHandler = async (callbackQuery, state) => {
   let response;
-  //TODO aray destructuring
-  const splitCallbackQueryData = callbackQuery.data.split('.');
-  switch (splitCallbackQueryData[0]) {
+  const [action, index, fromFavorites] = callbackQuery.data.split('.');
+  switch (action) {
     case 'changeRangeAction':
-      response = await changeRangeAction(callbackQuery);
-      return response;
+      return await changeRangeAction(callbackQuery);
 
     case 'paginationAction':
-      response = await paginationAction(callbackQuery, +splitCallbackQueryData[1], state);
+      response = await paginationAction(callbackQuery, +index, state);
       return response.concat(await deleteMessage(callbackQuery));
 
     case 'removeFromFavoritesAction':
-      response = await removeFromFavoritesAction(
+      return await removeFromFavoritesAction(
         {
           request: callbackQuery,
-          assignmentId: splitCallbackQueryData[1],
-          fromFavorites: splitCallbackQueryData[2],
+          assignmentId: index,
+          fromFavorites,
         },
       );
-      return response;
 
     case 'markAssignmentAsNotCompletedAction':
-      response = await markAssignmentAsNotCompletedAction({
+      return await markAssignmentAsNotCompletedAction({
         request: callbackQuery,
-        assignmentId: splitCallbackQueryData[1],
+        assignmentId: index,
       });
-
-      return response;
 
     case 'markAssignmentAsCompletedAction':
-      response = await markAssignmentAsCompletedAction({
+      return await markAssignmentAsCompletedAction({
         request: callbackQuery,
-        assignmentId: splitCallbackQueryData[1],
+        assignmentId: index,
       });
 
-      return response;
-
     case 'addToFavoritesAction':
-      response = await addToFavoritesAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return await addToFavoritesAction(callbackQuery, index);
 
     case 'markAssignmentAsSpamAction':
-      response = markAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return markAssignmentAsSpamAction(callbackQuery, index);
 
     case 'confirmAssignmentAsSpamAction':
-      response = await confirmAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return await confirmAssignmentAsSpamAction(callbackQuery, index);
 
     case 'backFromConfirmAssignmentAsSpamAction':
-      response = await backFromConfirmAssignmentAsSpamAction(
+      return await backFromConfirmAssignmentAsSpamAction(
         callbackQuery,
-        splitCallbackQueryData[1],
+        index,
       );
-      return response;
 
     case 'removeAssignmentAction':
-      response = await removeAssignmentAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return await removeAssignmentAction(callbackQuery, index);
 
     default:
       return mainMenuAction();

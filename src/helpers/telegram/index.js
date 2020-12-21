@@ -14,17 +14,74 @@ module.exports.hideInlineKeyboard = (messageId) => ({
 module.exports.deleteMessage = (request, step = 0) => ({
   method: 'deleteMessage',
   body: {
-    chat_id: request.message.chat.id,
-    message_id: request.message.message_id + step,
+    chat_id: request.from.id,
+    // удаление на реплай и инлайн кнопки
+    message_id: request.message ? request.message.message_id + step : request.message_id + step,
+  },
+});
+
+module.exports.answerCallbackQuery = (request, text, show_alert) => ({
+  method: 'answerCallbackQuery',
+  body: {
+    callback_query_id: request.id,
+    text,
+    show_alert,
   },
 });
 
 module.exports.editMessageReplyMarkup = (request, reply_markup) => ({
   method: 'editMessageReplyMarkup',
   body: {
-    chat_id: request.message.chat.id,
+    chat_id: request.from.id,
     message_id: request.message.message_id,
     reply_markup,
+  },
+});
+
+module.exports.editMessageText = (request, reply_markup, text, parse_mode) => ({
+  method: 'editMessageText',
+  body: {
+    chat_id: request.from.id,
+    message_id: request.message.message_id,
+    reply_markup,
+    text,
+    parse_mode: parse_mode || undefined,
+  },
+});
+
+module.exports.sendPhoto = (request, reply_markup, caption, photo, parse_mode) => (
+  {
+    method: 'sendPhoto',
+    body: {
+      chat_id: request.from.id,
+      caption: caption || undefined,
+      photo,
+      parse_mode: parse_mode || undefined,
+      reply_markup,
+    },
+  }
+);
+
+module.exports.sendMessage = (request, reply_markup, text, parse_mode) => (
+  {
+    method: 'sendMessage',
+    body: {
+      chat_id: request.from.id,
+      text,
+      parse_mode: parse_mode || undefined,
+      reply_markup,
+    },
+  }
+);
+
+module.exports.editMessageCaption = (request, reply_markup, caption, parse_mode) => ({
+  method: 'editMessageCaption',
+  body: {
+    chat_id: request.from.id,
+    message_id: request.message.message_id,
+    caption,
+    reply_markup,
+    parse_mode: parse_mode || undefined,
   },
 });
 

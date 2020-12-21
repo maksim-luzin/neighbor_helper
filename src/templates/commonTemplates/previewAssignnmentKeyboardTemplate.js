@@ -1,6 +1,7 @@
 const {
   BUTTON_HOME,
   BUTTON_BACK,
+  EDIT_ASSIGNMENT,
 } = require('../../constants/button.text').COMMON;
 
 const {
@@ -8,6 +9,7 @@ const {
 } = require('../../constants/button.text').ADD_ASSIGNMENT;
 
 const previewAssignnmentKeyboardTemplate = [
+  [EDIT_ASSIGNMENT],
   [PUBLISH_ASSIGNMENT],
   [BUTTON_HOME, BUTTON_BACK],
 ];

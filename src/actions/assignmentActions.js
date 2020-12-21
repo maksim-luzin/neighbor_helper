@@ -49,8 +49,7 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
-  //TODO !assignments.length
-  if (assignments.length === 0) {
+  if (!assignments.length) {
     return [
       new telegramTemplate.Text(
         favoriteAssignmentsMessageTemplate.noFavoriteAssignmentsMessageTemplate,
@@ -132,8 +131,7 @@ const createdAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
-  //TODO !assignments.length
-  if (assignments.length === 0) {
+  if (!assignments.length) {
     return [
       new telegramTemplate.Text(
         createdAssignmentsMessageTemplate.noCreatedAssignmentsMessageTemplate,
@@ -231,13 +229,12 @@ const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) =>
       locationId,
     },
     [
-      //TODO remove destructuring
+      // TODO remove destructuring
       ...state.cache,
     ],
   );
 
-  //TODO !assignments.length
-  if (assignments.length === 0) {
+  if (!assignments.length) {
     return [
       new telegramTemplate
         .Text(findAssignmentsMessageTemplate.notFoundAssignmentsMessageTemplate)
@@ -345,10 +342,12 @@ const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites 
 
   const response = await favoriteAssignmentsAction(request);
 
-  //TODO ...
-  return response.concat(await deleteMessage(request, 1))
-    .concat(await deleteMessage(request))
-    .concat(await deleteMessage(request, -1));
+  return [
+    ...response,
+    deleteMessage(request, 1),
+    deleteMessage(request),
+    deleteMessage(request, -1),
+  ];
 };
 
 const addToFavoritesAction = async (request, assignmentId) => {
@@ -397,10 +396,12 @@ const removeAssignmentAction = async (request, assignmentId) => {
 
   const response = await createdAssignmentsAction(request);
 
-  //TODO ...
-  return response.concat(await deleteMessage(request, 1))
-    .concat(await deleteMessage(request))
-    .concat(await deleteMessage(request, -1));
+  return [
+    ...response,
+    deleteMessage(request, 1),
+    deleteMessage(request),
+    deleteMessage(request, -1),
+  ];
 };
 
 const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {

@@ -10,6 +10,7 @@ const {
 } = require('../database');
 
 const { getPagingData } = require('../helpers/pagination');
+const { REQUIRED_SPAM_SCORE_TO_DELETE } = require('../configs/global.config');
 
 const ServiceResponse = require('../helpers/ServiceResponse');
 
@@ -40,8 +41,7 @@ module.exports = {
       });
 
       if (result) {
-        //TODO result.Locations.length
-        if (result.Locations.length !== 0) {
+        if (!result.Locations.length) {
           await Assignment.create({
             title,
             description,
@@ -96,51 +96,53 @@ module.exports = {
         }],
       });
 
-      //TODO 2 consistent requests
       const categoryCondition = category ? `AND A.category = '${category}'` : '';
-      const nearbyAssignments = await sequelize.query(
-        `SELECT A.id, A.title, A.description, A.reward, A."pictureUrl", L."globalName", A."authorTelegramId",
-        U.username as "authorUsername", EXISTS (
-        SELECT 1 FROM "FavoriteAssignments" FA 
-        WHERE FA."assignmentId" = A.id
-        AND FA."telegramId" = ${telegramId}) AS "isFavorite"
-        FROM "Assignments" A
-        INNER JOIN "Locations" L ON A."locationId" = L.id
-        INNER JOIN "Users" U on A."authorTelegramId" = U."telegramId"
-        LEFT JOIN "Spams" S ON A.id = S."assignmentId"
-        AND S."telegramId" = ${telegramId}
-        WHERE ST_DWithin(L.coordinates, 
-        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
-        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
-        ${foundRangeAndCoordinates.range} * 1000)
-        ${categoryCondition}
-        AND A."authorTelegramId" <> ${telegramId}
-        AND A.status <> 'done'
-        AND S."assignmentId" IS NULL
-        ORDER BY L.coordinates <-> L.coordinates
-        LIMIT ${limit} 
-        OFFSET ${offset}`,
-      );
 
-      const nearbyAssignmentsCount = await sequelize.query(
-        `SELECT COUNT(A.id)
-        FROM "Assignments" A
-        INNER JOIN "Locations" L ON A."locationId" = L.id
-        LEFT JOIN "Spams" S ON A.id = S."assignmentId"
-        AND S."telegramId" = ${telegramId}
-        WHERE ST_DWithin(L.coordinates, 
-        ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
-        ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
-        ${foundRangeAndCoordinates.range} * 1000)
-        ${categoryCondition}
-        AND A."authorTelegramId" <> ${telegramId}
-        AND A.status <> 'done'
-        AND S."assignmentId" IS NULL`,
-      );
+      const nearbyAssignmentsQuery = `SELECT A.id, A.title, A.description, A.reward, 
+      A."pictureUrl", L."globalName", A."authorTelegramId",
+      EXISTS (
+      SELECT 1 FROM "FavoriteAssignments" FA 
+      WHERE FA."assignmentId" = A.id
+      AND FA."telegramId" = ${telegramId}) AS "isFavorite"
+      FROM "Assignments" A
+      INNER JOIN "Locations" L ON A."locationId" = L.id
+      LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+      AND S."telegramId" = ${telegramId}
+      WHERE ST_DWithin(L.coordinates, 
+      ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+      ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}),
+      ${foundRangeAndCoordinates.range} * 1000)
+      ${categoryCondition}
+      AND A."authorTelegramId" <> ${telegramId}
+      AND A.status <> 'done'
+      AND S."assignmentId" IS NULL
+      ORDER BY L.coordinates <-> L.coordinates
+      LIMIT ${limit} 
+      OFFSET ${offset}`;
+
+      const nearbyAssignmentsCountQuery = `SELECT COUNT(A.id)
+      FROM "Assignments" A
+      INNER JOIN "Locations" L ON A."locationId" = L.id
+      LEFT JOIN "Spams" S ON A.id = S."assignmentId"
+      AND S."telegramId" = ${telegramId}
+      WHERE ST_DWithin(L.coordinates, 
+      ST_MakePoint(${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[0]},
+      ${foundRangeAndCoordinates.Locations[0].coordinates.coordinates[1]}), 
+      ${foundRangeAndCoordinates.range} * 1000)
+      ${categoryCondition}
+      AND A."authorTelegramId" <> ${telegramId}
+      AND A.status <> 'done'
+      AND S."assignmentId" IS NULL`;
+
+      const [[nearbyAssignments], [[nearbyAssignmentsCount]]] = await Promise.all([
+        sequelize.query(nearbyAssignmentsQuery),
+        sequelize.query(nearbyAssignmentsCountQuery),
+      ]);
+
       return new ServiceResponse({
         succeeded: true,
-        pagingData: getPagingData(nearbyAssignmentsCount[0][0], page, limit),
-        model: nearbyAssignments[0],
+        pagingData: getPagingData(nearbyAssignmentsCount, page, limit),
+        model: nearbyAssignments,
       });
     } catch (e) {
       return new ServiceResponse({
@@ -159,14 +161,13 @@ module.exports = {
   }) {
     try {
       const queryRecords = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
-      + `A."pictureUrl", L."globalName", U.username as "authorUsername"
+      + `A."pictureUrl", L."globalName"
       FROM "Assignments" A
       INNER JOIN "FavoriteAssignments" FA ON A.id = FA."assignmentId"
       AND FA."telegramId" = ${telegramId}
       LEFT JOIN "Spams" S ON A.id = S."assignmentId"
       AND S."telegramId" = ${telegramId}
       INNER JOIN "Locations" L on A."locationId" = L.id
-      INNER JOIN "Users" U on A."authorTelegramId" = U."telegramId"
       WHERE S."telegramId" IS NULL
       AND A.status <> 'done'
       LIMIT ${limit} 
@@ -181,12 +182,12 @@ module.exports = {
       WHERE S."telegramId" IS NULL
       AND A.status <> 'done'`;
 
-      //TODO 2 consistent requests + array destructuring
-      const recordsResult = await sequelize.query(queryRecords);
-      const countResult = await sequelize.query(queryCount);
+      const [[favoriteAssignments], [[countResult]]] = await Promise.all([
+        sequelize.query(queryRecords),
+        sequelize.query(queryCount),
+      ]);
 
-      const favoriteAssignments = recordsResult[0];
-      favoriteAssignments.count = countResult[0][0].count;
+      favoriteAssignments.count = countResult.count;
 
       return new ServiceResponse({
         succeeded: true,
@@ -233,7 +234,7 @@ module.exports = {
             {
               model: User,
               as: 'author',
-              attributes: ['username'],
+              attributes: [],
             },
           ],
         limit,
@@ -250,7 +251,6 @@ module.exports = {
           status: elem.dataValues.status,
           reward: elem.dataValues.reward,
           authorTelegramId: elem.dataValues.authorTelegramId,
-          authorUsername: elem.author.username,
           pictureUrl: elem.dataValues.pictureUrl,
           locationName: elem.dataValues.Location.dataValues.globalName,
           localLocationName: elem.dataValues.Location.dataValues.localName,
@@ -373,36 +373,30 @@ module.exports = {
   },
 
   async markAsSpam({ telegramId, assignmentId }) {
+    const t = await sequelize.transaction();
+
     try {
-      //TODO 2 consistent requests
-      await Assignment.increment(
-        { spamScore: 1 },
-        {
-          where: {
-            id: assignmentId,
-          },
-          returning: false,
-        },
-      );
+      const [[assignment]] = await sequelize.query(`UPDATE "Assignments" A
+      SET "spamScore" = "spamScore" + 1, "updatedAt" = NOW() 
+      WHERE "id" = ${assignmentId} RETURNING A."spamScore"`);
 
-      const assignment = await Assignment.findOne({
-        where: {
-          id: assignmentId,
-        },
-        attributes: ['id', 'spamScore'],
-      });
-
-      //TODO move 5 to const
-      if (assignment.spamScore >= 5) {
-      //TODO 2 consistent requests
-        await assignment.destroy();
-        await Spam.destroy(
-          {
+      if (assignment.spamScore >= REQUIRED_SPAM_SCORE_TO_DELETE) {
+        await Promise.all([
+          Assignment.destroy({
             where: {
-              assignmentId,
+              id: assignmentId,
             },
           },
-        );
+          { transaction: t }),
+
+          Spam.destroy(
+            {
+              where: {
+                assignmentId,
+              },
+            },
+            { transaction: t },
+          )]);
       } else {
         await Spam.findOrCreate({
           where: {
@@ -417,8 +411,10 @@ module.exports = {
         });
       }
 
+      await t.commit();
       return new ServiceResponse({ succeeded: true });
     } catch (e) {
+      await t.rollback();
       return new ServiceResponse({
         succeeded: false,
         message: 'Error occurred while marking assignment as spam with '
@@ -431,7 +427,7 @@ module.exports = {
   async get({ telegramId, assignmentId }) {
     try {
       const query = `SELECT A.id, A.title, A.reward, A.description, 
-      A."pictureUrl", L."globalName" as "locationName", U."username" as "authorUsername",
+      A."pictureUrl", L."globalName" as "locationName",
       A."authorTelegramId", EXISTS (
       SELECT 1 FROM "FavoriteAssignments" FA 
       WHERE FA."assignmentId" = ${assignmentId}
@@ -439,14 +435,10 @@ module.exports = {
       FROM "Assignments" A 
       INNER JOIN "Locations" L
       ON A."locationId" = L.id
-      INNER JOIN "Users" U
-      ON A."authorTelegramId" = U."telegramId"
       WHERE A.id = ${assignmentId}
       LIMIT 1`;
 
-      //TODO array destructuring
-      const result = await sequelize.query(query);
-      const foundAssignment = result[0][0];
+      const [[foundAssignment]] = await sequelize.query(query);
 
       if (foundAssignment) {
         return new ServiceResponse({ succeeded: true, model: foundAssignment });

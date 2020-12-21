@@ -27,3 +27,13 @@ exports.ADD_ASSIGNMENT = {
   SHOW_ASSIGNMENT: 'addAssignment.showAssignment',
   PUBLISH_ASSIGNMENT: 'addAssignment.publishAssignment',
 };
+
+exports.EDIT_ASSIGNMENT = {
+  CHOOSE_CATEGORY: 'editAssignment.chooseCategory',
+  EDIT_TITLE: 'editAssignment.addTitle',
+  EDIT_DESCRIPTION: 'editAssignment.addDescription',
+  CHOOSE_LOCATION: 'editAssignment.chooseLocation',
+  EDIT_REWARD: 'editAssignment.addReward',
+  SHOW_ASSIGNMENT: 'editAssignment.showAssignment',
+  PUBLISH_ASSIGNMENT: 'editAssignment.publishAssignment',
+};

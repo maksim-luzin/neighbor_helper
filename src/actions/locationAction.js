@@ -1,33 +1,18 @@
-/* eslint-disable no-shadow */
+/* eslint-disable consistent-return */
 /* eslint-disable no-use-before-define */
 const openGeocoder = require('node-open-geocoder');
-const { telegramTemplate } = require('claudia-bot-builder');
-const responseMessage = require('../helpers/responseMessage');
 
+const responseMessage = require('../helpers/responseMessage');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
 const { update } = require('../services').userService;
 const { create, updateLocation } = require('../services').locationService;
-const setState = require('../helpers/setState');
-
-const {
-  ADD_LOCATION,
-  ADD_LOCATION_NAME,
-} = require('../constants/flow.step').ADD_LOCATION;
-
+const { setState } = require('../helpers/state');
+const { ADD_LOCATION_NAME } = require('../constants/flow.step').ADD_LOCATION;
 const {
   addLocationNameMessageTemplate,
   returnMainMenuMessageAfterCreateLocationTemplate,
   returnMainMenuMessageAfterUpdateLocationTemplate,
 } = require('../templates/locationTemplates');
-
-const {
-  commonKeyboardTemplate,
-} = require('../templates/commonTemplates');
-
-const {
-  getAllByTelegramId,
-} = require('../services/location.service');
-
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
 
 const addLocationAction = async (message) => {
@@ -53,6 +38,9 @@ const addLocationAction = async (message) => {
     message,
     addLocationNameMessageTemplate,
     locationNameKeyboard.keyboard,
+    null,
+    null,
+    2,
   );
 };
 
@@ -74,6 +62,9 @@ const addLocalNameLocationAction = async (message, state) => {
     message,
     messageResponse,
     mainMenuKeyboardTemplate,
+    null,
+    null,
+    2,
   );
 };
 
@@ -82,38 +73,32 @@ module.exports = {
   addLocalNameLocationAction,
 };
 
-//TODO refactoring
-async function addGlobalName(location, resolve, reject) {
-  const response = await new Promise((resolve, reject) => (
+async function addGlobalName(location) {
+  return new Promise((resolve, reject) => (
     openGeocoder()
       .reverse(location.longitude, location.latitude)
-      .end((err, res) => {
-        let response = '';
+      .end((err, { address }) => {
         // eslint-disable-next-line prefer-promise-reject-errors
         if (err) reject(Error('Global name hasn\'t created.'));
-        if (!res.address) resolve(response);
-        const { address } = res;
+        const response = (
+          address.city
+          || address.town
+          || address.town
+          || address.village
+          || address.hallmet
+          || address.state
+          || ''
+        );
+        if (!address.road) return resolve(response);
 
-        if (address.city) response = address.city;
-        if (address.town) response = address.town;
-        if (address.village) response = address.village;
-        if (address.hallmet) response = address.hallmet;
-        if (response && !address.road) resolve(response);
-
-        if (response && address.road) {
-          let { road } = address;
-          const str = (road.match(/(^| )(пер|пров|наб|бульв|в?ул|п(р|л))/i) || [''])[0];
-          road = road.replace(/(^| )((пере|пров)улок|набережная?|бульвар|в?улиц(а|я)|проспект|площа(дь)?)/i, '');
-          resolve(`${response} ${str || ''}. ${road || ''}`);
-        }
-        if (address.state) resolve(address.state);
-        resolve('');
+        let { road } = address;
+        const str = (road.match(/(^| )(пер|пров|наб|бульв|в?ул|п(р|л))/i) || [''])[0];
+        road = road.replace(/(^| )((пере|пров)улок|набережная?|бульвар|в?улиц(а|я)|проспект|площа(дь)?)/i, '');
+        resolve(`${response} ${str || ''}. ${road || ''}`);
       })
   ));
-  return response;
 }
 
-// eslint-disable-next-line consistent-return
 async function createNewLocation(message, state) {
   const result = await create({
     ...state.data,
@@ -122,7 +107,6 @@ async function createNewLocation(message, state) {
   if (!result.succeeded) throw Error(result.message);
 }
 
-// eslint-disable-next-line consistent-return
 async function updateOldLocation(message, state) {
   const result = await updateLocation({
     ...state.data,

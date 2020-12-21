@@ -20,7 +20,7 @@ const {
 } = require('../constants/flow.step').FIND_ASSIGNMENTS;
 
 const { ADD_ASSIGNMENT } = require('../constants/flow.step');
-const setState = require('../helpers/setState');
+const { setState } = require('../helpers/state');
 
 const {
   addLocationMessageTemplate,
@@ -41,7 +41,7 @@ const startAction = async (message) => {
   const result = await create(
     {
       telegramId: message.from.id,
-      username: message.from.username,
+      username: message.from.first_name,
     },
   );
 
@@ -49,38 +49,21 @@ const startAction = async (message) => {
 
   const messageStart = `Здравствуй, ${message.from.first_name}.\n${aboutUsMessageTemplate}`;
 
-  return [
-    {
-      method: 'deleteMessage',
-      body: {
-        message_id: message.message_id,
-      },
-    },
-    new telegramTemplate
-      .Text(messageStart)
-      .addReplyKeyboard(
-        mainMenuKeyboardTemplate,
-        { one_time_keyboard: true },
-      )
-      // eslint-disable-next-line comma-dangle
-      .get()
-  ];
+  return responseMessage(
+    message,
+    messageStart,
+    mainMenuKeyboardTemplate,
+  );
 };
 
 const mainMenuAction = async (message) => {
   // eslint-disable-next-line no-use-before-define
   await setState(message.from.id);
-  // TODO: при некоторых возвращениях "Домой" выпадает эксепшн.
-  //  Надо исправить. responseMessage временно заменён
-  // return responseMessage(
-  //   message,
-  //   mainMenuMessageTemplate,
-  //   mainMenuKeyboardTemplate,
-  // );
-  return new telegramTemplate
-    .Text(mainMenuMessageTemplate)
-    .addReplyKeyboard(mainMenuKeyboardTemplate)
-    .get();
+  return responseMessage(
+    message,
+    mainMenuMessageTemplate,
+    mainMenuKeyboardTemplate,
+  );
 };
 
 const aboutUsAction = (message) => responseMessage(

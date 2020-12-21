@@ -27,7 +27,7 @@ const {
 const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
 const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
 
-const setState = require('../helpers/setState');
+const { setState } = require('../helpers/state');
 
 const { deleteMessage, editMessageReplyMarkup } = require('../helpers/telegram');
 
@@ -49,7 +49,7 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
-  //TODO !assignments.length
+  // TODO !assignments.length
   if (assignments.length === 0) {
     return [
       new telegramTemplate.Text(
@@ -132,7 +132,7 @@ const createdAssignmentsAction = async (request, page = 0) => {
   const { pagingData } = result;
   const assignments = result.model;
 
-  //TODO !assignments.length
+  // TODO !assignments.length
   if (assignments.length === 0) {
     return [
       new telegramTemplate.Text(
@@ -231,12 +231,12 @@ const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) =>
       locationId,
     },
     [
-      //TODO remove destructuring
+      // TODO remove destructuring
       ...state.cache,
     ],
   );
 
-  //TODO !assignments.length
+  // TODO !assignments.length
   if (assignments.length === 0) {
     return [
       new telegramTemplate
@@ -345,7 +345,7 @@ const removeFromFavoritesAction = async ({ request, assignmentId, fromFavorites 
 
   const response = await favoriteAssignmentsAction(request);
 
-  //TODO ...
+  // TODO ...
   return response.concat(await deleteMessage(request, 1))
     .concat(await deleteMessage(request))
     .concat(await deleteMessage(request, -1));
@@ -397,7 +397,7 @@ const removeAssignmentAction = async (request, assignmentId) => {
 
   const response = await createdAssignmentsAction(request);
 
-  //TODO ...
+  // TODO ...
   return response.concat(await deleteMessage(request, 1))
     .concat(await deleteMessage(request))
     .concat(await deleteMessage(request, -1));

@@ -9,7 +9,7 @@ const ServiceResponse = require('../helpers/ServiceResponse');
 module.exports = {
   async create({ telegramId, username }) {
     try {
-      //TODO array destructuring const [, created]
+      // TODO array destructuring const [, created]
       const result = await User.findOrCreate({
         where: {
           telegramId,
@@ -31,7 +31,7 @@ module.exports = {
       return new ServiceResponse({
         succeeded: false,
         message: `Error occurred while creating user with telegramId=${telegramId}.`
-               + `${e}.`,
+          + `${e}.`,
       });
     }
   },
@@ -41,23 +41,40 @@ module.exports = {
     newRange = null,
     newLocale = null,
     updatedState = null,
-  }) {
+  }, transaction = null) {
     try {
-      const foundUser = await User.findOne({
-        where: {
-          telegramId,
-        },
-        attributes: ['telegramId', 'range', 'locale', 'state'],
-      });
+      if (transaction) {
+        const foundUser = await User.findOne({
+          where: {
+            telegramId,
+          },
+          attributes: ['telegramId', 'range', 'locale', 'state'],
+        }, { transaction });
 
-      if (foundUser) {
-        await foundUser.update({
-          range: newRange || foundUser.range,
-          locale: newLocale || foundUser.locale,
-          state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
+        if (foundUser) {
+          await foundUser.update({
+            range: newRange || foundUser.range,
+            locale: newLocale || foundUser.locale,
+            state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
+          }, { transaction });
+          return new ServiceResponse({ succeeded: true });
+        }
+      } else {
+        const foundUser = await User.findOne({
+          where: {
+            telegramId,
+          },
+          attributes: ['telegramId', 'range', 'locale', 'state'],
         });
 
-        return new ServiceResponse({ succeeded: true });
+        if (foundUser) {
+          await foundUser.update({
+            range: newRange || foundUser.range,
+            locale: newLocale || foundUser.locale,
+            state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
+          });
+          return new ServiceResponse({ succeeded: true });
+        }
       }
       return new ServiceResponse({
         succeeded: true,

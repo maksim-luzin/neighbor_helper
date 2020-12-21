@@ -21,6 +21,15 @@ const {
 } = require('../actions/addAssignmentAction');
 
 const {
+  chooseCategoryForEditAssignmentAction,
+  editTitleForEditAssignmentAction,
+  editDescriptionForEditAssignmentAction,
+  chooseLocationForEditAssignmentAction,
+  editRewardForEditAssignmentAction,
+  editPictureForEditAssignmentAction,
+} = require('../actions/editAssignmentAction');
+
+const {
   ADD_LOCATION_NAME,
 } = require('../constants/flow.step').ADD_LOCATION;
 
@@ -34,51 +43,58 @@ const {
 } = require('../constants/flow.step').CHANGE_RANGE;
 
 const { ADD_ASSIGNMENT } = require('../constants/flow.step');
+const { EDIT_ASSIGNMENT } = require('../constants/flow.step');
 
 // eslint-disable-next-line consistent-return
-const stateDefaultHandler = async (request, state) => {
-  let response = false;
+const stateDefaultHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
     case ADD_LOCATION_NAME:
-      //TODO return addLocalNameLocationAction(...)
-      response = await addLocalNameLocationAction(request, state);
-      return response;
+      return addLocalNameLocationAction(request, state);
+
     case CHOOSE_LOCATION:
-      //TODO same
-      response = await addFoundAssignmentLocationAction({ request, state });
-      return response;
+      return addFoundAssignmentLocationAction({ request, state });
+
     case CHANGE_RANGE:
-      //TODO same
-      response = await changeRangeAction(request, state);
-      return response;
+      return changeRangeAction(request, state);
 
     // Add assignmet
     case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
-      //TODO same
-      response = await chooseCategoryAssignmentAction(request, state, false);
-      return response;
+      return chooseCategoryAssignmentAction(request, state, false);
 
     case ADD_ASSIGNMENT.ADD_TITLE:
-      //TODO same
-      response = await addTitleForAddAssignmentAction(request, state);
-      return response;
+      return addTitleForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.ADD_DESCRIPTION:
-      response = await addDescriptionForAddAssignmentAction(request, state);
-      return response;
+      return addDescriptionForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.CHOOSE_LOCATION:
-      response = await chooseLocationForAddAssignmentAction(request, state);
-      return response;
+      return chooseLocationForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.ADD_REWARD:
-      response = await addRewardForAddAssignmentAction(request, state);
-      return response;
+      return addRewardForAddAssignmentAction(request, state);
 
     case ADD_ASSIGNMENT.SHOW_ASSIGNMENT:
-      response = await addPictureForAddAssignmentAction(request, state);
-      return response;
+      return addPictureForAddAssignmentAction(request, state);
+
+    // Edit assignmet
+    case EDIT_ASSIGNMENT.CHOOSE_CATEGORY:
+      return chooseCategoryForEditAssignmentAction(request, state, false);
+
+    case EDIT_ASSIGNMENT.EDIT_TITLE:
+      return editTitleForEditAssignmentAction(request, state);
+
+    case EDIT_ASSIGNMENT.EDIT_DESCRIPTION:
+      return editDescriptionForEditAssignmentAction(request, state);
+
+    case EDIT_ASSIGNMENT.CHOOSE_LOCATION:
+      return chooseLocationForEditAssignmentAction(request, state);
+
+    case EDIT_ASSIGNMENT.EDIT_REWARD:
+      return editRewardForEditAssignmentAction(request, state);
+
+    case EDIT_ASSIGNMENT.SHOW_ASSIGNMENT:
+      return editPictureForEditAssignmentAction(request, state);
   }
 };
 

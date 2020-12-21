@@ -14,6 +14,7 @@ const {
 const {
   BUTTON_HOME,
   BUTTON_BACK,
+  EDIT_ASSIGNMENT,
 } = require('../constants/button.text').COMMON;
 const {
   BUTTON_EDUCATION,
@@ -49,32 +50,30 @@ const {
 } = require('../actions/assignmentActions');
 
 const {
+  buttonEditAssignmentHandler,
+  buttonPublishAssignmentHandler,
+} = require('./buttonHandlers');
+
+const {
   PUBLISH_ASSIGNMENT,
 } = require('../constants/button.text').ADD_ASSIGNMENT;
 
-const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
-
-// eslint-disable-next-line consistent-return
-const textHandlers = async (request, state) => {
-  let response = false;
+const textHandlers = (request, state) => {
   switch (request.text) {
     case '/start':
-      response = await startAction(request);
-      return response;
+      return startAction(request);
 
     case BUTTON_ABOUT_US:
       return aboutUsAction(request);
 
     case BUTTON_CHANGE_RANGE:
-      response = await showRangeAction(request);
-      return response;
+      return showRangeAction(request);
 
     case BUTTON_MY_ASSIGNMENT:
       return myAssignmentAction();
 
     case BUTTON_FIND_ASSIGNMENTS:
-      response = await findAssignmentsAction(request, state);
-      return response;
+      return findAssignmentsAction(request, state);
 
     case BUTTON_FAVORITE_ASSIGNMENTS:
       return favoriteAssignmentsAction(request);
@@ -89,42 +88,42 @@ const textHandlers = async (request, state) => {
       return addMenuAddLocationAction(request);
 
     case BUTTON_BACK:
-      response = await buttonBackHandler(request, state);
-      return response;
+      return buttonBackHandler(request, state);
 
     // Выбор категории
     // TODO: заменить на константы, когда будет локализация
     case BUTTON_HELP:
       request.text = 'help';
-      response = await categoryHandler(request, state);
-      return response;
+      return categoryHandler(request, state);
+
     case BUTTON_BARTER:
       request.text = 'barter';
-      response = await categoryHandler(request, state);
-      return response;
+      return categoryHandler(request, state);
+
     case BUTTON_REPAIR:
       request.text = 'repair';
-      response = await categoryHandler(request, state);
-      return response;
+      return categoryHandler(request, state);
+
     case BUTTON_EDUCATION:
       request.text = 'education';
-      response = await categoryHandler(request, state);
-      return response;
+      return categoryHandler(request, state);
+
     case BUTTON_OTHER:
       request.text = 'other';
-      response = await categoryHandler(request, state);
-      return response;
+      return categoryHandler(request, state);
 
     case BUTTON_ADD_ASSIGNMENT:
-      response = await addMenuSelectCategoryForCreatedAssignmentAction(request, state);
-      return response;
+      return addMenuSelectCategoryForCreatedAssignmentAction(request, state);
 
     case PUBLISH_ASSIGNMENT:
-      response = await publishAddAssignmentAction(request, state);
-      return response;
+      return buttonPublishAssignmentHandler(request, state);
+
+    case EDIT_ASSIGNMENT:
+      return buttonEditAssignmentHandler(request, state);
 
     default:
-      response = await stateDefaultHandler(request, state);
+      // eslint-disable-next-line no-case-declarations
+      const response = stateDefaultHandler(request, state);
       if (response) return response;
       return mainMenuAction(request);
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 const {
   changeRangeAction,
   mainMenuAction,
@@ -15,69 +16,69 @@ const {
   markAssignmentAsCompletedAction,
 } = require('../actions/assignmentActions');
 
+const { addMenuSelectCategoryForEditAssignmentAction } = require('../actions/editAssignmentAction');
+
 const { deleteMessage } = require('../helpers/telegram');
 
 const callbackQueryHandler = async (callbackQuery, state) => {
-  let response;
-  //TODO aray destructuring
+  // TODO aray destructuring
   const splitCallbackQueryData = callbackQuery.data.split('.');
   switch (splitCallbackQueryData[0]) {
     case 'changeRangeAction':
-      response = await changeRangeAction(callbackQuery);
-      return response;
+      return await changeRangeAction(callbackQuery);
 
     case 'paginationAction':
-      response = await paginationAction(callbackQuery, +splitCallbackQueryData[1], state);
+      // eslint-disable-next-line no-case-declarations
+      const response = await paginationAction(callbackQuery, +splitCallbackQueryData[1], state);
       return response.concat(await deleteMessage(callbackQuery));
 
     case 'removeFromFavoritesAction':
-      response = await removeFromFavoritesAction(
+      return await removeFromFavoritesAction(
         {
           request: callbackQuery,
           assignmentId: splitCallbackQueryData[1],
           fromFavorites: splitCallbackQueryData[2],
         },
       );
-      return response;
 
     case 'markAssignmentAsNotCompletedAction':
-      response = await markAssignmentAsNotCompletedAction({
+      return await markAssignmentAsNotCompletedAction({
         request: callbackQuery,
         assignmentId: splitCallbackQueryData[1],
       });
-
-      return response;
 
     case 'markAssignmentAsCompletedAction':
-      response = await markAssignmentAsCompletedAction({
+      return await markAssignmentAsCompletedAction({
         request: callbackQuery,
         assignmentId: splitCallbackQueryData[1],
       });
 
-      return response;
-
     case 'addToFavoritesAction':
-      response = await addToFavoritesAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return await addToFavoritesAction(callbackQuery, splitCallbackQueryData[1]);
 
     case 'markAssignmentAsSpamAction':
-      response = markAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return markAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
 
     case 'confirmAssignmentAsSpamAction':
-      response = await confirmAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return await confirmAssignmentAsSpamAction(callbackQuery, splitCallbackQueryData[1]);
 
     case 'backFromConfirmAssignmentAsSpamAction':
-      response = await backFromConfirmAssignmentAsSpamAction(
+      return await backFromConfirmAssignmentAsSpamAction(
         callbackQuery,
         splitCallbackQueryData[1],
       );
-      return response;
 
     case 'removeAssignmentAction':
-      response = await removeAssignmentAction(callbackQuery, splitCallbackQueryData[1]);
-      return response;
+      return await removeAssignmentAction(callbackQuery, splitCallbackQueryData[1]);
+
+    case 'editAssignmentAction':
+      // eslint-disable-next-line no-case-declarations
+      const { message } = callbackQuery;
+      return await addMenuSelectCategoryForEditAssignmentAction(
+        message,
+        null,
+        splitCallbackQueryData[1],
+      );
 
     default:
       return mainMenuAction();

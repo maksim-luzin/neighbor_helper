@@ -40,10 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     state: {
       type: DataTypes.JSONB,
     },
-    username: {
-      allowNull: false,
-      type: DataTypes.STRING,
-    },
   }, {
     sequelize,
     modelName: USER_MODEL_NAME,

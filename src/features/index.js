@@ -8,10 +8,8 @@ const pictureHandler = require('./pictureHandler');
 
 const { ADD_LOCATION, ADD_ASSIGNMENT } = require('../constants/flow.step');
 
-//TODO move originalRequest destructuring here
-const handlers = async (request) => {
+const handlers = async ({ originalRequest }) => {
   try {
-    const { originalRequest } = request;
     let state = {
       data: '',
       step: '',
@@ -40,12 +38,6 @@ const handlers = async (request) => {
       return await callbackQueryHandler(originalRequest.callback_query, state);
     }
 
-    // TODO
-    // try {
-    // } catch (err) {
-    // } finally {
-    //   return messageDefaultAction();
-    // }
     return messageDefaultAction();
   } catch (err) {
     console.error(err.name);
@@ -57,11 +49,12 @@ const handlers = async (request) => {
 
 module.exports = handlers;
 
-//TODO line breaks
 async function stateLoad(message) {
   if (message.text === '/start') return { data: '', step: '', cache: '' };
+
   const result = await getOne({ telegramId: message.from.id, params: ['state'] });
   if (!result.succeeded) throw Error(result.message);
+
   if (!result.model) {
     const resultCreate = await create({
       telegramId: message.from.id,
@@ -70,11 +63,10 @@ async function stateLoad(message) {
     if (!resultCreate.succeeded) throw Error(resultCreate.message);
     throw Error("State haven't found");
   }
-  const response = {
+
+  return {
     step: result.model.state.step || '',
     data: result.model.state.data || '',
     cache: result.model.state.cache || '',
   };
-
-  return response;
 }

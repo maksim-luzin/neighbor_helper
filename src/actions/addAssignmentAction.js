@@ -201,8 +201,8 @@ const addPictureForAddAssignmentAction = async (message, state) => {
 
 const publishAddAssignmentAction = async (message, state) => {
   // TODO 2 consistent requests
-  await setState(message.from.id);
   const result = await create(state.data);
+  await setState(message.from.id);
   if (!result.succeeded) throw Error(result.message);
   return responseMessage(
     message,

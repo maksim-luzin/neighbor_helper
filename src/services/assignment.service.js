@@ -41,7 +41,7 @@ module.exports = {
       });
 
       if (result) {
-        if (!result.Locations.length) {
+        if (result.Locations.length) {
           await Assignment.create({
             title,
             description,

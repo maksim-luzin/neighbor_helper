@@ -21,7 +21,7 @@ const {
 } = require('../../actions/addAssignmentAction');
 
 // eslint-disable-next-line consistent-return
-const buttonBackHandler = async (request, state) => {
+const buttonBackHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
     case ADD_LOCATION.ADD_LOCATION_NAME:

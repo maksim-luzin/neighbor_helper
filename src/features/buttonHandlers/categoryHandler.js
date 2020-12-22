@@ -10,7 +10,7 @@ const {
 } = require('../../actions/addAssignmentAction');
 
 // eslint-disable-next-line consistent-return
-const categoryHandler = async (request, state) => {
+const categoryHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
     case findAssignmentsFlowSteps.CHOOSE_CATEGORY:

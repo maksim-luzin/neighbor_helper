@@ -9,9 +9,8 @@ const { stateLoad } = require('../helpers/state');
 const { ADD_LOCATION } = require('../constants/flow.step');
 
 // TODO move originalRequest destructuring here
-const handlers = async (request) => {
+const handlers = async ({ originalRequest }) => {
   try {
-    const { originalRequest } = request;
     let state = {
       data: '',
       step: '',
@@ -39,6 +38,8 @@ const handlers = async (request) => {
       state = await stateLoad(originalRequest.callback_query);
       return await callbackQueryHandler(originalRequest.callback_query, state);
     }
+
+    return messageDefaultAction();
   } catch (err) {
     console.error(err.name);
     console.error(err.message);

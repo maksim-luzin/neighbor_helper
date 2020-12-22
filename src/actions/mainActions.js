@@ -13,6 +13,7 @@ const {
   chooseCategoryKeyboardTemplate,
   chooseCategoryMessageTemplate,
 } = require('../templates/categoryTemplates');
+const { deleteMessage } = require('../helpers/telegram');
 
 const {
   CHOOSE_CATEGORY,
@@ -41,7 +42,6 @@ const startAction = async (message) => {
   const result = await create(
     {
       telegramId: message.from.id,
-      username: message.from.first_name,
     },
   );
 
@@ -129,6 +129,7 @@ const findAssignmentsAction = async (message) => {
       .get()
   );
 };
+
 const addMenuSelectCategoryForCreatedAssignmentAction = async (message) => {
   await setState(message.from.id, ADD_ASSIGNMENT.CHOOSE_CATEGORY);
   return responseMessage(

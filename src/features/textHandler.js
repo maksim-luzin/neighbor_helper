@@ -58,6 +58,8 @@ const {
   PUBLISH_ASSIGNMENT,
 } = require('../constants/button.text').ADD_ASSIGNMENT;
 
+const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
+
 const textHandlers = (request, state) => {
   switch (request.text) {
     case '/start':

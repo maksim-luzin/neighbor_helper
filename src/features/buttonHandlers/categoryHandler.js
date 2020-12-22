@@ -9,20 +9,15 @@ const {
   chooseCategoryAssignmentAction,
 } = require('../../actions/addAssignmentAction');
 
-//TODO return function() (without await)
-
 // eslint-disable-next-line consistent-return
-const categoryHandler = async (request, state) => {
-  let response;
+const categoryHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
     case findAssignmentsFlowSteps.CHOOSE_CATEGORY:
-      response = await addFoundAssignmentCategoryAction(request, state);
-      return response;
+      return addFoundAssignmentCategoryAction(request, state);
 
     case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
-      response = await chooseCategoryAssignmentAction(request, state, true);
-      return response;
+      return chooseCategoryAssignmentAction(request, state, true);
   }
 
   return false;

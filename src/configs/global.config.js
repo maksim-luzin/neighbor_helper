@@ -9,4 +9,5 @@ module.exports = {
   DATABASE_DIALECT: process.env.DATABASE_DIALECT,
 
   TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN, // for local development
+  REQUIRED_SPAM_SCORE_TO_DELETE: process.env.REQUIRED_SPAM_SCORE_TO_DELETE,
 };

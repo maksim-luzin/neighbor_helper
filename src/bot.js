@@ -1,11 +1,7 @@
 const botBuilder = require('claudia-bot-builder');
 const messageHandler = require('./features');
 
-//TODO botBuilder(messageHandler, ...);
-const bot = botBuilder(async (request) => {
-  const response = await messageHandler(request);
-  return response;
-}, {
+const bot = botBuilder(messageHandler, {
   platforms: ['telegram'],
 });
 

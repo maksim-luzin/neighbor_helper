@@ -7,19 +7,16 @@ const {
 const ServiceResponse = require('../helpers/ServiceResponse');
 
 module.exports = {
-  async create({ telegramId, username }) {
+  async create({ telegramId }) {
     try {
-      //TODO array destructuring const [, created]
-      const result = await User.findOrCreate({
+      const [, created] = await User.findOrCreate({
         where: {
           telegramId,
         },
         defaults: {
           telegramId,
-          username,
         },
       });
-      const created = result[1];
 
       if (created) { return new ServiceResponse({ succeeded: true }); }
 
@@ -94,7 +91,7 @@ module.exports = {
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while getting user's locale with telegramId=${telegramId}`
+        message: `Error occurred while getting user with telegramId=${telegramId}`
           + `${e}.`,
       });
     }

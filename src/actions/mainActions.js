@@ -13,6 +13,7 @@ const {
   chooseCategoryKeyboardTemplate,
   chooseCategoryMessageTemplate,
 } = require('../templates/categoryTemplates');
+const { deleteMessage } = require('../helpers/telegram');
 
 const {
   CHOOSE_CATEGORY,
@@ -41,7 +42,6 @@ const startAction = async (message) => {
   const result = await create(
     {
       telegramId: message.from.id,
-      username: message.from.username,
     },
   );
 
@@ -50,12 +50,7 @@ const startAction = async (message) => {
   const messageStart = `Здравствуй, ${message.from.first_name}.\n${aboutUsMessageTemplate}`;
 
   return [
-    {
-      method: 'deleteMessage',
-      body: {
-        message_id: message.message_id,
-      },
-    },
+    deleteMessage(message),
     new telegramTemplate
       .Text(messageStart)
       .addReplyKeyboard(

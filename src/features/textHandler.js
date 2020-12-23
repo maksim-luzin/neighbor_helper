@@ -60,7 +60,7 @@ const {
 
 const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
 
-const textHandlers = (request, state) => {
+const textHandlers = async (request, state) => {
   switch (request.text) {
     case '/start':
       return startAction(request);
@@ -125,7 +125,7 @@ const textHandlers = (request, state) => {
 
     default:
       // eslint-disable-next-line no-case-declarations
-      const response = stateDefaultHandler(request, state);
+      const response = await stateDefaultHandler(request, state);
       if (response) return response;
       return mainMenuAction(request);
   }

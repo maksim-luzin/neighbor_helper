@@ -9,3 +9,6 @@ exports.markAssignmentAsSpamMessageTemplate = require('./markAssignmentAsSpamMes
 exports.markAssignmentAsSpamKeyboardTemplate = require('./markAssignmentAsSpamKeyboardTemplate');
 exports.markAssignmentAsSpamAlertTemplate = require('./markAssignmentAsSpamAlertTemplate.js');
 exports.createdAssignmentsMessageTemplate = require('./createdAssignmentsMessageTemplate.js');
+exports.removeAssignmentKeyboardTemplate = require('./removeAssignmentKeyboardTemplate');
+exports.removeAssignmentAlertTemplate = require('./removeAssignmentAlertTemplate');
+exports.removeAssignmentMessageTemplate = require('./removeAssignmentMessageTemplate');

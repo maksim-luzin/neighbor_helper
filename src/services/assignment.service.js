@@ -15,48 +15,83 @@ const { REQUIRED_SPAM_SCORE_TO_DELETE } = require('../configs/global.config');
 const ServiceResponse = require('../helpers/ServiceResponse');
 
 module.exports = {
-  async create({
-    title,
-    description,
-    reward = null,
-    link = null,
-    pictureUrl = null,
-    category,
-    authorTelegramId,
-    localLocationName,
-  }) {
+  async create(
+    {
+      title,
+      description,
+      reward = null,
+      link = null,
+      pictureUrl = null,
+      category,
+      authorTelegramId,
+      localLocationName,
+    },
+    transaction = null,
+  ) {
     try {
-      const result = await User.findOne({
-        where: {
-          telegramId: authorTelegramId,
-        },
-        include: [{
-          model: Location,
-          attributes: ['id'],
+      if (transaction) {
+        const result = await User.findOne({
           where: {
-            localName: localLocationName,
+            telegramId: authorTelegramId,
           },
-        }],
-        attributes: ['telegramId'],
-      });
+          include: [{
+            model: Location,
+            attributes: ['id'],
+            where: {
+              localName: localLocationName,
+            },
+          }],
+          attributes: ['telegramId'],
+        }, {
+          transaction,
+        });
 
-      if (result) {
-        if (result.Locations.length) {
-          await Assignment.create({
-            title,
-            description,
-            reward,
-            link,
-            pictureUrl,
-            category,
-            authorTelegramId: result.telegramId,
-            locationId: result.Locations[0].id,
-          });
+        if (result) {
+          if (result.Locations.length) {
+            await Assignment.create({
+              title,
+              description,
+              reward,
+              link,
+              pictureUrl,
+              category,
+              authorTelegramId: result.telegramId,
+              locationId: result.Locations[0].id,
+            });
+          }
+          return new ServiceResponse({ succeeded: true });
         }
+      } else {
+        const result = await User.findOne({
+          where: {
+            telegramId: authorTelegramId,
+          },
+          include: [{
+            model: Location,
+            attributes: ['id'],
+            where: {
+              localName: localLocationName,
+            },
+          }],
+          attributes: ['telegramId'],
+        });
 
-        return new ServiceResponse({ succeeded: true });
+        if (result) {
+          if (result.Locations.length) {
+            await Assignment.create({
+              title,
+              description,
+              reward,
+              link,
+              pictureUrl,
+              category,
+              authorTelegramId: result.telegramId,
+              locationId: result.Locations[0].id,
+            });
+          }
+          return new ServiceResponse({ succeeded: true });
+        }
       }
-
       return new ServiceResponse({
         succeeded: true,
         message: `No locations were found using user's telegramId=${authorTelegramId} `
@@ -452,5 +487,42 @@ module.exports = {
           + `${e}.`,
       });
     }
+  },
+
+  async assignmentGetById(id) {
+    return Assignment.findOne({
+      where: { id },
+      attributes: ['id', 'authorTelegramId', 'title', 'description', 'reward', 'category', 'pictureUrl'],
+      include: [{
+        model: Location,
+        attributes: ['localName'],
+      }],
+    });
+  },
+
+  // eslint-disable-next-line consistent-return
+  async assignmentUpdateById(id, data, transaction) {
+    let result;
+    if (transaction) {
+      result = await Assignment.update(data, {
+        where: { id },
+        returning: true,
+        plain: true,
+      }, {
+        transaction,
+      });
+    } else {
+      result = await Assignment.update(data, {
+        where: { id },
+        returning: true,
+        plain: true,
+      });
+    }
+
+    if (result[1]) return new ServiceResponse({ succeeded: true });
+    return new ServiceResponse({
+      succeeded: false,
+      message: `Error occurred while updatinng assignment with assignmentId=${id}.`,
+    });
   },
 };

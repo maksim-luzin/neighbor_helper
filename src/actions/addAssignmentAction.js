@@ -1,7 +1,4 @@
-/* eslint-disable no-use-before-define */
-const { telegramTemplate } = require('claudia-bot-builder');
-const setState = require('../helpers/setState');
-const { chooseCategoryKeyboardTemplate } = require('../templates/categoryTemplates');
+const { setState } = require('../helpers/state');
 const { create } = require('../services/assignment.service');
 const { assignmentCategory } = require('../constants/enums');
 const responseMessage = require('../helpers/responseMessage');
@@ -21,17 +18,6 @@ const {
 } = require('../constants/flow.step').ADD_ASSIGNMENT;
 
 const {
-  commonKeyboardTemplate,
-  skipCommonKeyboardTemplate,
-} = require('../templates/commonTemplates');
-
-const {
-  previewAssignnmentMessageTemplate,
-  previewAssignnmentKeyboardTemplate,
-  publishAssignnmentMessageTemplate,
-} = require('../templates/addAssignmentTemplates');
-
-const {
   addTitleAssignmentMessageTemplate,
   addDescriptionAssignmentMessageTemplate,
   addRewardAssignmentMessageTemplate,
@@ -42,8 +28,22 @@ const {
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
 
+const {
+  commonKeyboard,
+  skipCommonKeyboard,
+} = require('../helpers/commonKeyboards');
+
+const validationInputCategory = require('../helpers/validationInputCategory');
+
+const {
+  previewAssignmentMessageTemplate,
+  previewAssignmentKeyboardTemplate,
+  publishNewAssignmentMessageTemplate,
+} = require('../templates/commonTemplates');
+
 const chooseCategoryAssignmentAction = async (message, state, categoryHandler) => {
   const { text } = message;
+  // eslint-disable-next-line no-use-before-define
   if (!categoryHandler && !(text === BUTTON_BACK || validationInputCategory(text))) return;
   // eslint-disable-next-line no-nested-ternary
   const category = text === BUTTON_BACK
@@ -60,9 +60,17 @@ const chooseCategoryAssignmentAction = async (message, state, categoryHandler) =
       category,
     },
   );
-
+  const assignment = {
+    ...message.data,
+    category,
+  };
   // eslint-disable-next-line consistent-return
-  return commonKeyboard(addTitleAssignmentMessageTemplate, message);
+  return commonKeyboard(
+    addTitleAssignmentMessageTemplate,
+    message,
+    assignment,
+    2,
+  );
 };
 
 const addTitleForAddAssignmentAction = async (message, state) => {
@@ -81,8 +89,16 @@ const addTitleForAddAssignmentAction = async (message, state) => {
     },
   );
 
+  const assignment = {
+    ...state.data,
+    title,
+  };
   // eslint-disable-next-line no-use-before-define
-  return commonKeyboard(addDescriptionAssignmentMessageTemplate, message);
+  return commonKeyboard(
+    addDescriptionAssignmentMessageTemplate,
+    message,
+    assignment,
+  );
 };
 
 const addDescriptionForAddAssignmentAction = async (message, state) => {
@@ -102,43 +118,53 @@ const addDescriptionForAddAssignmentAction = async (message, state) => {
     locationKeyboardTemplate.cache,
   );
 
+  const assignment = {
+    ...state.data,
+    description,
+  };
   return responseMessage(
     message,
     chooseLocationAssignmentMessageTemplate,
     locationKeyboardTemplate.keyboard,
+    null,
+    assignment,
+    3,
   );
 };
 
 const chooseLocationForAddAssignmentAction = async (message, state) => {
   const { text } = message;
+  const { data } = state;
   if (!(text === BUTTON_BACK || state.cache[message.text])) return;
 
   const localLocationName = text === BUTTON_BACK
-    ? state.data.localLocationName
-    : text;
-  const cache = text === BUTTON_BACK
-    ? state.cache
+    ? data.localLocationName
     : text;
 
   await setState(
     message.from.id,
     ADD_REWARD,
     {
-      ...state.data,
+      ...data,
       localLocationName,
     },
-    cache,
   );
 
+  const assignment = {
+    ...data,
+    localLocationName,
+  };
   // eslint-disable-next-line consistent-return
-  return skipCommonKeyboard(addRewardAssignmentMessageTemplate, message);
+  return skipCommonKeyboard(
+    addRewardAssignmentMessageTemplate,
+    message,
+    assignment,
+  );
 };
 
 const addRewardForAddAssignmentAction = async (message, state) => {
   const { text } = message;
-
-  //TODO message destructuring
-  let data = { ...state.data };
+  let { data } = state;
   if (text !== BUTTON_BACK) data = { ...data, reward: text };
   if (text === BUTTON_SKIP && data.reward) delete data.reward;
 
@@ -146,16 +172,19 @@ const addRewardForAddAssignmentAction = async (message, state) => {
     message.from.id,
     SHOW_ASSIGNMENT,
     data,
-    state.cache,
   );
 
   // eslint-disable-next-line no-use-before-define
-  return skipCommonKeyboard(addPictureAssignmentMessageTemplate, message);
+  return skipCommonKeyboard(
+    addPictureAssignmentMessageTemplate,
+    message,
+    data,
+  );
 };
 
 const addPictureForAddAssignmentAction = async (message, state) => {
-  let data = { ...state.data };
-  let pictureUrl;
+  let { data } = state;
+  let pictureUrl = null;
 
   const photo = message.photo
     ? message.photo
@@ -176,38 +205,30 @@ const addPictureForAddAssignmentAction = async (message, state) => {
     message.from.id,
     PUBLISH_ASSIGNMENT,
     data,
-    state.cache,
   );
-  let assignment = `*${state.data.title}*\n ${state.data.description}`;
-  if (state.data.reward) assignment += `\n\`Награда: ${state.data.reward}\``;
-  assignment += `\n\`Категория: ${categoryNameToShow(state.data.category)}\``;
-  assignment += `\n\`Локация: ${state.cache}\``;
-
-  if (photo) {
-    return responseMessage(
-      message,
-      assignment,
-      previewAssignnmentKeyboardTemplate,
-      pictureUrl,
-    );
-  }
 
   return responseMessage(
     message,
-    assignment,
-    previewAssignnmentKeyboardTemplate,
+    previewAssignmentMessageTemplate,
+    previewAssignmentKeyboardTemplate,
+    null,
+    data,
+    3,
   );
 };
 
 const publishAddAssignmentAction = async (message, state) => {
-  // TODO 2 consistent requests
   const result = await create(state.data);
-  await setState(message.from.id);
   if (!result.succeeded) throw Error(result.message);
+  await setState(message.from.id);
+
   return responseMessage(
     message,
-    publishAssignnmentMessageTemplate,
+    publishNewAssignmentMessageTemplate,
     mainMenuKeyboardTemplate,
+    null,
+    null,
+    3,
   );
 };
 
@@ -220,36 +241,3 @@ module.exports = {
   addPictureForAddAssignmentAction,
   publishAddAssignmentAction,
 };
-
-function validationInputCategory(text) {
-  const { length } = chooseCategoryKeyboardTemplate;
-  const response = chooseCategoryKeyboardTemplate.some((row, rowKey) => (
-    rowKey < (length - 1) && row.some((cell) => cell === text)
-  ));
-  return response;
-}
-
-function commonKeyboard(resMessage, message) {
-  return responseMessage(
-    message,
-    resMessage,
-    commonKeyboardTemplate,
-  );
-}
-
-function skipCommonKeyboard(resMessage, message) {
-  return responseMessage(
-    message,
-    resMessage,
-    skipCommonKeyboardTemplate,
-  );
-}
-
-// name function better + return category === elem[1]; (I'd prefer to use for of with return)
-function categoryNameToShow(category) {
-  const response = Object.entries(assignmentCategory).find((elem) => {
-    if (category === elem[1]) return true;
-    return false;
-  })[0];
-  return response;
-}

@@ -26,7 +26,7 @@ const {
 const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
 const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
 
-const setState = require('../helpers/setState');
+const { setState } = require('../helpers/state');
 
 const {
   deleteMessage,

@@ -1,12 +1,12 @@
-const { getOne } = require('../services').userService;
+/* eslint-disable consistent-return */
 const locationHandler = require('./locationHandler');
 const textHandler = require('./textHandler');
 const callbackQueryHandler = require('./callbackQueryHandler');
 const { messageDefaultAction } = require('../actions/commonActions');
-const { create } = require('../services').userService;
 const pictureHandler = require('./pictureHandler');
+const { stateLoad } = require('../helpers/state');
 
-const { ADD_LOCATION, ADD_ASSIGNMENT } = require('../constants/flow.step');
+const { ADD_LOCATION } = require('../constants/flow.step');
 
 const handlers = async ({ originalRequest }) => {
   try {
@@ -23,7 +23,7 @@ const handlers = async ({ originalRequest }) => {
         return await locationHandler(message, state);
       }
 
-      if (message.photo && state.step === ADD_ASSIGNMENT.SHOW_ASSIGNMENT) {
+      if (message.photo) {
         return await pictureHandler(message, state);
       }
 
@@ -48,25 +48,3 @@ const handlers = async ({ originalRequest }) => {
 };
 
 module.exports = handlers;
-
-async function stateLoad(message) {
-  if (message.text === '/start') return { data: '', step: '', cache: '' };
-
-  const result = await getOne({ telegramId: message.from.id, params: ['state'] });
-  if (!result.succeeded) throw Error(result.message);
-
-  if (!result.model) {
-    const resultCreate = await create({
-      telegramId: message.from.id,
-    });
-
-    if (!resultCreate.succeeded) throw Error(resultCreate.message);
-    throw Error("State haven't found");
-  }
-
-  return {
-    step: result.model.state.step || '',
-    data: result.model.state.data || '',
-    cache: result.model.state.cache || '',
-  };
-}

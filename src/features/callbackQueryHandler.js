@@ -1,3 +1,4 @@
+/* eslint-disable no-return-await */
 const {
   changeRangeAction,
   mainMenuAction,
@@ -14,6 +15,8 @@ const {
   markAssignmentAsNotCompletedAction,
   markAssignmentAsCompletedAction,
 } = require('../actions/assignmentActions');
+
+const { addMenuSelectCategoryForEditAssignmentAction } = require('../actions/editAssignmentAction');
 
 const { deleteMessage } = require('../helpers/telegram');
 
@@ -66,6 +69,15 @@ const callbackQueryHandler = async (callbackQuery, state) => {
 
     case 'removeAssignmentAction':
       return await removeAssignmentAction(callbackQuery, index);
+
+    case 'editAssignmentAction':
+      // eslint-disable-next-line no-case-declarations
+      const { message } = callbackQuery;
+      return await addMenuSelectCategoryForEditAssignmentAction(
+        message,
+        null,
+        index,
+      );
 
     default:
       return mainMenuAction();

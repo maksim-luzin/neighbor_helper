@@ -17,6 +17,8 @@ exports.COMMON = {
   BUTTON_HOME: 'Домой',
   BUTTON_CONFIRM: 'Да',
   BUTTON_SKIP: 'Пропустить',
+  EDIT_ASSIGNMENT: 'Редактировать объявление',
+  BUTTON_DELETE: 'Удалить',
 };
 
 exports.CATEGORY = {

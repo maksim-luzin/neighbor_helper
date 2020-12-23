@@ -1,32 +1,46 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable for-direction */
 const { telegramTemplate } = require('claudia-bot-builder');
+const assignmentMessage = require('./assignmentMessage');
 
 const responseMessage = (
   message,
-  messageTemplate = false,
-  keyboardTemplate = false,
-  photo = false,
+  messageTemplate = null,
+  keyboardTemplate = null,
+  photo = null,
+  template = null,
+  numberMessageForDelete = 1,
   // eslint-disable-next-line consistent-return
 ) => {
-  const deleteMessages = [
-    {
-      method: 'deleteMessage',
-      body: {
-        message_id: message.message_id - 1,
-      },
-    },
-    {
-      method: 'deleteMessage',
-      body: {
-        message_id: message.message_id,
-      },
-    },
-  ];
+  let pictureUrl;
+  let assignment;
+  if (template) {
+    const response = assignmentMessage(template);
+    pictureUrl = response.pictureUrl;
+    assignment = response.assignment;
+  }
 
-  if (!keyboardTemplate && !photo) return [...deleteMessages, messageTemplate];
+  const deleteMessages = () => {
+    let response = [];
 
-  if (!photo) {
+    for (let i = numberMessageForDelete - 1; i >= 0; --i) {
+      response = [
+        ...response,
+        {
+          method: 'deleteMessage',
+          body: {
+            message_id: message.message_id - i,
+          },
+        },
+      ];
+    }
+
+    return response;
+  };
+
+  if (!photo && !assignment) {
     return [
-      ...deleteMessages,
+      ...deleteMessages(),
       new telegramTemplate
         .Text(messageTemplate)
         .addReplyKeyboard(
@@ -38,25 +52,12 @@ const responseMessage = (
     ];
   }
 
-  if (!keyboardTemplate) {
+  if (!assignment) {
     const resPhoto = new telegramTemplate
       .Photo(
         photo,
         messageTemplate,
       )
-      .get();
-
-    resPhoto.body.parse_mode = 'Markdown';
-
-    return [
-      ...deleteMessages,
-      resPhoto,
-    ];
-  }
-
-  if (!messageTemplate) {
-    const resPhoto = new telegramTemplate
-      .Photo(photo)
       .addReplyKeyboard(
         keyboardTemplate,
         { one_time_keyboard: true },
@@ -66,28 +67,50 @@ const responseMessage = (
     resPhoto.body.parse_mode = 'Markdown';
 
     return [
-      ...deleteMessages,
+      ...deleteMessages(),
       resPhoto,
     ];
   }
 
-  const resPhoto = new telegramTemplate
-    .Photo(
-      photo,
-      messageTemplate,
-    )
-    .addReplyKeyboard(
-      keyboardTemplate,
-      { one_time_keyboard: true },
-    )
-    .get();
+  if (template && !template.pictureUrl) {
+    return [
+      ...deleteMessages(),
+      new telegramTemplate
+        .Text(assignment)
+        .get(),
+      new telegramTemplate
+        .Text(messageTemplate)
+        .addReplyKeyboard(
+          keyboardTemplate,
+          { one_time_keyboard: true },
+        )
+        // eslint-disable-next-line comma-dangle
+        .get()
+    ];
+  }
 
-  resPhoto.body.parse_mode = 'Markdown';
+  if (template && template.pictureUrl) {
+    const resPhoto = new telegramTemplate
+      .Photo(
+        template.pictureUrl,
+        assignment,
+      )
+      .get();
+    resPhoto.body.parse_mode = 'Markdown';
 
-  return [
-    ...deleteMessages,
-    resPhoto,
-  ];
+    return [
+      ...deleteMessages(),
+      resPhoto,
+      new telegramTemplate
+        .Text(messageTemplate)
+        .addReplyKeyboard(
+          keyboardTemplate,
+          { one_time_keyboard: true },
+        )
+        // eslint-disable-next-line comma-dangle
+        .get()
+    ];
+  }
 };
 
 module.exports = responseMessage;

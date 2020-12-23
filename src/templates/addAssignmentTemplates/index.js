@@ -4,7 +4,3 @@ exports.chooseCategoryAssignmentMessageTemplate = require('./chooseCategoryAssig
 exports.addRewardAssignmentMessageTemplate = require('./addRewardAssignmentMessageTemplate');
 exports.addPictureAssignmentMessageTemplate = require('./addPictureAssignmentMessageTemplate');
 exports.chooseLocationAssignmentMessageTemplate = require('./chooseLocationAssignmentMessageTemplate');
-exports.returnMainMenuAfterCreateAssignmentMessageTemplate = require('./publishAssignnmentMessageTemplate');
-exports.previewAssignnmentKeyboardTemplate = require('./previewAssignnmentKeyboardTemplate');
-exports.previewAssignnmentMessageTemplate = require('./previewAssignnmentMessageTemplate');
-exports.publishAssignnmentMessageTemplate = require('./publishAssignnmentMessageTemplate');

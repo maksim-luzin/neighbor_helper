@@ -5,16 +5,20 @@ const setState = async (
   step = '',
   data = '',
   cache = '',
+  transaction,
 ) => {
   const updatedState = {
     step,
     cache,
     data,
   };
-  const result = await update({
-    telegramId,
-    updatedState,
-  });
+  const result = await update(
+    {
+      telegramId,
+      updatedState,
+    },
+    transaction,
+  );
   if (!result.succeeded) throw Error(result.message);
 };
 

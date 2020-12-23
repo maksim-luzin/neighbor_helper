@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+//* eslint-disable camelcase */
 const { Text, Pause } = require('claudia-bot-builder').telegramTemplate;
 
 module.exports.pause = (time) => new Pause(time).get();

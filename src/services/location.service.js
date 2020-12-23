@@ -94,10 +94,10 @@ module.exports = {
   // eslint-disable-next-line consistent-return
   async updateLocation({ id, coordinates, ...data }) {
     try {
-      //TODO array destructuring
+      // TODO array destructuring
       const result = await Location.update(
         {
-          //TODO remove spread operator
+          // TODO remove spread operator
           ...data,
           coordinates: { type: 'Point', coordinates },
         },

@@ -5,7 +5,7 @@ const ownAssignmentInlineKeyboardTemplate = ({ assignmentId, status }) => {
 
   return [
     [visibilityEvent],
-    [{ text: 'Редактировать', callback_data: 'editAssignmentAction' }],
+    [{ text: 'Редактировать', callback_data: `editAssignmentAction.${assignmentId}` }],
     [{ text: 'Удалить', callback_data: `removeAssignmentAction.${assignmentId}` }],
   ];
 };

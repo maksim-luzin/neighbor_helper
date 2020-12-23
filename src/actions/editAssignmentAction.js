@@ -1,4 +1,3 @@
-const sequelize = require('../database/connection/localConnection');
 const { setState } = require('../helpers/state');
 const {
   create,
@@ -295,23 +294,16 @@ const publishEditAssignmentAction = async (message, state) => {
   let result;
   let messageTemplate;
 
-  const transaction = await sequelize.transaction();
-  try {
-    if (!data.id) {
-      result = await create(state.data, transaction);
-      if (!result.succeeded) throw Error(result.message);
-      messageTemplate = publishNewAssignnmentMessageTemplate;
-    } else {
-      const { id, ...dataUpdate } = data;
-      result = await assignmentUpdateById(id, dataUpdate, transaction);
-      if (!result.succeeded) throw Error(result.message);
-      messageTemplate = publishUpdateAssignnmentMessageTemplate;
-    }
-    await setState(message.from.id, null, null, null, transaction);
-    await transaction.commit();
-  } catch {
-    await transaction.rollback();
+  if (!data.id) {
+    result = await create(state.data, transaction);
+    messageTemplate = publishNewAssignnmentMessageTemplate;
+  } else {
+    const { id, ...dataUpdate } = data;
+    result = await assignmentUpdateById(id, dataUpdate, transaction);
+    messageTemplate = publishUpdateAssignnmentMessageTemplate;
   }
+  if (!result.succeeded) throw Error(result.message);
+  await setState(message.from.id, null, null, null, transaction);
 
   return responseMessage(
     message,

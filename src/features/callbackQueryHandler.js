@@ -14,6 +14,8 @@ const {
   removeAssignmentAction,
   markAssignmentAsNotCompletedAction,
   markAssignmentAsCompletedAction,
+  backFromConfirmAssignmentRemoveAction,
+  confirmAssignmentRemoveAction,
 } = require('../actions/assignmentActions');
 
 const { addMenuSelectCategoryForEditAssignmentAction } = require('../actions/editAssignmentAction');
@@ -62,13 +64,16 @@ const callbackQueryHandler = async (callbackQuery, state) => {
       return await confirmAssignmentAsSpamAction(callbackQuery, index);
 
     case 'backFromConfirmAssignmentAsSpamAction':
-      return await backFromConfirmAssignmentAsSpamAction(
-        callbackQuery,
-        index,
-      );
+      return await backFromConfirmAssignmentAsSpamAction(callbackQuery, index);
 
     case 'removeAssignmentAction':
-      return await removeAssignmentAction(callbackQuery, index);
+      return removeAssignmentAction(callbackQuery, index);
+
+    case 'confirmAssignmentRemoveAction':
+      return confirmAssignmentRemoveAction(callbackQuery, index);
+
+    case 'backFromConfirmAssignmentRemoveAction':
+      return backFromConfirmAssignmentRemoveAction(callbackQuery, index);
 
     case 'editAssignmentAction':
       // eslint-disable-next-line no-case-declarations

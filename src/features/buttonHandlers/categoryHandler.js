@@ -1,4 +1,4 @@
-const findAssignmentsFlowSteps = require('../../constants/flow.step').FIND_ASSIGNMENTS;
+const { FIND_ASSIGNMENTS } = require('../../constants/flow.step');
 const { ADD_ASSIGNMENT } = require('../../constants/flow.step');
 const { EDIT_ASSIGNMENT } = require('../../constants/flow.step');
 
@@ -18,7 +18,7 @@ const {
 const categoryHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
-    case findAssignmentsFlowSteps.CHOOSE_CATEGORY:
+    case FIND_ASSIGNMENTS.CHOOSE_CATEGORY:
       return addFoundAssignmentCategoryAction(request, state);
 
     case ADD_ASSIGNMENT.CHOOSE_CATEGORY:

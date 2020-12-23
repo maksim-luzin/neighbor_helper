@@ -36,9 +36,9 @@ const {
 const validationInputCategory = require('../helpers/validationInputCategory');
 
 const {
-  previewAssignnmentMessageTemplate,
-  previewAssignnmentKeyboardTemplate,
-  publishNewAssignnmentMessageTemplate,
+  previewAssignmentMessageTemplate,
+  previewAssignmentKeyboardTemplate,
+  publishNewAssignmentMessageTemplate,
 } = require('../templates/commonTemplates');
 
 const chooseCategoryAssignmentAction = async (message, state, categoryHandler) => {
@@ -209,8 +209,8 @@ const addPictureForAddAssignmentAction = async (message, state) => {
 
   return responseMessage(
     message,
-    previewAssignnmentMessageTemplate,
-    previewAssignnmentKeyboardTemplate,
+    previewAssignmentMessageTemplate,
+    previewAssignmentKeyboardTemplate,
     null,
     data,
     3,
@@ -221,10 +221,10 @@ const publishAddAssignmentAction = async (message, state) => {
   const result = await create(state.data);
   if (!result.succeeded) throw Error(result.message);
   await setState(message.from.id);
-  
+
   return responseMessage(
     message,
-    publishNewAssignnmentMessageTemplate,
+    publishNewAssignmentMessageTemplate,
     mainMenuKeyboardTemplate,
     null,
     null,

@@ -46,18 +46,20 @@ module.exports = {
           transaction,
         });
 
-      if (result) {
-        if (result.Locations.length) {
-          await Assignment.create({
-            title,
-            description,
-            reward,
-            link,
-            pictureUrl,
-            category,
-            authorTelegramId: result.telegramId,
-            locationId: result.Locations[0].id,
-          });
+        if (result) {
+          if (result.Locations.length) {
+            await Assignment.create({
+              title,
+              description,
+              reward,
+              link,
+              pictureUrl,
+              category,
+              authorTelegramId: result.telegramId,
+              locationId: result.Locations[0].id,
+            });
+          }
+          return new ServiceResponse({ succeeded: true });
         }
       } else {
         const result = await User.findOne({
@@ -87,7 +89,6 @@ module.exports = {
               locationId: result.Locations[0].id,
             });
           }
-
           return new ServiceResponse({ succeeded: true });
         }
       }

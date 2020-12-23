@@ -1,4 +1,3 @@
-const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
 const {
   BUTTON_ABOUT_US,
   BUTTON_ADD_LOCATION,

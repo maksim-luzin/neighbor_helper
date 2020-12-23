@@ -44,6 +44,7 @@ const handlers = async ({ originalRequest }) => {
     console.error(err.message);
     console.error(err.stack);
     return messageDefaultAction();
+  }
 };
 
 module.exports = handlers;

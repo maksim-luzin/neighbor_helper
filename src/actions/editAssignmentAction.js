@@ -33,10 +33,10 @@ const {
 } = require('../templates/editAssignmentTemplates');
 
 const {
-  previewAssignnmentMessageTemplate,
-  previewAssignnmentKeyboardTemplate,
-  publishNewAssignnmentMessageTemplate,
-  publishUpdateAssignnmentMessageTemplate,
+  previewAssignmentMessageTemplate,
+  previewAssignmentKeyboardTemplate,
+  publishNewAssignmentMessageTemplate,
+  publishUpdateAssignmentMessageTemplate,
 } = require('../templates/commonTemplates');
 
 const { chooseCategoryKeyboardTemplate } = require('../templates/categoryTemplates');
@@ -281,8 +281,8 @@ const editPictureForEditAssignmentAction = async (message, state) => {
 
   return responseMessage(
     message,
-    previewAssignnmentMessageTemplate,
-    previewAssignnmentKeyboardTemplate,
+    previewAssignmentMessageTemplate,
+    previewAssignmentKeyboardTemplate,
     null,
     data,
     3,
@@ -295,15 +295,15 @@ const publishEditAssignmentAction = async (message, state) => {
   let messageTemplate;
 
   if (!data.id) {
-    result = await create(state.data, transaction);
-    messageTemplate = publishNewAssignnmentMessageTemplate;
+    result = await create(state.data);
+    messageTemplate = publishNewAssignmentMessageTemplate;
   } else {
     const { id, ...dataUpdate } = data;
-    result = await assignmentUpdateById(id, dataUpdate, transaction);
-    messageTemplate = publishUpdateAssignnmentMessageTemplate;
+    result = await assignmentUpdateById(id, dataUpdate);
+    messageTemplate = publishUpdateAssignmentMessageTemplate;
   }
   if (!result.succeeded) throw Error(result.message);
-  await setState(message.from.id, null, null, null, transaction);
+  await setState(message.from.id, null, null, null);
 
   return responseMessage(
     message,

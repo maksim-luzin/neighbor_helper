@@ -3,7 +3,6 @@ const {
 } = require('../actions/locationAction');
 
 const {
-  addFoundAssignmentCategoryAction,
   addFoundAssignmentLocationAction,
 } = require('../actions/assignmentActions');
 
@@ -34,7 +33,6 @@ const {
 } = require('../constants/flow.step').ADD_LOCATION;
 
 const {
-  CHOOSE_CATEGORY,
   CHOOSE_LOCATION,
 } = require('../constants/flow.step').FIND_ASSIGNMENTS;
 
@@ -77,7 +75,7 @@ const stateDefaultHandler = (request, state) => {
     case ADD_ASSIGNMENT.SHOW_ASSIGNMENT:
       return addPictureForAddAssignmentAction(request, state);
 
-    // Edit assignmet
+    // Edit assignment
     case EDIT_ASSIGNMENT.CHOOSE_CATEGORY:
       return chooseCategoryForEditAssignmentAction(request, state, false);
 

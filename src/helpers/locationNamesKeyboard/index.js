@@ -6,6 +6,8 @@ const {
   getAllByTelegramId,
 } = require('../../services/location.service');
 
+const { BUTTON_ADD_LOCATION } = require('../../constants/button.text').COMMON;
+
 const addLocationNamesToKeyboard = async (telegramId) => {
   const result = await getAllByTelegramId({ telegramId });
   if (!result.succeeded) throw Error(result.message);
@@ -20,6 +22,7 @@ const addLocationNamesToKeyboard = async (telegramId) => {
   return {
     keyboard: [
       ...addLocationNamesKeyboardTemplate,
+      [BUTTON_ADD_LOCATION],
       ...commonKeyboardTemplate,
     ],
     cache,

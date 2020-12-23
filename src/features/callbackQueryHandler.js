@@ -27,14 +27,15 @@ const callbackQueryHandler = async (callbackQuery, state) => {
   const [action, index, fromFavorites] = callbackQuery.data.split('.');
   switch (action) {
     case 'changeRangeAction':
-      return await changeRangeAction(callbackQuery);
+      return changeRangeAction(callbackQuery);
 
+      // TODO: убрать единственный await в этом методе. После чего убрать async.
     case 'paginationAction':
       response = await paginationAction(callbackQuery, +index, state);
-      return response.concat(await deleteMessage(callbackQuery));
+      return response.concat(deleteMessage(callbackQuery));
 
     case 'removeFromFavoritesAction':
-      return await removeFromFavoritesAction(
+      return removeFromFavoritesAction(
         {
           request: callbackQuery,
           assignmentId: index,
@@ -43,28 +44,28 @@ const callbackQueryHandler = async (callbackQuery, state) => {
       );
 
     case 'markAssignmentAsNotCompletedAction':
-      return await markAssignmentAsNotCompletedAction({
+      return markAssignmentAsNotCompletedAction({
         request: callbackQuery,
         assignmentId: index,
       });
 
     case 'markAssignmentAsCompletedAction':
-      return await markAssignmentAsCompletedAction({
+      return markAssignmentAsCompletedAction({
         request: callbackQuery,
         assignmentId: index,
       });
 
     case 'addToFavoritesAction':
-      return await addToFavoritesAction(callbackQuery, index);
+      return addToFavoritesAction(callbackQuery, index);
 
     case 'markAssignmentAsSpamAction':
       return markAssignmentAsSpamAction(callbackQuery, index);
 
     case 'confirmAssignmentAsSpamAction':
-      return await confirmAssignmentAsSpamAction(callbackQuery, index);
+      return confirmAssignmentAsSpamAction(callbackQuery, index);
 
     case 'backFromConfirmAssignmentAsSpamAction':
-      return await backFromConfirmAssignmentAsSpamAction(callbackQuery, index);
+      return backFromConfirmAssignmentAsSpamAction(callbackQuery, index);
 
     case 'removeAssignmentAction':
       return removeAssignmentAction(callbackQuery, index);
@@ -78,7 +79,7 @@ const callbackQueryHandler = async (callbackQuery, state) => {
     case 'editAssignmentAction':
       // eslint-disable-next-line no-case-declarations
       const { message } = callbackQuery;
-      return await addMenuSelectCategoryForEditAssignmentAction(
+      return addMenuSelectCategoryForEditAssignmentAction(
         message,
         null,
         index,

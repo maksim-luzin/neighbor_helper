@@ -108,7 +108,7 @@ module.exports = {
     } catch (e) {
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while getting user's locale with telegramId=${telegramId}`
+        message: `Error occurred while getting user with telegramId=${telegramId}`
           + `${e}.`,
       });
     }

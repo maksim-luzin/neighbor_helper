@@ -46,23 +46,18 @@ module.exports = {
           transaction,
         });
 
-        if (result) {
-          if (!result.Locations.length) {
-            await Assignment.create({
-              title,
-              description,
-              reward,
-              link,
-              pictureUrl,
-              category,
-              authorTelegramId: result.telegramId,
-              locationId: result.Locations[0].id,
-            }, {
-              transaction,
-            });
-          }
-
-          return new ServiceResponse({ succeeded: true });
+      if (result) {
+        if (result.Locations.length) {
+          await Assignment.create({
+            title,
+            description,
+            reward,
+            link,
+            pictureUrl,
+            category,
+            authorTelegramId: result.telegramId,
+            locationId: result.Locations[0].id,
+          });
         }
       } else {
         const result = await User.findOne({
@@ -200,7 +195,7 @@ module.exports = {
   }) {
     try {
       const queryRecords = 'SELECT A."id", A."title", A."description", A."reward", A."authorTelegramId",'
-        + `A."pictureUrl", L."globalName"
+      + `A."pictureUrl", L."globalName"
       FROM "Assignments" A
       INNER JOIN "FavoriteAssignments" FA ON A.id = FA."assignmentId"
       AND FA."telegramId" = ${telegramId}
@@ -425,9 +420,9 @@ module.exports = {
             where: {
               id: assignmentId,
             },
-          }, {
-            transaction: t,
-          }),
+          },
+          { transaction: t }),
+
           Spam.destroy(
             {
               where: {

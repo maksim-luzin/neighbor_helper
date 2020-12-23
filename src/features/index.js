@@ -8,7 +8,6 @@ const { stateLoad } = require('../helpers/state');
 
 const { ADD_LOCATION } = require('../constants/flow.step');
 
-// TODO move originalRequest destructuring here
 const handlers = async ({ originalRequest }) => {
   try {
     let state = {
@@ -45,10 +44,6 @@ const handlers = async ({ originalRequest }) => {
     console.error(err.message);
     console.error(err.stack);
     return messageDefaultAction();
-  } finally {
-    // eslint-disable-next-line no-unsafe-finally
-    // return messageDefaultAction();
-  }
 };
 
 module.exports = handlers;

@@ -1,4 +1,3 @@
-const sequelize = require('../database/connection/localConnection');
 const { setState } = require('../helpers/state');
 const { create } = require('../services/assignment.service');
 const { assignmentCategory } = require('../constants/enums');
@@ -219,18 +218,10 @@ const addPictureForAddAssignmentAction = async (message, state) => {
 };
 
 const publishAddAssignmentAction = async (message, state) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const result = await create(state.data, transaction);
-    if (!result.succeeded) throw Error(result.message);
-    await setState(message.from.id, null, null, null, transaction);
-    await transaction.commit();
-  } catch {
-    await transaction.rollback();
-  }
   const result = await create(state.data);
   if (!result.succeeded) throw Error(result.message);
   await setState(message.from.id);
+  
   return responseMessage(
     message,
     publishNewAssignnmentMessageTemplate,

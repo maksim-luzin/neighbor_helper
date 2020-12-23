@@ -12,6 +12,9 @@ const {
   markAssignmentAsSpamKeyboardTemplate,
   markAssignmentAsSpamAlertTemplate,
   createdAssignmentsMessageTemplate,
+  removeAssignmentMessageTemplate,
+  removeAssignmentAlertTemplate,
+  removeAssignmentKeyboardTemplate,
 } = require('../templates/assignmentTemplate');
 
 const {
@@ -381,7 +384,27 @@ const addToFavoritesAction = async (request, assignmentId) => {
   );
 };
 
-const removeAssignmentAction = async (request, assignmentId) => {
+const removeAssignmentAction = (request, assignmentId) => {
+  if (!request.message.photo) {
+    return editMessageText(
+      request,
+      {
+        inline_keyboard: removeAssignmentKeyboardTemplate(assignmentId),
+      },
+      removeAssignmentMessageTemplate,
+    );
+  }
+
+  return editMessageCaption(
+    request,
+    {
+      inline_keyboard: removeAssignmentKeyboardTemplate(assignmentId),
+    },
+    removeAssignmentMessageTemplate,
+  );
+};
+
+const confirmAssignmentRemoveAction = async (request, assignmentId) => {
   const result = await assignmentService.delete({
     telegramId: request.from.id,
     assignmentId,
@@ -389,13 +412,62 @@ const removeAssignmentAction = async (request, assignmentId) => {
   if (!result.succeeded) throw Error(result.message);
 
   const response = await createdAssignmentsAction(request);
+  const alertResponse = answerCallbackQuery(request, removeAssignmentAlertTemplate, true);
 
   return [
     ...response,
     deleteMessage(request, 1),
     deleteMessage(request),
     deleteMessage(request, -1),
+    alertResponse,
   ];
+};
+
+const backFromConfirmAssignmentRemoveAction = async (request, assignmentId) => {
+  const result = await assignmentService.get({
+    telegramId: request.from.id,
+    assignmentId,
+  });
+
+  if (!result.succeeded) throw Error(result.message);
+
+  if (result.model) {
+    const assignment = result.model;
+
+    if (!request.message.photo) {
+      return editMessageText(
+        request,
+        {
+          inline_keyboard: ownAssignmentInlineKeyboardTemplate({
+            status: assignment.status,
+            assignmentId: assignment.id,
+          }),
+        },
+        assignmentMessageTemplate({
+          ...assignment,
+          locationName: assignment.locationName,
+        }),
+        'Markdown',
+      );
+    }
+
+    return editMessageCaption(
+      request,
+      {
+        inline_keyboard: ownAssignmentInlineKeyboardTemplate({
+          status: assignment.status,
+          assignmentId: assignment.id,
+        }),
+      },
+      assignmentMessageTemplate({
+        ...assignment,
+        locationName: assignment.locationName,
+      }),
+      'Markdown',
+    );
+  }
+
+  return deleteMessage(request);
 };
 
 const markAssignmentAsCompletedAction = async ({ request, assignmentId }) => {
@@ -531,4 +603,6 @@ module.exports = {
   removeAssignmentAction,
   markAssignmentAsNotCompletedAction,
   markAssignmentAsCompletedAction,
+  confirmAssignmentRemoveAction,
+  backFromConfirmAssignmentRemoveAction,
 };

@@ -463,7 +463,7 @@ module.exports = {
     try {
       const query = `SELECT A.id, A.title, A.reward, A.description, 
       A."pictureUrl", L."globalName" as "locationName",
-      A."authorTelegramId", EXISTS (
+      A."authorTelegramId", A.status, EXISTS (
       SELECT 1 FROM "FavoriteAssignments" FA 
       WHERE FA."assignmentId" = ${assignmentId}
       AND FA."telegramId" = ${telegramId}) AS "isFavorite"

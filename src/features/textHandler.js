@@ -1,6 +1,5 @@
 const {
   BUTTON_ABOUT_US,
-  BUTTON_ADD_LOCATION,
   BUTTON_CHANGE_RANGE,
   BUTTON_MY_ASSIGNMENT,
   BUTTON_FIND_ASSIGNMENTS,
@@ -14,6 +13,7 @@ const {
   BUTTON_HOME,
   BUTTON_BACK,
   EDIT_ASSIGNMENT,
+  BUTTON_ADD_LOCATION,
 } = require('../constants/button.text').COMMON;
 const {
   BUTTON_EDUCATION,
@@ -38,10 +38,11 @@ const {
   aboutUsAction,
   showRangeAction,
   myAssignmentAction,
-  addMenuAddLocationAction,
   findAssignmentsAction,
   addMenuSelectCategoryForCreatedAssignmentAction,
 } = require('../actions/mainActions');
+
+const { addMenuAddLocationAction } = require('../actions/locationAction');
 
 const {
   createdAssignmentsAction,
@@ -56,8 +57,6 @@ const {
 const {
   PUBLISH_ASSIGNMENT,
 } = require('../constants/button.text').ADD_ASSIGNMENT;
-
-const { publishAddAssignmentAction } = require('../actions/addAssignmentAction');
 
 const textHandlers = async (request, state) => {
   switch (request.text) {
@@ -86,7 +85,7 @@ const textHandlers = async (request, state) => {
       return mainMenuAction(request);
 
     case BUTTON_ADD_LOCATION:
-      return addMenuAddLocationAction(request);
+      return addMenuAddLocationAction(request, state);
 
     case BUTTON_BACK:
       return buttonBackHandler(request, state);

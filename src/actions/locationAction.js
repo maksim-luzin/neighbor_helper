@@ -58,7 +58,7 @@ const addMenuAddLocationAction = async (message, state) => {
 const addLocationAction = async (message, state) => {
   const { location } = message;
   const globalName = await addGlobalName(location);
-  const locationNameKeyboard = await addLocationNamesToKeyboard(message.from.id);
+  const locationNameKeyboard = await addLocationNamesToKeyboard(message.from.id, false);
 
   await setState(
     message.from.id,

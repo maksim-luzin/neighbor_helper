@@ -4,10 +4,13 @@ const { ADD_ASSIGNMENT } = require('../../constants/flow.step');
 const { EDIT_ASSIGNMENT } = require('../../constants/flow.step');
 
 const {
-  addMenuAddLocationAction,
   findAssignmentsAction,
   addMenuSelectCategoryForCreatedAssignmentAction,
 } = require('../../actions/mainActions');
+
+const {
+  addMenuAddLocationAction,
+} = require('../../actions/commonActions');
 
 const {
   addFoundAssignmentCategoryAction,
@@ -36,7 +39,7 @@ const buttonBackHandler = (request, state) => {
   switch (state.step) {
     case ADD_LOCATION.ADD_LOCATION_NAME:
       // eslint-disable-next-line no-case-declarations
-      return addMenuAddLocationAction(request);
+      return addMenuAddLocationAction(request, state);
 
     case findAssignmentsFlowSteps.CHOOSE_LOCATION:
       return findAssignmentsAction(request);

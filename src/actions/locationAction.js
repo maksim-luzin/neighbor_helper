@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 /* eslint-disable vars-on-top */
 /* eslint-disable no-else-return */
 /* eslint-disable consistent-return */
@@ -8,20 +9,15 @@ const responseMessage = require('../helpers/responseMessage');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
 const { create, updateLocation } = require('../services').locationService;
 const { setState } = require('../helpers/state');
-const {
-  ADD_LOCATION,
-  ADD_LOCATION_NAME,
-} = require('../constants/flow.step').ADD_LOCATION;
-const { BUTTON_BACK } = require('../constants/button.text').COMMON;
 
 const {
+  ADD_LOCATION,
   ADD_ASSIGNMENT,
   EDIT_ASSIGNMENT,
+  FIND_ASSIGNMENTS,
 } = require('../constants/flow.step');
 
 const {
-  addLocationMessageTemplate,
-  addLocationKeyboardTemplate,
   addLocationNameMessageTemplate,
   returnMainMenuMessageAfterCreateLocationTemplate,
   returnMainMenuMessageAfterUpdateLocationTemplate,
@@ -29,31 +25,7 @@ const {
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
 
 const { buttonBackHandler } = require('../features/buttonHandlers');
-
-const addMenuAddLocationAction = async (message, state) => {
-  // eslint-disable-next-line no-use-before-define
-  await setState(
-    message.from.id,
-    ADD_LOCATION,
-    null,
-    {
-      stepToReturn: state.step,
-      data: state.data,
-      cache: state.cache,
-    },
-  );
-
-  return responseMessage(
-    message,
-    addLocationMessageTemplate,
-    addLocationKeyboardTemplate,
-    null,
-    null,
-    state.step
-      ? 3
-      : 1,
-  );
-};
+const { BUTTON_BACK } = require('../constants/button.text').COMMON;
 
 const addLocationAction = async (message, state) => {
   const { location } = message;
@@ -62,7 +34,7 @@ const addLocationAction = async (message, state) => {
 
   await setState(
     message.from.id,
-    ADD_LOCATION_NAME,
+    ADD_LOCATION.ADD_LOCATION_NAME,
     {
       telegramId: message.from.id,
       globalName,
@@ -124,7 +96,6 @@ const addLocalNameLocationAction = async (message, state) => {
 };
 
 module.exports = {
-  addMenuAddLocationAction,
   addLocationAction,
   addLocalNameLocationAction,
 };
@@ -172,9 +143,14 @@ async function updateOldLocation(message, state) {
 }
 
 function stepToReturn(step) {
-  if (step === ADD_ASSIGNMENT.CHOOSE_LOCATION) {
-    return ADD_ASSIGNMENT.ADD_REWARD;
-  } else {
-    return EDIT_ASSIGNMENT.EDIT_REWARD;
+  switch (step) {
+    case ADD_ASSIGNMENT.CHOOSE_LOCATION:
+      return ADD_ASSIGNMENT.ADD_REWARD;
+
+    case EDIT_ASSIGNMENT.CHOOSE_LOCATION:
+      return EDIT_ASSIGNMENT.EDIT_REWARD;
+
+    case FIND_ASSIGNMENTS.CHOOSE_LOCATION:
+      return FIND_ASSIGNMENTS.GET_ASSIGNMENTS;
   }
 }

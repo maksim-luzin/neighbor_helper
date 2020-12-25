@@ -38,40 +38,22 @@ module.exports = {
     newRange = null,
     newLocale = null,
     updatedState = null,
-  }, transaction = null) {
+  }) {
     try {
-      if (transaction) {
-        const foundUser = await User.findOne({
-          where: {
-            telegramId,
-          },
-          attributes: ['telegramId', 'range', 'locale', 'state'],
-        }, { transaction });
+      const foundUser = await User.findOne({
+        where: {
+          telegramId,
+        },
+        attributes: ['telegramId', 'range', 'locale', 'state'],
+      });
 
-        if (foundUser) {
-          await foundUser.update({
-            range: newRange || foundUser.range,
-            locale: newLocale || foundUser.locale,
-            state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
-          }, { transaction });
-          return new ServiceResponse({ succeeded: true });
-        }
-      } else {
-        const foundUser = await User.findOne({
-          where: {
-            telegramId,
-          },
-          attributes: ['telegramId', 'range', 'locale', 'state'],
+      if (foundUser) {
+        await foundUser.update({
+          range: newRange || foundUser.range,
+          locale: newLocale || foundUser.locale,
+          state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
         });
-
-        if (foundUser) {
-          await foundUser.update({
-            range: newRange || foundUser.range,
-            locale: newLocale || foundUser.locale,
-            state: updatedState ? { ...foundUser.state, ...updatedState } : foundUser.state,
-          });
-          return new ServiceResponse({ succeeded: true });
-        }
+        return new ServiceResponse({ succeeded: true });
       }
       return new ServiceResponse({
         succeeded: true,

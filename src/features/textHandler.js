@@ -42,7 +42,7 @@ const {
   addMenuSelectCategoryForCreatedAssignmentAction,
 } = require('../actions/mainActions');
 
-const { addMenuAddLocationAction } = require('../actions/locationAction');
+const { addMenuAddLocationAction } = require('../actions/commonActions');
 
 const {
   createdAssignmentsAction,

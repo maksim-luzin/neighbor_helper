@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable no-plusplus */
 /* eslint-disable for-direction */
 const { telegramTemplate } = require('claudia-bot-builder');
@@ -24,6 +25,7 @@ const responseMessage = (
     let response = [];
 
     for (let i = numberMessageForDelete - 1; i >= 0; --i) {
+      if (i === 1) continue;
       response = [
         ...response,
         {

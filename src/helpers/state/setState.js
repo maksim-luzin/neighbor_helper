@@ -5,7 +5,6 @@ const setState = async (
   step = '',
   data = '',
   cache = '',
-  transaction,
 ) => {
   const updatedState = {
     step,
@@ -17,7 +16,6 @@ const setState = async (
       telegramId,
       updatedState,
     },
-    transaction,
   );
   if (!result.succeeded) throw Error(result.message);
 };

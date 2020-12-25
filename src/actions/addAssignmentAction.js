@@ -115,7 +115,9 @@ const addDescriptionForAddAssignmentAction = async (message, state) => {
       ...state.data,
       description,
     },
-    locationKeyboardTemplate.cache,
+    {
+      locationKeyboardTemplate: locationKeyboardTemplate.cache,
+    },
   );
 
   const assignment = {
@@ -128,14 +130,14 @@ const addDescriptionForAddAssignmentAction = async (message, state) => {
     locationKeyboardTemplate.keyboard,
     null,
     assignment,
-    3,
+    state.cache.deleteMessage || 3,
   );
 };
 
 const chooseLocationForAddAssignmentAction = async (message, state) => {
   const { text } = message;
   const { data } = state;
-  if (!(text === BUTTON_BACK || state.cache[message.text])) return;
+  if (!(text === BUTTON_BACK || state.cache.locationKeyboardTemplate[message.text])) return;
 
   const localLocationName = text === BUTTON_BACK
     ? data.localLocationName

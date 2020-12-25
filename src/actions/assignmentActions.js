@@ -1,5 +1,6 @@
 const { telegramTemplate } = require('claudia-bot-builder');
 const { locationService, assignmentService } = require('../services');
+const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
 
 const {
   assignmentMessageTemplate,
@@ -19,7 +20,6 @@ const {
 
 const {
   addAssignmentLocationMessageTemplate,
-  addAssignmentLocationKeyboardTemplate,
 } = require('../templates/locationTemplates');
 
 const {
@@ -196,6 +196,7 @@ const addFoundAssignmentCategoryAction = async (message, state) => {
 
   if (!result.succeeded) throw Error(result.message);
 
+  const { keyboard } = await addLocationNamesToKeyboard(message.from.id);
   await setState(
     message.from.id,
     findAssignmentsFlowSteps.CHOOSE_LOCATION,
@@ -212,7 +213,7 @@ const addFoundAssignmentCategoryAction = async (message, state) => {
   return (
     new telegramTemplate.Text(addAssignmentLocationMessageTemplate)
       .addReplyKeyboard(
-        addAssignmentLocationKeyboardTemplate(result.model.map((elem) => [elem.localName])),
+        keyboard,
       )
       .get());
 };

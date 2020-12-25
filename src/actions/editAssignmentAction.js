@@ -178,7 +178,7 @@ const editDescriptionForEditAssignmentAction = async (message, state) => {
     locationKeyboardTemplate.keyboard,
     null,
     assignment,
-    3,
+    state.cache.deleteMessage || 3,
   );
 };
 

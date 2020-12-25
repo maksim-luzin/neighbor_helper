@@ -1,13 +1,22 @@
+/* eslint-disable default-case */
+/* eslint-disable vars-on-top */
+/* eslint-disable no-else-return */
 /* eslint-disable consistent-return */
 /* eslint-disable no-use-before-define */
 const openGeocoder = require('node-open-geocoder');
 
 const responseMessage = require('../helpers/responseMessage');
 const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
-const { update } = require('../services').userService;
 const { create, updateLocation } = require('../services').locationService;
 const { setState } = require('../helpers/state');
-const { ADD_LOCATION_NAME } = require('../constants/flow.step').ADD_LOCATION;
+
+const {
+  ADD_LOCATION,
+  ADD_ASSIGNMENT,
+  EDIT_ASSIGNMENT,
+  FIND_ASSIGNMENTS,
+} = require('../constants/flow.step');
+
 const {
   addLocationNameMessageTemplate,
   returnMainMenuMessageAfterCreateLocationTemplate,
@@ -15,14 +24,17 @@ const {
 } = require('../templates/locationTemplates');
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
 
-const addLocationAction = async (message) => {
+const { buttonBackHandler } = require('../features/buttonHandlers');
+const { BUTTON_BACK } = require('../constants/button.text').COMMON;
+
+const addLocationAction = async (message, state) => {
   const { location } = message;
   const globalName = await addGlobalName(location);
-  const locationNameKeyboard = await addLocationNamesToKeyboard(message.from.id);
+  const locationNameKeyboard = await addLocationNamesToKeyboard(message.from.id, false);
 
   await setState(
     message.from.id,
-    ADD_LOCATION_NAME,
+    ADD_LOCATION.ADD_LOCATION_NAME,
     {
       telegramId: message.from.id,
       globalName,
@@ -31,7 +43,10 @@ const addLocationAction = async (message) => {
         location.latitude,
       ],
     },
-    locationNameKeyboard.cache,
+    {
+      ...state.cache,
+      locationNameKeyboard: locationNameKeyboard.cache,
+    },
   );
 
   return responseMessage(
@@ -46,7 +61,7 @@ const addLocationAction = async (message) => {
 
 const addLocalNameLocationAction = async (message, state) => {
   let messageResponse = '';
-  if (state.cache[message.text]) {
+  if (state.cache.locationNameKeyboard[message.text]) {
     // eslint-disable-next-line no-const-assign
     await updateOldLocation(message, state);
     messageResponse = returnMainMenuMessageAfterUpdateLocationTemplate;
@@ -55,17 +70,29 @@ const addLocalNameLocationAction = async (message, state) => {
     await createNewLocation(message, state);
     messageResponse = returnMainMenuMessageAfterCreateLocationTemplate;
   }
-  await setState(message.from.id);
-  messageResponse = messageResponse.replace(/Локация/, `Локация ${message.text}`);
 
-  return responseMessage(
-    message,
-    messageResponse,
-    mainMenuKeyboardTemplate,
-    null,
-    null,
-    2,
-  );
+  if (state.cache.stepToReturn) {
+    return await buttonBackHandler(
+      { ...message, text: BUTTON_BACK },
+      {
+        step: stepToReturn(state.cache.stepToReturn),
+        data: state.cache.data,
+        cache: { ...state.cache.cache, deleteMessage: 2 },
+      },
+    );
+  } else {
+    messageResponse = messageResponse.replace(/Локация/, `Локация ${message.text}`);
+    await setState(message.from.id, state.cache.stepToReturn);
+
+    return responseMessage(
+      message,
+      messageResponse,
+      mainMenuKeyboardTemplate,
+      null,
+      null,
+      2,
+    );
+  }
 };
 
 module.exports = {
@@ -110,7 +137,20 @@ async function createNewLocation(message, state) {
 async function updateOldLocation(message, state) {
   const result = await updateLocation({
     ...state.data,
-    id: state.cache[message.text],
+    id: state.cache.locationNameKeyboard[message.text],
   });
   if (!result.succeeded) throw Error(result.message);
+}
+
+function stepToReturn(step) {
+  switch (step) {
+    case ADD_ASSIGNMENT.CHOOSE_LOCATION:
+      return ADD_ASSIGNMENT.ADD_REWARD;
+
+    case EDIT_ASSIGNMENT.CHOOSE_LOCATION:
+      return EDIT_ASSIGNMENT.EDIT_REWARD;
+
+    case FIND_ASSIGNMENTS.CHOOSE_LOCATION:
+      return FIND_ASSIGNMENTS.GET_ASSIGNMENTS;
+  }
 }

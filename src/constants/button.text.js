@@ -1,6 +1,5 @@
 exports.MAIN_MENU = {
   BUTTON_ABOUT_US: 'О нас',
-  BUTTON_ADD_LOCATION: 'Добавить локацию',
   BUTTON_CHANGE_RANGE: 'Редактировать радиус',
   BUTTON_MY_ASSIGNMENT: 'Мои объявления',
   BUTTON_FIND_ASSIGNMENTS: 'Найти объявления',
@@ -19,6 +18,7 @@ exports.COMMON = {
   BUTTON_SKIP: 'Пропустить',
   EDIT_ASSIGNMENT: 'Редактировать объявление',
   BUTTON_DELETE: 'Удалить',
+  BUTTON_ADD_LOCATION: 'Добавить локацию',
 };
 
 exports.CATEGORY = {

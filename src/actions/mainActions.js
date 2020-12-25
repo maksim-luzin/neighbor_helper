@@ -24,11 +24,6 @@ const { ADD_ASSIGNMENT } = require('../constants/flow.step');
 const { setState } = require('../helpers/state');
 
 const {
-  addLocationMessageTemplate,
-  addLocationKeyboardTemplate,
-} = require('../templates/locationTemplates');
-
-const {
   ADD_LOCATION,
 } = require('../constants/flow.step').ADD_LOCATION;
 
@@ -109,16 +104,6 @@ const changeRangeAction = async (message, state) => {
 const myAssignmentAction = () => new telegramTemplate
   .Text('Выберите фильтр').addReplyKeyboard(myAssignmentsKeyboardTemplate).get();
 
-const addMenuAddLocationAction = async (message) => {
-  // eslint-disable-next-line no-use-before-define
-  await setState(message.from.id, ADD_LOCATION);
-  return responseMessage(
-    message,
-    addLocationMessageTemplate,
-    addLocationKeyboardTemplate,
-  );
-};
-
 const findAssignmentsAction = async (message) => {
   await setState(message.from.id, CHOOSE_CATEGORY);
   return (
@@ -146,7 +131,6 @@ module.exports = {
   showRangeAction,
   changeRangeAction,
   myAssignmentAction,
-  addMenuAddLocationAction,
   findAssignmentsAction,
   addMenuSelectCategoryForCreatedAssignmentAction,
 };

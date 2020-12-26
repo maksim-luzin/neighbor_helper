@@ -3,19 +3,8 @@ const { create } = require('../services/assignment.service');
 const { assignmentCategory } = require('../constants/enums');
 const responseMessage = require('../helpers/responseMessage');
 
-const {
-  BUTTON_BACK,
-  BUTTON_SKIP,
-} = require('../constants/button.text').COMMON;
-
-const {
-  ADD_TITLE,
-  ADD_DESCRIPTION,
-  CHOOSE_LOCATION,
-  ADD_REWARD,
-  SHOW_ASSIGNMENT,
-  PUBLISH_ASSIGNMENT,
-} = require('../constants/flow.step').ADD_ASSIGNMENT;
+const { COMMON_BUTTONS } = require('../constants/button.text');
+const { ADD_ASSIGNMENT_FLOW_STEPS } = require('../constants/flow.step');
 
 const {
   addTitleAssignmentMessageTemplate,
@@ -26,7 +15,7 @@ const {
 } = require('../templates/addAssignmentTemplates');
 
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
-const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
+const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplates');
 
 const {
   commonKeyboard,
@@ -44,9 +33,9 @@ const {
 const chooseCategoryAssignmentAction = async (message, state, categoryHandler) => {
   const { text } = message;
   // eslint-disable-next-line no-use-before-define
-  if (!categoryHandler && !(text === BUTTON_BACK || validationInputCategory(text))) return;
+  if (!categoryHandler && !(text === COMMON_BUTTONS.BACK || validationInputCategory(text))) return;
   // eslint-disable-next-line no-nested-ternary
-  const category = text === BUTTON_BACK
+  const category = text === COMMON_BUTTONS.BACK
     ? state.data.category
     : categoryHandler
       ? text
@@ -54,7 +43,7 @@ const chooseCategoryAssignmentAction = async (message, state, categoryHandler) =
 
   await setState(
     message.from.id,
-    ADD_TITLE,
+    ADD_ASSIGNMENT_FLOW_STEPS.ADD_TITLE,
     {
       authorTelegramId: message.from.id,
       category,
@@ -76,13 +65,13 @@ const chooseCategoryAssignmentAction = async (message, state, categoryHandler) =
 const addTitleForAddAssignmentAction = async (message, state) => {
   const { text } = message;
 
-  const title = text === BUTTON_BACK
+  const title = text === COMMON_BUTTONS.BACK
     ? state.data.title
     : text;
 
   await setState(
     message.from.id,
-    ADD_DESCRIPTION,
+    ADD_ASSIGNMENT_FLOW_STEPS.ADD_DESCRIPTION,
     {
       ...state.data,
       title,
@@ -104,13 +93,13 @@ const addTitleForAddAssignmentAction = async (message, state) => {
 const addDescriptionForAddAssignmentAction = async (message, state) => {
   const locationKeyboardTemplate = await addLocationNamesToKeyboard(message.from.id);
   const { text } = message;
-  const description = text === BUTTON_BACK
+  const description = text === COMMON_BUTTONS.BACK
     ? state.data.description
     : text;
 
   await setState(
     message.from.id,
-    CHOOSE_LOCATION,
+    ADD_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION,
     {
       ...state.data,
       description,
@@ -137,15 +126,15 @@ const addDescriptionForAddAssignmentAction = async (message, state) => {
 const chooseLocationForAddAssignmentAction = async (message, state) => {
   const { text } = message;
   const { data } = state;
-  if (!(text === BUTTON_BACK || state.cache.locationKeyboardTemplate[message.text])) return;
+  if (!(text === COMMON_BUTTONS.BACK || state.cache.locationKeyboardTemplate[message.text])) return;
 
-  const localLocationName = text === BUTTON_BACK
+  const localLocationName = text === COMMON_BUTTONS.BACK
     ? data.localLocationName
     : text;
 
   await setState(
     message.from.id,
-    ADD_REWARD,
+    ADD_ASSIGNMENT_FLOW_STEPS.ADD_REWARD,
     {
       ...data,
       localLocationName,
@@ -167,12 +156,12 @@ const chooseLocationForAddAssignmentAction = async (message, state) => {
 const addRewardForAddAssignmentAction = async (message, state) => {
   const { text } = message;
   let { data } = state;
-  if (text !== BUTTON_BACK) data = { ...data, reward: text };
-  if (text === BUTTON_SKIP && data.reward) delete data.reward;
+  if (text !== COMMON_BUTTONS.BACK) data = { ...data, reward: text };
+  if (text === COMMON_BUTTONS.SKIP && data.reward) delete data.reward;
 
   await setState(
     message.from.id,
-    SHOW_ASSIGNMENT,
+    ADD_ASSIGNMENT_FLOW_STEPS.SHOW_ASSIGNMENT,
     data,
   );
 
@@ -201,11 +190,11 @@ const addPictureForAddAssignmentAction = async (message, state) => {
     pictureUrl = photo[length - 1].file_id;
     data = { ...data, pictureUrl };
   }
-  if (text === BUTTON_SKIP && data.pictureUrl) delete data.pictureUrl;
+  if (text === COMMON_BUTTONS.SKIP && data.pictureUrl) delete data.pictureUrl;
 
   await setState(
     message.from.id,
-    PUBLISH_ASSIGNMENT,
+    ADD_ASSIGNMENT_FLOW_STEPS.PUBLISH_ASSIGNMENT,
     data,
   );
 

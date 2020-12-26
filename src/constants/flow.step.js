@@ -1,24 +1,24 @@
-exports.ADD_LOCATION = {
+exports.ADD_LOCATION_FLOW_STEPS = {
   ADD_LOCATION: 'addLocation.addLocation',
   ADD_LOCATION_NAME: 'addLocation.addLocationName',
 };
 
-exports.FIND_ASSIGNMENTS = {
+exports.FIND_ASSIGNMENTS_FLOW_STEPS = {
   CHOOSE_CATEGORY: 'findAssignment.chooseCategory',
   CHOOSE_LOCATION: 'findAssignment.chooseLocation',
   GET_ASSIGNMENTS: 'findAssignment.getAssignments',
 };
 
-exports.MY_ASSIGNMENTS = {
+exports.MY_ASSIGNMENTS_FLOW_STEPS = {
   GET_CREATED_ASSIGNMENTS: 'myAssignment.getCreatedAssignments',
   GET_FAVORITE_ASSIGNMENTS: 'myAssignment.getFavoriteAssignments',
 };
 
-exports.CHANGE_RANGE = {
+exports.CHANGE_RANGE_FLOW_STEPS = {
   CHANGE_RANGE: 'changeRange.ChangeRange',
 };
 
-exports.ADD_ASSIGNMENT = {
+exports.ADD_ASSIGNMENT_FLOW_STEPS = {
   CHOOSE_CATEGORY: 'addAssignment.chooseCategory',
   ADD_TITLE: 'addAssignment.addTitle',
   ADD_DESCRIPTION: 'addAssignment.addDescription',
@@ -28,7 +28,7 @@ exports.ADD_ASSIGNMENT = {
   PUBLISH_ASSIGNMENT: 'addAssignment.publishAssignment',
 };
 
-exports.EDIT_ASSIGNMENT = {
+exports.EDIT_ASSIGNMENT_FLOW_STEPS = {
   CHOOSE_CATEGORY: 'editAssignment.chooseCategory',
   EDIT_TITLE: 'editAssignment.addTitle',
   EDIT_DESCRIPTION: 'editAssignment.addDescription',

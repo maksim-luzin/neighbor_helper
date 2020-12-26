@@ -1,20 +1,14 @@
 /* eslint-disable default-case */
-/* eslint-disable vars-on-top */
 /* eslint-disable no-else-return */
 /* eslint-disable consistent-return */
 /* eslint-disable no-use-before-define */
 const openGeocoder = require('node-open-geocoder');
 
-const responseMessage = require('../helpers/responseMessage');
-const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
-const { create, updateLocation } = require('../services').locationService;
-const { setState } = require('../helpers/state');
-
 const {
-  ADD_LOCATION,
-  ADD_ASSIGNMENT,
-  EDIT_ASSIGNMENT,
-  FIND_ASSIGNMENTS,
+  ADD_LOCATION_FLOW_STEPS,
+  ADD_ASSIGNMENT_FLOW_STEPS,
+  EDIT_ASSIGNMENT_FLOW_STEPS,
+  FIND_ASSIGNMENTS_FLOW_STEPS,
 } = require('../constants/flow.step');
 
 const {
@@ -22,10 +16,17 @@ const {
   returnMainMenuMessageAfterCreateLocationTemplate,
   returnMainMenuMessageAfterUpdateLocationTemplate,
 } = require('../templates/locationTemplates');
+
+const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplates');
+
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
+const responseMessage = require('../helpers/responseMessage');
 
 const { buttonBackHandler } = require('../features/buttonHandlers');
-const { BUTTON_BACK } = require('../constants/button.text').COMMON;
+const { BACK } = require('../constants/button.text').COMMON_BUTTONS;
+
+const { locationService } = require('../services');
+const { setState } = require('../helpers/state');
 
 const addLocationAction = async (message, state) => {
   const { location } = message;
@@ -34,7 +35,7 @@ const addLocationAction = async (message, state) => {
 
   await setState(
     message.from.id,
-    ADD_LOCATION.ADD_LOCATION_NAME,
+    ADD_LOCATION_FLOW_STEPS.ADD_LOCATION_NAME,
     {
       telegramId: message.from.id,
       globalName,
@@ -73,7 +74,7 @@ const addLocalNameLocationAction = async (message, state) => {
 
   if (state.cache.stepToReturn) {
     return await buttonBackHandler(
-      { ...message, text: BUTTON_BACK },
+      { ...message, text: BACK },
       {
         step: stepToReturn(state.cache.stepToReturn),
         data: state.cache.data,
@@ -127,7 +128,7 @@ async function addGlobalName(location) {
 }
 
 async function createNewLocation(message, state) {
-  const result = await create({
+  const result = await locationService.create({
     ...state.data,
     localName: message.text,
   });
@@ -135,7 +136,7 @@ async function createNewLocation(message, state) {
 }
 
 async function updateOldLocation(message, state) {
-  const result = await updateLocation({
+  const result = await locationService.updateLocation({
     ...state.data,
     id: state.cache.locationNameKeyboard[message.text],
   });
@@ -144,13 +145,13 @@ async function updateOldLocation(message, state) {
 
 function stepToReturn(step) {
   switch (step) {
-    case ADD_ASSIGNMENT.CHOOSE_LOCATION:
-      return ADD_ASSIGNMENT.ADD_REWARD;
+    case ADD_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION:
+      return ADD_ASSIGNMENT_FLOW_STEPS.ADD_REWARD;
 
-    case EDIT_ASSIGNMENT.CHOOSE_LOCATION:
-      return EDIT_ASSIGNMENT.EDIT_REWARD;
+    case EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION:
+      return EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_REWARD;
 
-    case FIND_ASSIGNMENTS.CHOOSE_LOCATION:
-      return FIND_ASSIGNMENTS.GET_ASSIGNMENTS;
+    case FIND_ASSIGNMENTS_FLOW_STEPS.CHOOSE_LOCATION:
+      return FIND_ASSIGNMENTS_FLOW_STEPS.GET_ASSIGNMENTS;
   }
 }

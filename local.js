@@ -6,8 +6,11 @@ const parser = require('claudia-bot-builder/lib/telegram/parse');
 const responder = require('claudia-bot-builder/lib/telegram/reply');
 
 const config = require('./src/configs/global.config');
-const sequelize = require('./src/database/connection/localConnection');
-
+const {
+  models: {
+    sequelize,
+  },
+} = require('./src/database');
 const handlers = require('./src/features');
 
 const port = 3000;

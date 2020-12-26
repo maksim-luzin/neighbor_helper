@@ -1,11 +1,8 @@
-const {
-  BUTTON_HOME,
-  BUTTON_BACK,
-} = require('../../constants/button.text').COMMON;
+const { COMMON_BUTTONS } = require('../../constants/button.text');
 
 const addAssignmentLocationKeyboardTemplate = (buttons) => {
   const keyboard = Array.from(buttons);
-  keyboard.push([BUTTON_HOME, BUTTON_BACK]);
+  keyboard.push([COMMON_BUTTONS.HOME, COMMON_BUTTONS.BACK]);
   return keyboard;
 };
 

@@ -1,17 +1,11 @@
-const {
-  BUTTON_BARTER,
-  BUTTON_EDUCATION,
-  BUTTON_HELP,
-  BUTTON_REPAIR,
-  BUTTON_OTHER,
-} = require('../button.text').CATEGORY;
+const { CATEGORY_BUTTONS } = require('../button.text');
 
 const assignmentCategory = {
-  [BUTTON_BARTER]: 'barter',
-  [BUTTON_EDUCATION]: 'education',
-  [BUTTON_HELP]: 'help',
-  [BUTTON_REPAIR]: 'repair',
-  [BUTTON_OTHER]: 'other',
+  [CATEGORY_BUTTONS.BARTER]: 'barter',
+  [CATEGORY_BUTTONS.EDUCATION]: 'education',
+  [CATEGORY_BUTTONS.HELP]: 'help',
+  [CATEGORY_BUTTONS.REPAIR]: 'repair',
+  [CATEGORY_BUTTONS.OTHER]: 'other',
 };
 
 module.exports = assignmentCategory;

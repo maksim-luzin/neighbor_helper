@@ -1,0 +1,12 @@
+const { COMMON_BUTTONS, MAIN_MENU_BUTTONS } = require('../../constants/button.text');
+
+const mainMenuKeyboardTemplate = [
+  [MAIN_MENU_BUTTONS.CHANGE_RANGE],
+  [COMMON_BUTTONS.ADD_LOCATION],
+  [MAIN_MENU_BUTTONS.MY_ASSIGNMENT],
+  [MAIN_MENU_BUTTONS.FIND_ASSIGNMENTS],
+  [MAIN_MENU_BUTTONS.ADD_ASSIGNMENT],
+  [MAIN_MENU_BUTTONS.LANGUAGE, MAIN_MENU_BUTTONS.ABOUT_US],
+];
+
+module.exports = mainMenuKeyboardTemplate;

@@ -1,6 +1,8 @@
-const { FIND_ASSIGNMENTS } = require('../../constants/flow.step');
-const { ADD_ASSIGNMENT } = require('../../constants/flow.step');
-const { EDIT_ASSIGNMENT } = require('../../constants/flow.step');
+const {
+  FIND_ASSIGNMENTS_FLOW_STEPS,
+  ADD_ASSIGNMENT_FLOW_STEPS,
+  EDIT_ASSIGNMENT_FLOW_STEPS,
+} = require('../../constants/flow.step');
 
 const {
   addFoundAssignmentCategoryAction,
@@ -18,13 +20,13 @@ const {
 const categoryHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
-    case FIND_ASSIGNMENTS.CHOOSE_CATEGORY:
+    case FIND_ASSIGNMENTS_FLOW_STEPS.CHOOSE_CATEGORY:
       return addFoundAssignmentCategoryAction(request, state);
 
-    case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
+    case ADD_ASSIGNMENT_FLOW_STEPS.CHOOSE_CATEGORY:
       return chooseCategoryAssignmentAction(request, state, true);
 
-    case EDIT_ASSIGNMENT.CHOOSE_CATEGORY:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_CATEGORY:
       return chooseCategoryForEditAssignmentAction(request, state, true);
   }
 };

@@ -1,25 +1,24 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-undef */
 const { telegramTemplate } = require('claudia-bot-builder');
-const { defaultMessageTemplate } = require('../templates/defaultMessageTemplate');
-const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
-const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
-const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
-const { setState } = require('../helpers/state');
-const responseMessage = require('../helpers/responseMessage');
+const { defaultMessageTemplate } = require('../templates/defaultMessageTemplates');
+const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplates');
 const {
   addLocationMessageTemplate,
   addLocationKeyboardTemplate,
 } = require('../templates/locationTemplates');
 
+const responseMessage = require('../helpers/responseMessage');
+
+const { setState } = require('../helpers/state');
+
 const {
-  ADD_LOCATION,
-  ADD_ASSIGNMENT,
-  EDIT_ASSIGNMENT,
-  FIND_ASSIGNMENTS,
+  ADD_LOCATION_FLOW_STEPS,
+  ADD_ASSIGNMENT_FLOW_STEPS,
+  EDIT_ASSIGNMENT_FLOW_STEPS,
+  FIND_ASSIGNMENTS_FLOW_STEPS,
+  MY_ASSIGNMENTS_FLOW_STEPS,
 } = require('../constants/flow.step');
 
-const { BUTTON_BACK } = require('../constants/button.text').COMMON;
+const { COMMON_BUTTONS } = require('../constants/button.text');
 
 const {
   favoriteAssignmentsAction,
@@ -39,15 +38,15 @@ const messageDefaultAction = () => (
 const paginationAction = async (request, page, state) => {
   let response;
   switch (state.step) {
-    case myAssignmentsFlowSteps.GET_CREATED_ASSIGNMENTS:
+    case MY_ASSIGNMENTS_FLOW_STEPS.GET_CREATED_ASSIGNMENTS:
       response = await createdAssignmentsAction(request, page, state);
 
       break;
-    case myAssignmentsFlowSteps.GET_FAVORITE_ASSIGNMENTS:
+    case MY_ASSIGNMENTS_FLOW_STEPS.GET_FAVORITE_ASSIGNMENTS:
       response = await favoriteAssignmentsAction(request, page, state);
 
       break;
-    case findAssignmentsFlowSteps.GET_ASSIGNMENTS:
+    case FIND_ASSIGNMENTS_FLOW_STEPS.GET_ASSIGNMENTS:
       response = await addFoundAssignmentLocationAction({ request, page, state });
 
       break;
@@ -58,9 +57,8 @@ const paginationAction = async (request, page, state) => {
 };
 
 const addMenuAddLocationAction = async (message, state) => {
-  // eslint-disable-next-line no-use-before-define
   let cache;
-  if (message.text === BUTTON_BACK) {
+  if (message.text === COMMON_BUTTONS.BACK) {
     cache = state.cache;
   } else {
     cache = {
@@ -71,7 +69,7 @@ const addMenuAddLocationAction = async (message, state) => {
   }
   await setState(
     message.from.id,
-    ADD_LOCATION.ADD_LOCATION,
+    ADD_LOCATION_FLOW_STEPS.ADD_LOCATION,
     null,
     cache,
   );
@@ -82,6 +80,7 @@ const addMenuAddLocationAction = async (message, state) => {
     addLocationKeyboardTemplate,
     null,
     null,
+    // eslint-disable-next-line no-use-before-define
     countMessagesDelete(state),
   );
 };
@@ -94,12 +93,12 @@ module.exports = {
 
 function countMessagesDelete(state) {
   switch (state.step) {
-    case ADD_LOCATION.ADD_LOCATION_NAME:
-    case FIND_ASSIGNMENTS.CHOOSE_LOCATION:
+    case ADD_LOCATION_FLOW_STEPS.ADD_LOCATION_NAME:
+    case FIND_ASSIGNMENTS_FLOW_STEPS.CHOOSE_LOCATION:
       return 2;
 
-    case ADD_ASSIGNMENT.CHOOSE_LOCATION:
-    case EDIT_ASSIGNMENT.CHOOSE_LOCATION:
+    case ADD_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION:
       return 3;
 
     default:

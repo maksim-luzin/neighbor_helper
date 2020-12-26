@@ -388,7 +388,7 @@ module.exports = {
               id: assignmentId,
             },
           },
-            { transaction: t }),
+          { transaction: t }),
 
           Spam.destroy(
             {

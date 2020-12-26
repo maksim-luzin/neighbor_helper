@@ -6,7 +6,7 @@ const { messageDefaultAction } = require('../actions/commonActions');
 const pictureHandler = require('./pictureHandler');
 const { stateLoad } = require('../helpers/state');
 
-const { ADD_LOCATION } = require('../constants/flow.step');
+const { ADD_LOCATION_FLOW_STEPS } = require('../constants/flow.step');
 
 const handlers = async ({ originalRequest }) => {
   try {
@@ -19,7 +19,7 @@ const handlers = async ({ originalRequest }) => {
       const { message } = originalRequest;
       // eslint-disable-next-line no-use-before-define
       state = await stateLoad(message);
-      if (message.location && state.step === ADD_LOCATION.ADD_LOCATION) {
+      if (message.location && state.step === ADD_LOCATION_FLOW_STEPS.ADD_LOCATION) {
         return await locationHandler(message, state);
       }
 

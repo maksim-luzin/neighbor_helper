@@ -1,27 +1,6 @@
-const { setState } = require('../helpers/state');
-const {
-  create,
-  assignmentGetById,
-  assignmentUpdateById,
-} = require('../services').assignmentService;
-const { assignmentCategory } = require('../constants/enums');
-const responseMessage = require('../helpers/responseMessage');
+const { COMMON_BUTTONS } = require('../constants/button.text');
 
-const {
-  BUTTON_BACK,
-  BUTTON_SKIP,
-  BUTTON_DELETE,
-} = require('../constants/button.text').COMMON;
-
-const {
-  CHOOSE_CATEGORY,
-  EDIT_TITLE,
-  EDIT_DESCRIPTION,
-  CHOOSE_LOCATION,
-  EDIT_REWARD,
-  SHOW_ASSIGNMENT,
-  PUBLISH_ASSIGNMENT,
-} = require('../constants/flow.step').EDIT_ASSIGNMENT;
+const { EDIT_ASSIGNMENT_FLOW_STEPS } = require('../constants/flow.step');
 
 const {
   editTitleAssignmentMessageTemplate,
@@ -39,15 +18,21 @@ const {
   publishUpdateAssignmentMessageTemplate,
 } = require('../templates/commonTemplates');
 
+const responseMessage = require('../helpers/responseMessage');
+
 const { chooseCategoryKeyboardTemplate } = require('../templates/categoryTemplates');
 
 const addLocationNamesToKeyboard = require('../helpers/locationNamesKeyboard');
-const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplate');
+const { mainMenuKeyboardTemplate } = require('../templates/mainMenuTemplates');
 
 const {
   skipCommonKeyboard,
   skipDeleteCommonKeyboard,
 } = require('../helpers/commonKeyboards');
+
+const { setState } = require('../helpers/state');
+const { assignmentService } = require('../services');
+const { assignmentCategory } = require('../constants/enums');
 
 const validationInputCategory = require('../helpers/validationInputCategory');
 
@@ -56,7 +41,7 @@ const addMenuSelectCategoryForEditAssignmentAction = async (message, state = nul
   let data;
   if (state) data = state.data;
   if (id) {
-    data = await assignmentGetById(id);
+    data = await assignmentService.assignmentGetById(id);
     data = data.toJSON();
     data = {
       ...data,
@@ -71,7 +56,7 @@ const addMenuSelectCategoryForEditAssignmentAction = async (message, state = nul
     : 1;
   await setState(
     userId,
-    CHOOSE_CATEGORY,
+    EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_CATEGORY,
     data,
   );
 
@@ -90,9 +75,9 @@ const chooseCategoryForEditAssignmentAction = async (message, state, categoryHan
   const { data } = state;
 
   // eslint-disable-next-line no-use-before-define
-  if (!categoryHandler && !(text === BUTTON_BACK || validationInputCategory(text))) return;
+  if (!categoryHandler && !(text === COMMON_BUTTONS.BACK || validationInputCategory(text))) return;
   // eslint-disable-next-line no-nested-ternary
-  const category = text === BUTTON_BACK || text === BUTTON_SKIP
+  const category = text === COMMON_BUTTONS.BACK || text === COMMON_BUTTONS.SKIP
     ? data.category
     : categoryHandler
       ? text
@@ -100,7 +85,7 @@ const chooseCategoryForEditAssignmentAction = async (message, state, categoryHan
 
   await setState(
     message.from.id,
-    EDIT_TITLE,
+    EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_TITLE,
     {
       ...data,
       category,
@@ -122,13 +107,13 @@ const editTitleForEditAssignmentAction = async (message, state) => {
   const { text } = message;
   const { data } = state;
 
-  const title = text === BUTTON_BACK || text === BUTTON_SKIP
+  const title = text === COMMON_BUTTONS.BACK || text === COMMON_BUTTONS.SKIP
     ? data.title
     : text;
 
   await setState(
     message.from.id,
-    EDIT_DESCRIPTION,
+    EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_DESCRIPTION,
     {
       ...data,
       title,
@@ -151,13 +136,13 @@ const editDescriptionForEditAssignmentAction = async (message, state) => {
   const locationKeyboardTemplate = await addLocationNamesToKeyboard(message.from.id);
   const { text } = message;
   const { data } = state;
-  const description = text === BUTTON_BACK || text === BUTTON_SKIP
+  const description = text === COMMON_BUTTONS.BACK || text === COMMON_BUTTONS.SKIP
     ? data.description
     : text;
 
   await setState(
     message.from.id,
-    CHOOSE_LOCATION,
+    EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION,
     {
       ...data,
       description,
@@ -185,15 +170,15 @@ const editDescriptionForEditAssignmentAction = async (message, state) => {
 const chooseLocationForEditAssignmentAction = async (message, state) => {
   const { text } = message;
   const { data } = state;
-  if (!(text === BUTTON_BACK || state.cache.locationKeyboardTemplate[message.text])) return;
+  if (!(text === COMMON_BUTTONS.BACK || state.cache.locationKeyboardTemplate[message.text])) return;
 
-  const localLocationName = text === BUTTON_BACK || text === BUTTON_SKIP
+  const localLocationName = text === COMMON_BUTTONS.BACK || text === COMMON_BUTTONS.SKIP
     ? state.data.localLocationName
     : text;
 
   await setState(
     message.from.id,
-    EDIT_REWARD,
+    EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_REWARD,
     {
       ...state.data,
       localLocationName,
@@ -225,13 +210,18 @@ const chooseLocationForEditAssignmentAction = async (message, state) => {
 const editRewardForEditAssignmentAction = async (message, state) => {
   const { text } = message;
   let { data } = state;
-  const { cache } = state;
 
-  if (text !== BUTTON_BACK && text !== BUTTON_SKIP) data = { ...data, reward: text };
-  if (text === BUTTON_DELETE) delete data.reward;
+  if (text !== COMMON_BUTTONS.BACK && text !== COMMON_BUTTONS.SKIP) {
+    data = {
+      ...data,
+      reward: text,
+    };
+  }
+
+  if (text === COMMON_BUTTONS.DELETE) delete data.reward;
   await setState(
     message.from.id,
-    SHOW_ASSIGNMENT,
+    EDIT_ASSIGNMENT_FLOW_STEPS.SHOW_ASSIGNMENT,
     data,
   );
   const assignment = {
@@ -271,11 +261,11 @@ const editPictureForEditAssignmentAction = async (message, state) => {
     pictureUrl = photo[length - 1].file_id;
     data = { ...data, pictureUrl };
   }
-  if (text === BUTTON_DELETE) delete data.pictureUrl;
+  if (text === COMMON_BUTTONS.DELETE) delete data.pictureUrl;
 
   await setState(
     message.from.id,
-    PUBLISH_ASSIGNMENT,
+    EDIT_ASSIGNMENT_FLOW_STEPS.PUBLISH_ASSIGNMENT,
     data,
   );
 
@@ -295,11 +285,11 @@ const publishEditAssignmentAction = async (message, state) => {
   let messageTemplate;
 
   if (!data.id) {
-    result = await create(state.data);
+    result = await assignmentService.create(state.data);
     messageTemplate = publishNewAssignmentMessageTemplate;
   } else {
     const { id, ...dataUpdate } = data;
-    result = await assignmentUpdateById(id, dataUpdate);
+    result = await assignmentService.assignmentUpdateById(id, dataUpdate);
     messageTemplate = publishUpdateAssignmentMessageTemplate;
   }
   if (!result.succeeded) throw Error(result.message);

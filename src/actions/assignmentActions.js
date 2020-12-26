@@ -16,18 +16,18 @@ const {
   removeAssignmentMessageTemplate,
   removeAssignmentAlertTemplate,
   removeAssignmentKeyboardTemplate,
-} = require('../templates/assignmentTemplate');
+} = require('../templates/assignmentTemplates');
 
 const {
   addAssignmentLocationMessageTemplate,
 } = require('../templates/locationTemplates');
 
-const {
-  BUTTON_BACK,
-} = require('../constants/button.text').COMMON;
+const { COMMON_BUTTONS } = require('../constants/button.text');
 
-const findAssignmentsFlowSteps = require('../constants/flow.step').FIND_ASSIGNMENTS;
-const myAssignmentsFlowSteps = require('../constants/flow.step').MY_ASSIGNMENTS;
+const {
+  FIND_ASSIGNMENTS_FLOW_STEPS,
+  MY_ASSIGNMENTS_FLOW_STEPS,
+} = require('../constants/flow.step');
 
 const { setState } = require('../helpers/state');
 
@@ -41,7 +41,7 @@ const {
   answerCallbackQuery,
 } = require('../helpers/telegram');
 
-const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplate');
+const { paginationKeyboardTemplate, paginationMessageTemplate } = require('../templates/paginationTemplates');
 const { PAGE_SIZE } = require('../constants/pageSize');
 const { getPagination } = require('../helpers/pagination');
 
@@ -54,7 +54,7 @@ const favoriteAssignmentsAction = async (request, page = 0) => {
 
   if (!result.succeeded) throw Error(result.message);
 
-  await setState(request.from.id, myAssignmentsFlowSteps.GET_FAVORITE_ASSIGNMENTS);
+  await setState(request.from.id, MY_ASSIGNMENTS_FLOW_STEPS.GET_FAVORITE_ASSIGNMENTS);
 
   const { pagingData } = result;
   const assignments = result.model;
@@ -130,7 +130,7 @@ const createdAssignmentsAction = async (request, page = 0) => {
 
   if (!result.succeeded) throw Error(result.message);
 
-  await setState(request.from.id, myAssignmentsFlowSteps.GET_CREATED_ASSIGNMENTS);
+  await setState(request.from.id, MY_ASSIGNMENTS_FLOW_STEPS.GET_CREATED_ASSIGNMENTS);
 
   const { pagingData } = result;
   const assignments = result.model;
@@ -199,12 +199,12 @@ const addFoundAssignmentCategoryAction = async (message, state) => {
   const { keyboard } = await addLocationNamesToKeyboard(message.from.id);
   await setState(
     message.from.id,
-    findAssignmentsFlowSteps.CHOOSE_LOCATION,
+    FIND_ASSIGNMENTS_FLOW_STEPS.CHOOSE_LOCATION,
     {
       ...state.data,
       telegramId: message.from.id,
       // TODO: заменить, когда будет локализация
-      foundAssignmentChosenCategory: message.text !== BUTTON_BACK
+      foundAssignmentChosenCategory: message.text !== COMMON_BUTTONS.BACK
         ? message.text : state.data.foundAssignmentChosenCategory,
     },
     result.model,
@@ -238,7 +238,7 @@ const addFoundAssignmentLocationAction = async ({ request, state, page = 0 }) =>
 
   await setState(
     request.from.id,
-    findAssignmentsFlowSteps.GET_ASSIGNMENTS,
+    FIND_ASSIGNMENTS_FLOW_STEPS.GET_ASSIGNMENTS,
     {
       ...state.data,
       locationId,

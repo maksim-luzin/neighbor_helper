@@ -29,69 +29,62 @@ const {
 } = require('../actions/editAssignmentAction');
 
 const {
-  ADD_LOCATION_NAME,
-} = require('../constants/flow.step').ADD_LOCATION;
-
-const {
-  CHOOSE_LOCATION,
-} = require('../constants/flow.step').FIND_ASSIGNMENTS;
-
-const {
-  CHANGE_RANGE,
-} = require('../constants/flow.step').CHANGE_RANGE;
-
-const { ADD_ASSIGNMENT } = require('../constants/flow.step');
-const { EDIT_ASSIGNMENT } = require('../constants/flow.step');
+  ADD_ASSIGNMENT_FLOW_STEPS,
+  EDIT_ASSIGNMENT_FLOW_STEPS,
+  FIND_ASSIGNMENTS_FLOW_STEPS,
+  ADD_LOCATION_FLOW_STEPS,
+  CHANGE_RANGE_FLOW_STEPS,
+} = require('../constants/flow.step');
 
 // eslint-disable-next-line consistent-return
 const stateDefaultHandler = (request, state) => {
   // eslint-disable-next-line default-case
   switch (state.step) {
-    case ADD_LOCATION_NAME:
+    case ADD_LOCATION_FLOW_STEPS.ADD_LOCATION_NAME:
       return addLocalNameLocationAction(request, state);
 
-    case CHOOSE_LOCATION:
+    case FIND_ASSIGNMENTS_FLOW_STEPS.CHOOSE_LOCATION:
       return addFoundAssignmentLocationAction({ request, state });
 
-    case CHANGE_RANGE:
-      return changeRangeAction(request, state);
+    case CHANGE_RANGE_FLOW_STEPS.CHANGE_RANGE:
+      return changeRangeAction(request);
 
-    // Add assignmet
-    case ADD_ASSIGNMENT.CHOOSE_CATEGORY:
+    // Add assignment
+    case ADD_ASSIGNMENT_FLOW_STEPS.CHOOSE_CATEGORY:
       return chooseCategoryAssignmentAction(request, state, false);
 
-    case ADD_ASSIGNMENT.ADD_TITLE:
+    case ADD_ASSIGNMENT_FLOW_STEPS.ADD_TITLE:
       return addTitleForAddAssignmentAction(request, state);
 
-    case ADD_ASSIGNMENT.ADD_DESCRIPTION:
+    case ADD_ASSIGNMENT_FLOW_STEPS.ADD_DESCRIPTION:
       return addDescriptionForAddAssignmentAction(request, state);
 
-    case ADD_ASSIGNMENT.CHOOSE_LOCATION:
+    case ADD_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION:
       return chooseLocationForAddAssignmentAction(request, state);
 
-    case ADD_ASSIGNMENT.ADD_REWARD:
+    case ADD_ASSIGNMENT_FLOW_STEPS.ADD_REWARD:
       return addRewardForAddAssignmentAction(request, state);
 
-    case ADD_ASSIGNMENT.SHOW_ASSIGNMENT:
+    case ADD_ASSIGNMENT_FLOW_STEPS.SHOW_ASSIGNMENT:
       return addPictureForAddAssignmentAction(request, state);
 
     // Edit assignment
-    case EDIT_ASSIGNMENT.CHOOSE_CATEGORY:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_CATEGORY:
       return chooseCategoryForEditAssignmentAction(request, state, false);
 
-    case EDIT_ASSIGNMENT.EDIT_TITLE:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_TITLE:
       return editTitleForEditAssignmentAction(request, state);
 
-    case EDIT_ASSIGNMENT.EDIT_DESCRIPTION:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_DESCRIPTION:
       return editDescriptionForEditAssignmentAction(request, state);
 
-    case EDIT_ASSIGNMENT.CHOOSE_LOCATION:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.CHOOSE_LOCATION:
       return chooseLocationForEditAssignmentAction(request, state);
 
-    case EDIT_ASSIGNMENT.EDIT_REWARD:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.EDIT_REWARD:
       return editRewardForEditAssignmentAction(request, state);
 
-    case EDIT_ASSIGNMENT.SHOW_ASSIGNMENT:
+    case EDIT_ASSIGNMENT_FLOW_STEPS.SHOW_ASSIGNMENT:
       return editPictureForEditAssignmentAction(request, state);
   }
 };

@@ -1,27 +1,10 @@
 const {
-  BUTTON_ABOUT_US,
-  BUTTON_CHANGE_RANGE,
-  BUTTON_MY_ASSIGNMENT,
-  BUTTON_FIND_ASSIGNMENTS,
-  BUTTON_ADD_ASSIGNMENT,
-} = require('../constants/button.text').MAIN_MENU;
-const {
-  BUTTON_FAVORITE_ASSIGNMENTS,
-  BUTTON_CREATED_ASSIGNMENTS,
-} = require('../constants/button.text').MY_ASSIGNMENTS_MENU;
-const {
-  BUTTON_HOME,
-  BUTTON_BACK,
-  EDIT_ASSIGNMENT,
-  BUTTON_ADD_LOCATION,
-} = require('../constants/button.text').COMMON;
-const {
-  BUTTON_EDUCATION,
-  BUTTON_HELP,
-  BUTTON_REPAIR,
-  BUTTON_BARTER,
-  BUTTON_OTHER,
-} = require('../constants/button.text').CATEGORY;
+  MAIN_MENU_BUTTONS,
+  MY_ASSIGNMENTS_MENU_BUTTONS,
+  COMMON_BUTTONS,
+  CATEGORY_BUTTONS,
+  ADD_ASSIGNMENT_BUTTONS,
+} = require('../constants/button.text');
 
 const {
   buttonBackHandler,
@@ -54,71 +37,67 @@ const {
   buttonPublishAssignmentHandler,
 } = require('./buttonHandlers');
 
-const {
-  PUBLISH_ASSIGNMENT,
-} = require('../constants/button.text').ADD_ASSIGNMENT;
-
 const textHandlers = async (request, state) => {
   switch (request.text) {
     case '/start':
       return startAction(request);
 
-    case BUTTON_ABOUT_US:
+    case MAIN_MENU_BUTTONS.ABOUT_US:
       return aboutUsAction(request);
 
-    case BUTTON_CHANGE_RANGE:
+    case MAIN_MENU_BUTTONS.CHANGE_RANGE:
       return showRangeAction(request);
 
-    case BUTTON_MY_ASSIGNMENT:
+    case MAIN_MENU_BUTTONS.MY_ASSIGNMENT:
       return myAssignmentAction();
 
-    case BUTTON_FIND_ASSIGNMENTS:
+    case MAIN_MENU_BUTTONS.FIND_ASSIGNMENTS:
       return findAssignmentsAction(request, state);
 
-    case BUTTON_FAVORITE_ASSIGNMENTS:
+    case MY_ASSIGNMENTS_MENU_BUTTONS.FAVORITE_ASSIGNMENTS:
       return favoriteAssignmentsAction(request);
 
-    case BUTTON_CREATED_ASSIGNMENTS:
+    case MY_ASSIGNMENTS_MENU_BUTTONS.CREATED_ASSIGNMENTS:
       return createdAssignmentsAction(request);
 
-    case BUTTON_HOME:
+    case COMMON_BUTTONS.HOME:
       return mainMenuAction(request);
 
-    case BUTTON_ADD_LOCATION:
+    case COMMON_BUTTONS.ADD_LOCATION:
       return addMenuAddLocationAction(request, state);
 
-    case BUTTON_BACK:
+    case COMMON_BUTTONS.BACK:
       return buttonBackHandler(request, state);
 
     // Выбор категории
     // TODO: заменить на константы, когда будет локализация
-    case BUTTON_HELP:
+    case CATEGORY_BUTTONS.HELP:
       request.text = 'help';
       return categoryHandler(request, state);
 
-    case BUTTON_BARTER:
+    case CATEGORY_BUTTONS.BARTER:
       request.text = 'barter';
       return categoryHandler(request, state);
 
-    case BUTTON_REPAIR:
+    case CATEGORY_BUTTONS.REPAIR:
       request.text = 'repair';
       return categoryHandler(request, state);
 
-    case BUTTON_EDUCATION:
+    case CATEGORY_BUTTONS.EDUCATION:
       request.text = 'education';
       return categoryHandler(request, state);
 
-    case BUTTON_OTHER:
+    case CATEGORY_BUTTONS.OTHER:
       request.text = 'other';
       return categoryHandler(request, state);
 
-    case BUTTON_ADD_ASSIGNMENT:
+    case MAIN_MENU_BUTTONS.ADD_ASSIGNMENT:
       return addMenuSelectCategoryForCreatedAssignmentAction(request, state);
 
-    case PUBLISH_ASSIGNMENT:
+    case ADD_ASSIGNMENT_BUTTONS.PUBLISH_ASSIGNMENT:
       return buttonPublishAssignmentHandler(request, state);
 
-    case EDIT_ASSIGNMENT:
+    case COMMON_BUTTONS.EDIT_ASSIGNMENT:
       return buttonEditAssignmentHandler(request, state);
 
     default:

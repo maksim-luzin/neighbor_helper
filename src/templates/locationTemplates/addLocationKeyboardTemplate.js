@@ -1,17 +1,11 @@
-const {
-  BUTTON_ADD_CURRENT_LOCATION,
-} = require('../../constants/button.text').ADD_LOCATIONS_MENU;
-
-const {
-  BUTTON_HOME,
-} = require('../../constants/button.text').COMMON;
+const { COMMON_BUTTONS, ADD_LOCATIONS_MENU_BUTTONS } = require('../../constants/button.text');
 
 const addLocationMenuKeyboardTemplate = [
   [{
-    text: BUTTON_ADD_CURRENT_LOCATION,
+    text: ADD_LOCATIONS_MENU_BUTTONS.ADD_CURRENT_LOCATION,
     request_location: true,
   }],
-  [BUTTON_HOME],
+  [COMMON_BUTTONS.HOME],
 ];
 
 module.exports = addLocationMenuKeyboardTemplate;

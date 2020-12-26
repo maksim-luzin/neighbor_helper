@@ -1,12 +1,8 @@
-const {
-  BUTTON_HOME,
-  BUTTON_BACK,
-  BUTTON_SKIP,
-} = require('../../constants/button.text').COMMON;
+const { COMMON_BUTTONS } = require('../../constants/button.text');
 
 const skipCommonKeyboardTemplate = [
-  [BUTTON_SKIP],
-  [BUTTON_HOME, BUTTON_BACK],
+  [COMMON_BUTTONS.SKIP],
+  [COMMON_BUTTONS.HOME, COMMON_BUTTONS.BACK],
 ];
 
 module.exports = skipCommonKeyboardTemplate;

@@ -1,10 +1,7 @@
-const {
-  BUTTON_HOME,
-  BUTTON_BACK,
-} = require('../../constants/button.text').COMMON;
+const { COMMON_BUTTONS } = require('../../constants/button.text');
 
 const addCommonKeyboardTemplate = [
-  [BUTTON_HOME, BUTTON_BACK],
+  [COMMON_BUTTONS.HOME, COMMON_BUTTONS.BACK],
 ];
 
 module.exports = addCommonKeyboardTemplate;

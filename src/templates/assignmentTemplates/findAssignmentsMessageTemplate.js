@@ -1,5 +1,7 @@
-const foundAssignmentsMessageTemplate = 'Найденные объявления:';
-const notFoundAssignmentsMessageTemplate = 'Объявления c заданными параметрами не были найдены в указанном радиусе!';
+const i18n = require('../../helpers/localization');
+
+const foundAssignmentsMessageTemplate = i18n.t('messages.foundAssignments');
+const notFoundAssignmentsMessageTemplate = i18n.t('messages.notFoundAssignments');
 
 module.exports = {
   foundAssignmentsMessageTemplate,

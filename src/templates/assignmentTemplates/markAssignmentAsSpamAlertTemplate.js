@@ -1,3 +1,5 @@
-const markAssignmentAsSpamAlertTemplate = 'Объявление было отмечено как спам. Больше вы не будете его видеть.';
+const i18n = require('../../helpers/localization');
+
+const markAssignmentAsSpamAlertTemplate = i18n.t('notification.markedAsSpam');
 
 module.exports = markAssignmentAsSpamAlertTemplate;

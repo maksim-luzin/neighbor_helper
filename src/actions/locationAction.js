@@ -137,7 +137,8 @@ async function createNewLocation(message, state) {
 
 async function updateOldLocation(message, state) {
   const result = await locationService.updateLocation({
-    ...state.data,
+    coordinates: state.data.coordinates,
+    globalName: state.data.globalName,
     id: state.cache.locationNameKeyboard[message.text],
   });
   if (!result.succeeded) throw Error(result.message);

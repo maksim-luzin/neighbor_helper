@@ -1,6 +1,8 @@
+const i18n = require('../../helpers/localization');
+
 const rangeResponseMessageTemplate = {
-  rangeErrorResponseMessageTemplate: 'Недопустимое значение радиуса.',
-  rangeSuccessResponseMessageTemplate: 'Радиус успешно изменён.',
+  rangeErrorResponseMessageTemplate: i18n.t('range.rangeError'),
+  rangeSuccessResponseMessageTemplate: i18n.t('range.rangeSuccess'),
 };
 
 module.exports = rangeResponseMessageTemplate;

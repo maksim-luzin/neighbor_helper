@@ -1,3 +1,5 @@
-const addLocationNameMenuMessageTemplate = 'Выберите локацию, которую хотите изменить или создайте новую, введя её имя.';
+const i18n = require('../../helpers/localization');
+
+const addLocationNameMenuMessageTemplate = i18n.t('location.addLocationName');
 
 module.exports = addLocationNameMenuMessageTemplate;

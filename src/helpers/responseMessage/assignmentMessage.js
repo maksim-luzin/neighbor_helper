@@ -1,4 +1,5 @@
 const { assignmentCategory } = require('../../constants/enums');
+const i18n = require('../localization');
 
 const assignmentMessage = ({
   title = null,
@@ -11,10 +12,10 @@ const assignmentMessage = ({
   let assignment = '';
   if (title) assignment += `*${title}*\n`;
   if (description) assignment += `${description}\n`;
-  if (reward) assignment += `\`Награда: ${reward}\`\n`;
+  if (reward) assignment += `\`${i18n.t('assignment.reward')}: ${reward}\`\n`;
   // eslint-disable-next-line no-use-before-define
-  if (category) assignment += `\`Категория: ${categoryNameForShowAssignment(category)}\`\n`;
-  if (localLocationName) assignment += `\`Локация: ${localLocationName}\`\n`;
+  if (category) assignment += `\`${i18n.t('assignment.category')}: ${categoryNameForShowAssignment(category)}\`\n`;
+  if (localLocationName) assignment += `\`${i18n.t('assignment.location')}: ${localLocationName}\`\n`;
   return {
     assignment,
     pictureUrl,

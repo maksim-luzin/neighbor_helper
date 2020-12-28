@@ -20,6 +20,7 @@
     "delete": "Видалити"
   },
   "language": {
+    "changeLanguageSucceed": "Мова успішно змінена",
     "changeLanguage": "Виберіть мову",
     "ua": "Українська",
     "ru": "Русский",

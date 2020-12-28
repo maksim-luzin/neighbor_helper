@@ -20,9 +20,10 @@
     "delete": "Удалить"
   },
   "language": {
-    "ukrainian": "Українська",
-    "russian": "Русский",
-    "english": "English"
+    "changeLanguage": "Выберите язык",
+    "ua": "Українська",
+    "ru": "Русский",
+    "en": "English"
   },
   "messages": {
     "greeting": "Привет, {{firstName}}",

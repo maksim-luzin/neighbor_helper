@@ -129,7 +129,7 @@ async function addGlobalName(location) {
 
 async function createNewLocation(message, state) {
   const result = await locationService.create({
-    ...state.data,
+
     localName: message.text,
   });
   if (!result.succeeded) throw Error(result.message);
@@ -137,8 +137,7 @@ async function createNewLocation(message, state) {
 
 async function updateOldLocation(message, state) {
   const result = await locationService.updateLocation({
-    coordinates: state.data.coordinates,
-    globalName: state.data.globalName,
+    ...state.data,
     id: state.cache.locationNameKeyboard[message.text],
   });
   if (!result.succeeded) throw Error(result.message);

@@ -2,21 +2,22 @@
   "mainMenu": {
     "addLocation": "Додати локацію",
     "myAssignments": "Мої оголошення",
-    "favoriteAssignments": "Вибрані оголошення",
     "submitAssignment": "Подати об'яву",
     "findAssignment": "Знайти оголошення",
+    "changeRange": "Змінити радіус",
     "about": "Про нас",
     "language": "Мова"
   },
-  "generalNavigation": {
+  "common": {
     "favoriteAssignments": "Вибрані",
     "submittedAssignments": "Поданні",
-    "addLocation": "Додати локацію",
     "back": "<< Назад",
     "home": "Додому",
     "cancel": "Відміна",
     "submit": "Далі >>",
-    "skip": "Пропустити >>"
+    "skip": "Пропустити >>",
+    "confirm": "Так",
+    "delete": "Видалити"
   },
   "language": {
     "ukrainian": "Українська",
@@ -24,34 +25,95 @@
     "english": "English"
   },
   "messages": {
+    "greeting": "Привіт, {{firstName}}",
+    "mainMenu": "Головне меню",
     "chooseLocation": "Виберіть локацію",
     "enterLocationName": "Введіть назву локації",
     "chooseLanguage": "Оберіть мову",
     "languageChanged": "Мова успішно змінена",
     "chooseCategory": "Оберіть категорію",
-    "enterAssignmentTitle": "Введіть назву",
-    "enterAssignmentDescription": "Введіть опис",
-    "enterReward": "Введіть нагороду",
-    "addPicture": "Додайте картинку",
-    "enterLink": "Введіть посилання"
+    "chooseFilter": "Оберіть фільтр",
+    "noCreatedAssignments": "Ваш список оголошень порожній",
+    "createdAssignments": "Ваші завдання: ",
+    "noFavoriteAssignments": "Список обраних оголошень порожній.",
+    "favoriteAssignments": "Ваші обрані оголошення: ",
+    "foundAssignments": "Знайдені оголошення:",
+    "notFoundAssignments": "Оголошення c заданими параметрами не були знайдені у вказаному радіусі!",
+    "about": "Я бот для організації взаємодопомоги сусідів.",
+    "error": "Ой, щось пішло не так"
   },
   "notifications": {
     "addedToFavorites": "Додано в обрані",
     "removedFromFavorites": "Вилучено з вибраних",
-    "markedAsSpam": "Відзначено як спам",
+    "markedAsSpam": "Оголошення було відзначено як спам. Більше ви не будете його бачити.",
     "assignmentCompleted": "Оголошення відзначено як виконане",
     "assignmentNotCompleted": "Оголошення відзначено як не виконане",
     "assignmentRemoved": "Оголошення видалено"
   },
+  "confirmation": {
+    "markAssignmentAsSpam": "Ви впевнені, що хочете відзначити оголошення спам?",
+    "removeAssignment": "Ви впевнені, що хочете видалити оголошення?"
+  },
+  "category": {
+    "barter": "Обмін",
+    "education": "Навчання",
+    "help": "Допомога",
+    "repair": "Ремонт",
+    "other": "Інше"
+  },
+  "location": {
+    "current": "Поточна локація",
+    "addAssignmentLocation": "Виберіть локацію, поруч з якою хочете знайти оголошення",
+    "addLocationMenu": "Виберіть будь-яку локацію, натиснувши на \"Скріпку \" -> \"Локація \" або просто відправте поточну",
+    "addLocationName": "Виберіть локацію, яку хочете змінити або створіть нову, ввівши її ім'я",
+    "addLocationMessage": "Локація\nвдало створено",
+    "updateLocationMessage": "Локація\nвдало оновлена"
+  },
   "assignment": {
     "reward": "Нагорода",
+    "location": "Локація",
+    "author": "Автор",
+    "category": "Категорія",
     "button": {
       "contactTheAuthor": "Зв'язатися з автором",
       "markAsSpam": "Спам",
       "markAssignmentAsCompleted": "Відмітити як виконане",
       "markAssignmentAsNotCompleted": "Відмітити як не виконане",
       "removeAssignment": "Видалити",
-      "addToFavorites": "Додати в обране"
+      "editAssignment": "Редагувати",
+      "addToFavorites": "Додати в обране",
+      "removeFromFavorites": "Видалити з обраного",
+      "publishAssignment": "Опублікувати оголошення"
+    },
+    "messages": {
+      "previewAssignment": "Предосмотр оголошення",
+      "publishNewAssignment": "Оголошення\nуспішно створено",
+      "publishAssignment": "Оголошення\nуспішно скориговано"
     }
+  },
+  "addAssignment": {
+    "addDescription": "Введіть детальний опис.",
+    "addPicture": "Додайте картинку",
+    "addReward": "Введіть нагороду",
+    "addTitle": "Введіть назву",
+    "chooseCategory": "Оберіть категорію",
+    "chooseLocation": "Оберіть локацію."
+  },
+  "editAssignment": {
+    "editDescription": "Скоригуйте детальний опис",
+    "editPicture": "Скоригуйте картинку",
+    "editReward": "Скоригуйте нагороду",
+    "editTitle": "Скоригуйте назву",
+    "chooseCategory": "Скоригуйте категорію",
+    "chooseLocation": "Скоригуйте локацію"
+  },
+  "pagination": {
+    "showMore": "Показати ще"
+  },
+  "range": {
+    "currentRange": "Поточний радіус = {{range}}км.\n",
+    "changeRangeMessage": "Щоб змінити, введіть новий вручну або скористайтеся кнопками",
+    "rangeError": "Неприпустиме значення радіуса",
+    "rangeSuccess": "Радіус успішно змінено"
   }
 }

@@ -2,21 +2,22 @@
   "mainMenu": {
     "addLocation": "Add location",
     "myAssignments": "My assignments",
-    "favoriteAssignments": "Favorite assignments",
     "submitAssignment": "Submit assignments",
     "findAssignment": "Find assignments",
+    "changeRange": "Change range",
     "about": "About",
     "language": "Language"
   },
-  "generalNavigation": {
+  "common": {
     "favoriteAssignments": "Favorites",
     "submittedAssignments": "Submitted",
-    "addLocation": "Add location",
     "back": "<< Back",
     "home": "Home",
     "cancel": "Cancel",
     "submit": "Submit >>",
-    "skip": "Skip >>"
+    "skip": "Skip >>",
+    "confirm": "Yes",
+    "delete": "Delete"
   },
   "language": {
     "ukrainian": "Українська",
@@ -24,34 +25,95 @@
     "english": "English"
   },
   "messages": {
+    "greeting": "Hello, {{firstName}}",
+    "mainMenu": "Main menu",
     "chooseLocation": "Choose location",
     "enterLocationName": "Enter location name",
     "chooseLanguage": "Choose language",
     "languageChanged": "Language succesfully changed",
     "chooseCategory": "Choose category",
-    "enterAssignmentTitle": "Enter title",
-    "enterAssignmentDescription": "Enter description",
-    "enterReward": "Enter reward",
-    "addPicture": "Add picture",
-    "enterLink": "Enter link"
+    "chooseFilter": "Choose filter",
+    "noCreatedAssignments": "Your list of assignments is empty",
+    "createdAssignments": "Your assignments:",
+    "noFavoriteAssignments": "Favorite list of assignments is empty.",
+    "favoriteAssignments": "Your favorite assignments: ",
+    "foundAssignments": "Found assignments:",
+    "notFoundAssignments": "Assignments with specified parameters were not found in the specified radius!",
+    "about": "I am a bot for organizing mutual assistance of neighbors.",
+    "error": "Oops, something went wrong"
   },
   "notifications": {
     "addedToFavorites": "Added to favorites",
     "removedFromFavorites": "Removed from favorites",
-    "markedAsSpam": "Marked as spam",
+    "markedAsSpam": "The assignment has been marked as spam. You will not see him again.",
     "assignmentCompleted": "Assignment completed",
     "assignmentNotCompleted": "Assignment not completed",
     "assignmentRemoved": "Assignment removed"
   },
+  "confirmation": {
+    "markAssignmentAsSpam": "Are you sure you want to flag your assignment as spam?",
+    "removeAssignment": "Are you sure you want to delete your assignment?"
+  },
+  "category": {
+    "barter": "Barter",
+    "education": "Education",
+    "help": "Help",
+    "repair": "Repair",
+    "other": "Other"
+  },
+  "location": {
+    "current": "Current location",
+    "addAssignmentLocation": "Select the location near which you want to find assignment",
+    "addLocationMenu": "Select any location by clicking on \"Paperclip \" -> \"Location \" or just send the current",
+    "addLocationName": "Select the location you want to change or create a new one by entering its name",
+    "addLocationMessage": "Location\nsuccessfully created",
+    "updateLocationMessage": "Location\nsuccessfully updated"
+  },
   "assignment": {
     "reward": "Reward",
+    "location": "Location",
+    "author": "Author",
+    "category": "Category",
     "button": {
       "contactTheAuthor": "Contact the author",
       "markAsSpam": "Spam",
       "markAssignmentAsCompleted": "Close assignment",
       "markAssignmentAsNotCompleted": "Open assignment",
       "removeAssignment": "Remove",
-      "addToFavorites": "Add to favorites"
+      "editAssignment": "Edit",
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites",
+      "publishAssignment": "Publish assignment"
+    },
+    "messages": {
+      "previewAssignment": "Preview assignment",
+      "publishNewAssignment": "Assignment\ncreated successfully",
+      "publishAssignment": "Assignment\ncorrected successfully"
     }
+  },
+  "addAssignment": {
+    "addDescription": "Enter a detailed description.",
+    "addPicture": "Add picture",
+    "addReward": "Enter reward",
+    "addTitle": "Enter title",
+    "chooseCategory": "Сhoose сategory",
+    "chooseLocation": "Сhoose location"
+  },
+  "editAssignment": {
+    "editDescription": "Correct a detailed description",
+    "editPicture": "Correct picture",
+    "editReward": "Correct reward",
+    "editTitle": "Correct title",
+    "chooseCategory": "Correct category",
+    "chooseLocation": "Correct location"
+  },
+  "pagination": {
+    "showMore": "Show more"
+  },
+  "range": {
+    "currentRange": "Current radius = {{range}}km.\n",
+    "changeRangeMessage": "To change, enter a new one manually or use the buttons",
+    "rangeError": "Invalid radius value",
+    "rangeSuccess": "Radius successfully updated"
   }
 }

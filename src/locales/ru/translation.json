@@ -2,21 +2,22 @@
   "mainMenu": {
     "addLocation": "Добавить локацию",
     "myAssignments": "Мои объявления",
-    "favoriteAssignments": "Избранные объявления",
     "submitAssignment": "Подать объявление",
     "findAssignment": "Найти объявление",
+    "changeRange": "Редактировать радиус",
     "about": "О нас",
     "language": "Язык"
   },
-  "generalNavigation": {
+  "common": {
     "favoriteAssignments": "Избранные",
-    "submittedAssignments": "Поданные",
-    "addLocation": "Добавить локацию",
+    "submittedAssignments": "Поданные объявления",
     "back": "<< Назад",
     "home": "Домой",
     "cancel": "Отмена",
     "submit": "Далее >>",
-    "skip": "Пропустить >>"
+    "skip": "Пропустить >>",
+    "confirm": "Да",
+    "delete": "Удалить"
   },
   "language": {
     "ukrainian": "Українська",
@@ -24,34 +25,95 @@
     "english": "English"
   },
   "messages": {
+    "greeting": "Привет, {{firstName}}",
+    "mainMenu": "Главное меню",
     "chooseLocation": "Выберите локацию",
     "enterLocationName": "Введите название локации",
     "chooseLanguage": "Выберите язык",
     "languageChanged": "Язык успешно изменен",
     "chooseCategory": "Выберите категорию",
-    "enterAssignmentTitle": "Введите название",
-    "enterAssignmentDescription": "Введите описание",
-    "enterReward": "Введите награду",
-    "addPicture": "Добавьте картинку",
-    "enterLink": "Введите ссылку"
+    "chooseFilter": "Выберите фильтр",
+    "noCreatedAssignments": "Список ваших объявлений пуст",
+    "createdAssignments": "Ваши объявления:",
+    "noFavoriteAssignments": "Список избранных объявлений пуст.",
+    "favoriteAssignments": "Ваши избранные объявления: ",
+    "foundAssignments": "Найденные объявления:",
+    "notFoundAssignments": "Объявления c заданными параметрами не были найдены в указанном радиусе!",
+    "about": "Я бот для организации взаимопомощи соседей.",
+    "error": "Ой, что-то пошло не так"
   },
   "notifications": {
     "addedToFavorites": "Добавлено в избранные",
     "removedFromFavorites": "Удалено из избранных",
-    "markedAsSpam": "Отмечено как спам",
+    "markedAsSpam": "Объявление было отмечено как спам. Больше вы не будете его видеть.",
     "assignmentCompleted": "Объявление отмечено как выполненное",
     "assignmentNotCompleted": "Объявление отмечено как не выполненное",
     "assignmentRemoved": "Объявление удалено"
   },
+  "confirmation": {
+    "markAssignmentAsSpam": "Вы уверены, что хотите отметить объявление как спам?",
+    "removeAssignment": "Вы уверены, что хотите удалить объявление?"
+  },
+  "category": {
+    "barter": "Обмен",
+    "education": "Обучение",
+    "help": "Помощь",
+    "repair": "Ремонт",
+    "other": "Другое"
+  },
+  "location": {
+    "current": "Текущая локация",
+    "addAssignmentLocation": "Выберите локацию, рядом с которой хотите найти объявления",
+    "addLocationMenu": "Выберите любую локацию, нажав на \"Скрепку\" -> \"Локация\" или просто отправьте текущую",
+    "addLocationName": "Выберите локацию, которую хотите изменить или создайте новую, введя её имя",
+    "addLocationMessage": "Локация\nуспешно создана",
+    "updateLocationMessage": "Локация\nуспешно обновлена"
+  },
   "assignment": {
     "reward": "Награда",
+    "location": "Локация",
+    "author": "Автор",
+    "category": "Категория",
     "button": {
       "contactTheAuthor": "Связаться с автором",
       "markAsSpam": "Спам",
       "markAssignmentAsCompleted": "Отметить как выполненное",
       "markAssignmentAsNotCompleted": "Отметить как не выполненное",
       "removeAssignment": "Удалить",
-      "addToFavorites": "Добавить в избранное"
+      "editAssignment": "Редактировать",
+      "addToFavorites": "Добавить в избранное",
+      "removeFromFavorites": "Убрать из избранных",
+      "publishAssignment": "Опубликовать объявление"
+    },
+    "messages": {
+      "previewAssignment": "Предосмотр объявления",
+      "publishNewAssignment": "Объявление\nуспешно создано",
+      "publishAssignment": "Объявление\nуспешно скорректировано"
     }
+  },
+  "addAssignment": {
+    "addDescription": "Введите подробное описание.",
+    "addPicture": "Прикрепите картинку.",
+    "addReward": "Введите награду.",
+    "addTitle": "Введите заголовок.",
+    "chooseCategory": "Выберите категорию.",
+    "chooseLocation": "Выберите локацию."
+  },
+  "editAssignment": {
+    "editDescription": "Откорректируйте подробное описание.",
+    "editPicture": "Откорректируйте картинку.",
+    "editReward": "Откорректируйте награду.",
+    "editTitle": "Откорректируйте заголовок.",
+    "chooseCategory": "Откорректируйте категорию.",
+    "chooseLocation": "Откорректируйте локацию."
+  },
+  "pagination": {
+    "showMore": "Показать еще"
+  },
+  "range": {
+    "currentRange": "Текущий радиус = {{range}} км.\n",
+    "changeRangeMessage": "Чтобы изменить, введите новый вручную или воспользуйтесь кнопками",
+    "rangeError": "Недопустимое значение радиуса",
+    "rangeSuccess": "Радиус успешно изменён"
   }
 }

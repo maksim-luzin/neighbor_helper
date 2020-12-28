@@ -129,7 +129,7 @@ async function addGlobalName(location) {
 
 async function createNewLocation(message, state) {
   const result = await locationService.create({
-    ...state.data,
+
     localName: message.text,
   });
   if (!result.succeeded) throw Error(result.message);

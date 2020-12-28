@@ -110,7 +110,6 @@ async function addGlobalName(location) {
         const response = (
           address.city
           || address.town
-          || address.town
           || address.village
           || address.hallmet
           || address.state
@@ -119,9 +118,9 @@ async function addGlobalName(location) {
         if (!address.road) return resolve(response);
 
         let { road } = address;
-        const str = (road.match(/(^| )(пер|пров|наб|бульв|в?ул|п(р|л))/i) || [''])[0];
-        road = road.replace(/(^| )((пере|пров)улок|набережная?|бульвар|в?улиц(а|я)|проспект|площа(дь)?)/i, '');
-        resolve(`${response} ${str || ''}. ${road || ''}`);
+        const str = (road.match(/(^| )(пер|пров|наб|бульв|в?ул|п(р|л))/i) || [''])[0].trim();
+        road = road.replace(/(^| )((пере|пров)улок|набережная?|бульвар|в?улиц(а|я)|проспект|площа(дь)?)/i, '').trim();
+        resolve(`${response}, ${str || ''}. ${road || ''}`);
       })
   ));
 }

@@ -91,28 +91,29 @@ module.exports = {
     }
   },
 
-  // eslint-disable-next-line consistent-return
-  async updateLocation({ id, coordinates, ...data }) {
+  async updateLocation({ id, coordinates, globalName }) {
     try {
-      // TODO array destructuring
-      const result = await Location.update(
+      const [result] = await Location.update(
         {
-          // TODO remove spread operator
-          ...data,
           coordinates: { type: 'Point', coordinates },
+          globalName,
         },
         {
           where: { id },
           returning: true,
         },
       );
-      if (result[0]) return new ServiceResponse({ succeeded: true });
-    } catch {
+      if (result === 1) return new ServiceResponse({ succeeded: true });
       return new ServiceResponse({
         succeeded: false,
-        message: `Error occurred while updating location with id=${id}`,
+        message: `Error occurred while updating location with id=${id}.\nUnknown id.`,
+      });
+    } catch (e) {
+      return new ServiceResponse({
+        succeeded: false,
+        message: `Error occurred while updating location with id=${id}. `
+        + `${e}.`,
       });
     }
   },
-
 };

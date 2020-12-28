@@ -31,6 +31,11 @@ const {
   chooseCategoryMessageTemplate,
 } = require('../templates/categoryTemplates');
 
+const {
+  changeLanguageMessageTemplate,
+  changeLanguageKeyboardTemplate,
+} = require('../templates/changeLanguageTemplates');
+
 const responseMessage = require('../helpers/responseMessage');
 
 const { setState } = require('../helpers/state');
@@ -106,6 +111,10 @@ const changeRangeAction = async (message) => {
 
 const myAssignmentAction = () => new telegramTemplate
   .Text(chooseFilterMessageTemplate).addReplyKeyboard(myAssignmentsKeyboardTemplate).get();
+console.log(changeLanguageMessageTemplate);
+console.log(changeLanguageKeyboardTemplate);
+const chooseLanguageAction = () => new telegramTemplate
+  .Text(changeLanguageMessageTemplate).addReplyKeyboard(changeLanguageKeyboardTemplate).get();
 
 const findAssignmentsAction = async (message) => {
   await setState(message.from.id, FIND_ASSIGNMENTS_FLOW_STEPS.CHOOSE_CATEGORY);
@@ -134,6 +143,7 @@ module.exports = {
   showRangeAction,
   changeRangeAction,
   myAssignmentAction,
+  chooseLanguageAction,
   findAssignmentsAction,
   addMenuSelectCategoryForCreatedAssignmentAction,
 };

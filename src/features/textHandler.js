@@ -4,6 +4,7 @@ const {
   COMMON_BUTTONS,
   CATEGORY_BUTTONS,
   ADD_ASSIGNMENT_BUTTONS,
+  CHANGE_LANGUAGE_BUTTONS,
 } = require('../constants/button.text');
 
 const {
@@ -21,6 +22,7 @@ const {
   aboutUsAction,
   showRangeAction,
   myAssignmentAction,
+  chooseLanguageAction,
   findAssignmentsAction,
   addMenuSelectCategoryForCreatedAssignmentAction,
 } = require('../actions/mainActions');
@@ -53,6 +55,9 @@ const textHandlers = async (request, state) => {
 
     case MAIN_MENU_BUTTONS.FIND_ASSIGNMENTS:
       return findAssignmentsAction(request, state);
+
+    case MAIN_MENU_BUTTONS.LANGUAGE:
+      return chooseLanguageAction(request);
 
     case MY_ASSIGNMENTS_MENU_BUTTONS.FAVORITE_ASSIGNMENTS:
       return favoriteAssignmentsAction(request);

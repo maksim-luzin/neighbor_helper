@@ -39,3 +39,9 @@ exports.ADD_LOCATIONS_MENU_BUTTONS = {
 exports.ADD_ASSIGNMENT_BUTTONS = {
   PUBLISH_ASSIGNMENT: i18n.t('assignment.button.publishAssignment'),
 };
+
+exports.CHANGE_LANGUAGE_BUTTONS = {
+  EN: i18n.t('language.en'),
+  RU: i18n.t('language.ru'),
+  UA: i18n.t('language.ua'),
+};

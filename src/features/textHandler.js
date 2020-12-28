@@ -34,6 +34,8 @@ const {
   favoriteAssignmentsAction,
 } = require('../actions/assignmentActions');
 
+const { changeLanguageAction } = require('../actions/changeLanguageAction.js');
+
 const {
   buttonEditAssignmentHandler,
   buttonPublishAssignmentHandler,
@@ -104,6 +106,15 @@ const textHandlers = async (request, state) => {
 
     case COMMON_BUTTONS.EDIT_ASSIGNMENT:
       return buttonEditAssignmentHandler(request, state);
+
+    case CHANGE_LANGUAGE_BUTTONS.RU:
+      return changeLanguageAction(request, { newLocale: 'ru' });
+
+    case CHANGE_LANGUAGE_BUTTONS.UA:
+      return changeLanguageAction(request, { newLocale: 'ua' });
+
+    case CHANGE_LANGUAGE_BUTTONS.EN:
+      return changeLanguageAction(request, { newLocale: 'en' });
 
     default:
       // eslint-disable-next-line no-case-declarations

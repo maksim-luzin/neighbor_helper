@@ -111,8 +111,7 @@ const changeRangeAction = async (message) => {
 
 const myAssignmentAction = () => new telegramTemplate
   .Text(chooseFilterMessageTemplate).addReplyKeyboard(myAssignmentsKeyboardTemplate).get();
-console.log(changeLanguageMessageTemplate);
-console.log(changeLanguageKeyboardTemplate);
+
 const chooseLanguageAction = () => new telegramTemplate
   .Text(changeLanguageMessageTemplate).addReplyKeyboard(changeLanguageKeyboardTemplate).get();
 
